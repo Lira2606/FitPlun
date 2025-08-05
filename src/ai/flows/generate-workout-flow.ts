@@ -12,9 +12,9 @@ import {z} from 'genkit';
 
 const ExerciseSchema = z.object({
   name: z.string().describe('O nome do exercício.'),
-  sets: z.number().describe('O número de séries para o exercício.'),
-  reps: z.string().describe('A faixa de repetições para o exercício (ex: "8-12").'),
-  weight: z.string().describe('O peso sugerido para o exercício (ex: "40kg" ou "Peso Corporal").'),
+  sets: z.number().describe('O número de séries para o exercício. Para cardio, pode ser 1.'),
+  reps: z.string().describe('A faixa de repetições (ex: "8-12") ou a duração para exercícios de cardio (ex: "30 minutos").'),
+  weight: z.string().describe('O peso sugerido (ex: "40kg") ou a intensidade para cardio (ex: "ritmo moderado").'),
   notes: z.string().describe('Uma breve explicação do exercício, para que serve e como executá-lo.'),
 });
 
@@ -36,9 +36,15 @@ const prompt = ai.definePrompt({
 
 Responda em português do Brasil (pt-BR).
 
+Se o objetivo for relacionado a musculação (ex: hipertrofia, força), estruture com séries e repetições.
+Se o objetivo for perda de gordura ou cardio (ex: correr, caminhar), você pode incluir exercícios como corrida, caminhada na esteira, etc. Nesses casos, adapte os campos:
+- "sets": pode ser 1.
+- "reps": use para a duração (ex: "30 minutos", "1 hora").
+- "weight": use para a intensidade (ex: "ritmo moderado", "inclinação de 5%", "N/A").
+
 Para cada exercício, forneça uma breve explicação no campo 'notes', detalhando para que serve o exercício e como realizá-lo.
 
-Retorne o plano como um array JSON de exercícios. Não inclua exercícios que não estejam diretamente relacionados ao objetivo do usuário. Para o peso, você pode sugerir um peso específico, se apropriado, ou usar termos como "Peso Corporal", "Médio" ou "Leve".
+Retorne o plano como um array JSON de exercícios. Não inclua exercícios que não estejam diretamente relacionados ao objetivo do usuário.
 
 Objetivo do usuário: {{{prompt}}}`
 });
