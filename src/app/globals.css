@@ -125,6 +125,11 @@
   }
 }
 
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+
 @keyframes moveGlow {
   from {
     transform: translate(0, 0);
