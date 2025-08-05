@@ -30,6 +30,7 @@ export function BuilderScreen() {
         workoutPlan.forEach(ex => {
           dispatch({ type: 'ADD_EXERCISE', payload: ex });
         });
+        setGoal(''); // Limpa o campo de objetivo
       } catch (error) {
         console.error("Failed to generate workout", error);
         // You might want to show an error toast here
