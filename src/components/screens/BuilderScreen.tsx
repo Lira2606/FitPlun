@@ -113,6 +113,7 @@ export function BuilderScreen() {
                                 <div className="text-xs text-gray-400 mt-1">
                                     {ex.sets} séries de {ex.reps} com {ex.weight}
                                 </div>
+                                {ex.notes && <p className="text-xs text-gray-300 mt-2">{ex.notes}</p>}
                             </div>
                         ))
                     )}

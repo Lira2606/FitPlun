@@ -11,11 +11,11 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const ExerciseSchema = z.object({
-  name: z.string().describe('The name of the exercise.'),
-  sets: z.number().describe('The number of sets for the exercise.'),
-  reps: z.string().describe('The repetition range for the exercise (e.g., "8-12").'),
-  weight: z.string().describe('The suggested weight for the exercise (e.g., "40kg" or "Bodyweight").'),
-  notes: z.string().optional().describe('Optional notes or tips for the exercise.'),
+  name: z.string().describe('O nome do exercício.'),
+  sets: z.number().describe('O número de séries para o exercício.'),
+  reps: z.string().describe('A faixa de repetições para o exercício (ex: "8-12").'),
+  weight: z.string().describe('O peso sugerido para o exercício (ex: "40kg" ou "Peso Corporal").'),
+  notes: z.string().describe('Uma breve explicação do exercício, para que serve e como executá-lo.'),
 });
 
 const GenerateWorkoutInputSchema = z.string().describe('The user\'s workout goal.');
@@ -32,11 +32,15 @@ const prompt = ai.definePrompt({
   name: 'generateWorkoutPrompt',
   input: {schema: GenerateWorkoutInputSchema},
   output: {schema: GenerateWorkoutOutputSchema},
-  prompt: `You are a world-class personal trainer. A user will provide you with their workout goal. Create a concise and effective workout plan with 4 to 6 exercises that directly target their goal. 
+  prompt: `Você é um personal trainer de classe mundial. Um usuário fornecerá seu objetivo de treino. Crie um plano de treino conciso e eficaz com 4 a 6 exercícios que visem diretamente o seu objetivo.
 
-Return the plan as a JSON array of exercises. Do not include any exercises that are not directly related to the user's goal. For the weight, you can suggest a specific weight if appropriate, or use terms like "Bodyweight", "Medium", or "Light".
+Responda em português do Brasil (pt-BR).
 
-User's goal: {{{prompt}}}`
+Para cada exercício, forneça uma breve explicação no campo 'notes', detalhando para que serve o exercício e como realizá-lo.
+
+Retorne o plano como um array JSON de exercícios. Não inclua exercícios que não estejam diretamente relacionados ao objetivo do usuário. Para o peso, você pode sugerir um peso específico, se apropriado, ou usar termos como "Peso Corporal", "Médio" ou "Leve".
+
+Objetivo do usuário: {{{prompt}}}`
 });
 
 const generateWorkoutFlow = ai.defineFlow(

@@ -4,7 +4,7 @@ export interface Exercise {
   sets: number;
   reps: string;
   weight: string;
-  notes?: string;
+  notes: string;
 }
 
 export type ScreenType = 'welcome' | 'builder' | 'workout' | 'rest' | 'finished';
