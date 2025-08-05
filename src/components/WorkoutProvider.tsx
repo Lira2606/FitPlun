@@ -12,6 +12,11 @@ const initialState: WorkoutState = {
   hasPreviousWorkout: false,
 };
 
+let exerciseIdCounter = 0;
+const generateUniqueId = () => {
+  return `${new Date().toISOString()}_${exerciseIdCounter++}`;
+}
+
 const workoutReducer = (state: WorkoutState, action: Action): WorkoutState => {
   switch (action.type) {
     case 'INITIALIZE':
@@ -21,7 +26,7 @@ const workoutReducer = (state: WorkoutState, action: Action): WorkoutState => {
     case 'START_NEW_WORKOUT':
       return { ...state, workoutPlan: [], currentExerciseIndex: 0, currentSet: 1, screen: 'builder', hasPreviousWorkout: false };
     case 'ADD_EXERCISE':
-      return { ...state, workoutPlan: [...state.workoutPlan, { ...action.payload, id: new Date().toISOString() }] };
+      return { ...state, workoutPlan: [...state.workoutPlan, { ...action.payload, id: generateUniqueId() }] };
     case 'REMOVE_EXERCISE':
       return { ...state, workoutPlan: state.workoutPlan.filter(ex => ex.id !== action.payload.id) };
     case 'START_WORKOUT':
