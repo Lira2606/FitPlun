@@ -32,6 +32,9 @@ const prompt = ai.definePrompt({
   name: 'generateWorkoutPrompt',
   input: {schema: GenerateWorkoutInputSchema},
   output: {schema: GenerateWorkoutOutputSchema},
+  config: {
+    temperature: 0.8,
+  },
   prompt: `Você é um personal trainer de classe mundial. Um usuário fornecerá seu objetivo de treino. Crie um plano de treino conciso e eficaz com 4 a 6 exercícios que visem diretamente o seu objetivo.
 
 Responda em português do Brasil (pt-BR).
