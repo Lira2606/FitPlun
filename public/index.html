@@ -1,125 +1,160 @@
-'use client';
-import { useEffect } from 'react';
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monte Seu Treino</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712; /* Fundo de fallback */
+            overflow: hidden; /* Previne scroll no body */
+        }
 
-export default function Home() {
-  useEffect(() => {
-    // This is a workaround to make the script tags in the HTML execute.
-    // Next.js doesn't execute script tags in dangerouslySetInnerHTML on initial render.
-    const script = document.createElement('script');
-    const scriptContent = `
-        document.addEventListener('DOMContentLoaded', () => {
-            const splashScreen = document.getElementById('splash-screen');
-            const form = document.getElementById('add-exercise-form');
-            const workoutList = document.getElementById('workout-list');
-            const emptyState = document.getElementById('empty-state');
-            const startWorkoutBtn = document.getElementById('start-workout-btn');
+        /* --- Fundo com Imagem de Academia --- */
+        .gym-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=2575&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+        .gym-background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(3, 7, 18, 0.8); /* Overlay escuro semi-transparente */
+            backdrop-filter: blur(5px); /* Efeito de desfoque sutil */
+        }
 
-            // --- Lógica da Tela de Splash ---
-            setTimeout(() => {
-                if (splashScreen) {
-                    splashScreen.classList.add('hidden');
-                }
-            }, 2500); // A tela de splash desaparecerá após 2.5 segundos
 
-            let exercises = [];
+        /* --- TELA DE SPLASH --- */
+        #splash-screen {
+            position: absolute; /* Alterado para absolute */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #030712;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50; /* Z-index alto para ficar sobre o conteúdo do celular */
+            transition: opacity 0.8s ease-out, visibility 0.8s;
+            border-radius: 32px; /* Arredonda para caber na moldura */
+        }
+        #splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .splash-icon {
+            animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        /* Estilos para a moldura do celular */
+        .phone-frame {
+            width: 390px;
+            height: 844px;
+            border: 8px solid #1f2937;
+            border-top-width: 16px;
+            border-bottom-width: 16px;
+            border-radius: 40px;
+            position: relative;
+            background: rgba(3, 7, 18, 0.5); /* Fundo da moldura semi-transparente */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 255, 255, 0.1);
+            overflow: hidden;
+            margin: 2rem auto;
+            z-index: 10;
+        }
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 24px;
+            background: #1f2937;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 20;
+        }
+        .phone-content {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
 
-            function renderWorkoutList() {
-                if (!workoutList || !emptyState || !startWorkoutBtn) return;
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #6b7280; }
 
-                workoutList.innerHTML = '';
-                
-                if (exercises.length === 0) {
-                    emptyState.classList.remove('hidden');
-                    startWorkoutBtn.disabled = true;
-                } else {
-                    emptyState.classList.add('hidden');
-                    startWorkoutBtn.disabled = false;
-                }
+        /* Efeito de borda gradiente */
+        .gradient-border {
+            position: relative;
+            background: #111827; /* gray-900 */
+            border-radius: 1.25rem; /* um pouco maior que o conteúdo */
+            padding: 2px;
+            overflow: hidden;
+        }
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background: linear-gradient(135deg, #06b6d4, #10b981);
+            z-index: 0;
+            animation: rotateGradient 5s linear infinite;
+        }
+        @keyframes rotateGradient {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .gradient-border-content {
+            background: #1f2937; /* gray-800 */
+            padding: 1.25rem;
+            border-radius: 1.15rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Animações de lista */
+        @keyframes slide-in {
+            from { opacity: 0; transform: scale(0.9) translateX(-20px); }
+            to { opacity: 1; transform: scale(1) translateX(0); }
+        }
+        .animate-slide-in {
+            animation: slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+        @keyframes slide-out {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.8) translateX(50px); height: 0; padding: 0; margin: 0; border: 0; }
+        }
+        .animate-slide-out {
+            animation: slide-out 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+        }
+    </style>
+</head>
+<body class="text-white antialiased flex items-center justify-center p-4">
 
-                exercises.forEach((exercise, index) => {
-                    const li = document.createElement('li');
-                    li.className = 'bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02]';
-                    li.dataset.index = index.toString();
-                    
-                    if (!exercise.rendered) {
-                        li.classList.add('animate-slide-in');
-                        exercise.rendered = true;
-                    }
-
-                    li.innerHTML = \`
-                        <div class="flex-grow pr-4">
-                            <h3 class="font-bold text-md text-cyan-300">\${exercise.name}</h3>
-                            <div class="text-sm text-gray-300 mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
-                                <span><strong>Séries:</strong> \${exercise.sets}</span>
-                                <span><strong>Reps:</strong> \${exercise.reps}</span>
-                                \${exercise.weight ? \`<span><strong>Peso:</strong> \${exercise.weight}</span>\` : ''}
-                            </div>
-                            \${exercise.notes ? \`<p class="text-xs text-gray-400 mt-2 italic"><strong>Nota:</strong> \${exercise.notes}</p>\` : ''}
-                        </div>
-                        <button class="remove-btn flex-shrink-0 text-gray-500 hover:text-red-500 transition-colors">
-                            <svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
-                    \`;
-                    workoutList.appendChild(li);
-                });
-            }
-
-            if (form) {
-                form.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const formData = new FormData(form as HTMLFormElement);
-                    const newExercise = {
-                        name: formData.get('exercise-name'),
-                        sets: formData.get('exercise-sets'),
-                        reps: formData.get('exercise-reps'),
-                        weight: formData.get('exercise-weight'),
-                        notes: formData.get('exercise-notes'),
-                        rendered: false
-                    };
-                    exercises.push(newExercise);
-                    (form as HTMLFormElement).reset();
-                    const exerciseNameInput = document.getElementById('exercise-name');
-                    if (exerciseNameInput) {
-                        (exerciseNameInput as HTMLInputElement).focus();
-                    }
-                    renderWorkoutList();
-                });
-            }
-
-            if (workoutList) {
-                workoutList.addEventListener('click', (e) => {
-                    const target = e.target as HTMLElement;
-                    const removeButton = target.closest('.remove-btn');
-                    if (removeButton) {
-                        const liToRemove = removeButton.closest('li');
-                        if (liToRemove && liToRemove.dataset.index) {
-                            const indexToRemove = parseInt(liToRemove.dataset.index, 10);
-                            
-                            liToRemove.classList.add('animate-slide-out');
-                            
-                            setTimeout(() => {
-                                exercises.splice(indexToRemove, 1);
-                                exercises.forEach(ex => ex.rendered = true); 
-                                renderWorkoutList();
-                            }, 400);
-                        }
-                    }
-                });
-            }
-
-            renderWorkoutList();
-        });
-    `;
-    script.appendChild(document.createTextNode(scriptContent));
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
-
-  return (
-    <div dangerouslySetInnerHTML={{ __html: `
     <div class="gym-background"></div>
 
     <div class="phone-frame">
@@ -236,6 +271,96 @@ export default function Home() {
             </div>
         </div>
     </div>
-    ` }} />
-  );
-}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const splashScreen = document.getElementById('splash-screen');
+            const form = document.getElementById('add-exercise-form');
+            const workoutList = document.getElementById('workout-list');
+            const emptyState = document.getElementById('empty-state');
+            const startWorkoutBtn = document.getElementById('start-workout-btn');
+
+            // --- Lógica da Tela de Splash ---
+            setTimeout(() => {
+                splashScreen.classList.add('hidden');
+            }, 2500); // A tela de splash desaparecerá após 2.5 segundos
+
+            let exercises = [];
+
+            function renderWorkoutList() {
+                workoutList.innerHTML = '';
+                
+                if (exercises.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    startWorkoutBtn.disabled = true;
+                } else {
+                    emptyState.classList.add('hidden');
+                    startWorkoutBtn.disabled = false;
+                }
+
+                exercises.forEach((exercise, index) => {
+                    const li = document.createElement('li');
+                    li.className = 'bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02]';
+                    li.dataset.index = index;
+                    
+                    if (!exercise.rendered) {
+                        li.classList.add('animate-slide-in');
+                        exercise.rendered = true;
+                    }
+
+                    li.innerHTML = `
+                        <div class="flex-grow pr-4">
+                            <h3 class="font-bold text-md text-cyan-300">${exercise.name}</h3>
+                            <div class="text-sm text-gray-300 mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+                                <span><strong>Séries:</strong> ${exercise.sets}</span>
+                                <span><strong>Reps:</strong> ${exercise.reps}</span>
+                                ${exercise.weight ? `<span><strong>Peso:</strong> ${exercise.weight}</span>` : ''}
+                            </div>
+                            ${exercise.notes ? `<p class="text-xs text-gray-400 mt-2 italic"><strong>Nota:</strong> ${exercise.notes}</p>` : ''}
+                        </div>
+                        <button class="remove-btn flex-shrink-0 text-gray-500 hover:text-red-500 transition-colors">
+                            <svg class="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    `;
+                    workoutList.appendChild(li);
+                });
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const newExercise = {
+                    name: formData.get('exercise-name'),
+                    sets: formData.get('exercise-sets'),
+                    reps: formData.get('exercise-reps'),
+                    weight: formData.get('exercise-weight'),
+                    notes: formData.get('exercise-notes'),
+                    rendered: false
+                };
+                exercises.push(newExercise);
+                form.reset();
+                document.getElementById('exercise-name').focus();
+                renderWorkoutList();
+            });
+
+            workoutList.addEventListener('click', (e) => {
+                const removeButton = e.target.closest('.remove-btn');
+                if (removeButton) {
+                    const liToRemove = removeButton.closest('li');
+                    const indexToRemove = parseInt(liToRemove.dataset.index, 10);
+                    
+                    liToRemove.classList.add('animate-slide-out');
+                    
+                    setTimeout(() => {
+                        exercises.splice(indexToRemove, 1);
+                        exercises.forEach(ex => ex.rendered = true); 
+                        renderWorkoutList();
+                    }, 400);
+                }
+            });
+
+            renderWorkoutList();
+        });
+    </script>
+</body>
+</html>

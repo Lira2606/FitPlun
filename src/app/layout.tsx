@@ -1,10 +1,8 @@
 import type { Metadata } from 'next';
-import './globals.css';
-import { WorkoutProvider } from '@/components/WorkoutProvider';
 
 export const metadata: Metadata = {
-  title: 'Treino Pro',
-  description: 'Seu app de treino para levar a sério.',
+  title: 'Monte Seu Treino',
+  description: 'Adicione os exercícios para sua rotina.',
 };
 
 export default function RootLayout({
@@ -13,29 +11,148 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="dark notranslate" translate="no">
+    <html lang="pt-BR">
       <head>
-        <meta name="google" content="notranslate" />
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.tailwindcss.com" async></script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-              :root {
-                --font-poppins: 'Poppins', sans-serif;
-                --font-bebas-neue: 'Bebas Neue', sans-serif;
-              }
-            `,
-          }}
-        />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <style dangerouslySetInnerHTML={{ __html: `
+            body {
+                font-family: 'Inter', sans-serif;
+                background-color: #030712;
+                overflow: hidden;
+            }
+            .gym-background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=2575&auto=format&fit=crop');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                z-index: 0;
+            }
+            .gym-background::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(3, 7, 18, 0.8);
+                backdrop-filter: blur(5px);
+            }
+            #splash-screen {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #030712;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 50;
+                transition: opacity 0.8s ease-out, visibility 0.8s;
+                border-radius: 32px;
+            }
+            #splash-screen.hidden {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+            .splash-icon {
+                animation: pulse 2s infinite ease-in-out;
+            }
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.1); opacity: 0.8; }
+            }
+            .phone-frame {
+                width: 390px;
+                height: 844px;
+                border: 8px solid #1f2937;
+                border-top-width: 16px;
+                border-bottom-width: 16px;
+                border-radius: 40px;
+                position: relative;
+                background: rgba(3, 7, 18, 0.5);
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 15px rgba(0, 255, 255, 0.1);
+                overflow: hidden;
+                margin: 2rem auto;
+                z-index: 10;
+            }
+            .phone-frame::before {
+                content: '';
+                position: absolute;
+                top: -2px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 150px;
+                height: 24px;
+                background: #1f2937;
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                z-index: 20;
+            }
+            .phone-content {
+                width: 100%;
+                height: 100%;
+                overflow-y: auto;
+            }
+            .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+            .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+            .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+            .gradient-border {
+                position: relative;
+                background: #111827;
+                border-radius: 1.25rem;
+                padding: 2px;
+                overflow: hidden;
+            }
+            .gradient-border::before {
+                content: '';
+                position: absolute;
+                top: 0; right: 0; bottom: 0; left: 0;
+                background: linear-gradient(135deg, #06b6d4, #10b981);
+                z-index: 0;
+                animation: rotateGradient 5s linear infinite;
+            }
+            @keyframes rotateGradient {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            .gradient-border-content {
+                background: #1f2937;
+                padding: 1.25rem;
+                border-radius: 1.15rem;
+                position: relative;
+                z-index: 1;
+            }
+            @keyframes slide-in {
+                from { opacity: 0; transform: scale(0.9) translateX(-20px); }
+                to { opacity: 1; transform: scale(1) translateX(0); }
+            }
+            .animate-slide-in {
+                animation: slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+            }
+            @keyframes slide-out {
+                from { opacity: 1; transform: scale(1); }
+                to { opacity: 0; transform: scale(0.8) translateX(50px); height: 0; padding: 0; margin: 0; border: 0; }
+            }
+            .animate-slide-out {
+                animation: slide-out 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+            }
+        ` }} />
       </head>
-      <body className="font-body antialiased">
-        <WorkoutProvider>
-            <div className="mx-auto max-w-md h-full bg-background shadow-2xl shadow-black">
-                {children}
-            </div>
-        </WorkoutProvider>
+      <body className="text-white antialiased flex items-center justify-center p-4">
+        {children}
       </body>
     </html>
   );
