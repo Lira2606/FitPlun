@@ -49,6 +49,7 @@ export default function Home() {
                         <span><strong>Séries:</strong> ${exercise.sets}</span>
                         <span><strong>Reps:</strong> ${exercise.reps}</span>
                         ${exercise.weight ? `<span><strong>Peso:</strong> ${exercise.weight}</span>` : ''}
+                        ${exercise.time ? `<span><strong>Tempo:</strong> ${exercise.time}</span>` : ''}
                     </div>
                     ${exercise.notes ? `<p class="text-xs text-gray-400 mt-2 italic"><strong>Nota:</strong> ${exercise.notes}</p>` : ''}
                 </div>
@@ -68,6 +69,7 @@ export default function Home() {
             sets: formData.get('exercise-sets'),
             reps: formData.get('exercise-reps'),
             weight: formData.get('exercise-weight'),
+            time: formData.get('exercise-time'),
             notes: formData.get('exercise-notes'),
             rendered: false
         };
@@ -169,13 +171,24 @@ export default function Home() {
                                     </div>
                                 </div>
                                 
-                                <div>
-                                    <label htmlFor="exercise-weight" className="block text-sm font-medium text-gray-300 mb-1">Peso</label>
-                                    <div className="relative">
-                                        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.036.243c-2.132 0-4.14-.818-5.62-2.24l-2.62-2.62a5.988 5.988 0 01-1.68-4.243V6.345c0-1.22.67-2.312 1.719-2.816.52-.252 1.07-.432 1.64-.563m13.5 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.036.243c-2.132 0-4.14-.818-5.62-2.24l-2.62-2.62a5.988 5.988 0 01-1.68-4.243V6.345c0-1.22.67-2.312 1.719-2.816.52-.252 1.07-.432 1.64-.563" /></svg>
-                                        </span>
-                                        <input type="text" id="exercise-weight" name="exercise-weight" placeholder="Ex: 40kg" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label htmlFor="exercise-weight" className="block text-sm font-medium text-gray-300 mb-1">Peso (opcional)</label>
+                                        <div className="relative">
+                                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.036.243c-2.132 0-4.14-.818-5.62-2.24l-2.62-2.62a5.988 5.988 0 01-1.68-4.243V6.345c0-1.22.67-2.312 1.719-2.816.52-.252 1.07-.432 1.64-.563m13.5 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.036.243c-2.132 0-4.14-.818-5.62-2.24l-2.62-2.62a5.988 5.988 0 01-1.68-4.243V6.345c0-1.22.67-2.312 1.719-2.816.52-.252 1.07-.432 1.64-.563" /></svg>
+                                            </span>
+                                            <input type="text" id="exercise-weight" name="exercise-weight" placeholder="Ex: 40kg" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="exercise-time" className="block text-sm font-medium text-gray-300 mb-1">Tempo (opcional)</label>
+                                        <div className="relative">
+                                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            </span>
+                                            <input type="text" id="exercise-time" name="exercise-time" placeholder="Ex: 30s" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200" />
+                                        </div>
                                     </div>
                                 </div>
                                 
