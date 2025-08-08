@@ -80,7 +80,7 @@ export default function Home() {
                     (form as HTMLFormElement).reset();
                     const exerciseNameInput = document.getElementById('exercise-name');
                     if (exerciseNameInput) {
-                        (exerciseNameInput as HTMLInputElement).focus();
+                       (exerciseNameInput as HTMLInputElement).focus();
                     }
                     renderWorkoutList();
                 });
