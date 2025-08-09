@@ -1,6 +1,6 @@
 
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface Exercise {
     id: number;
@@ -17,6 +17,9 @@ export default function Home() {
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
     const [currentSet, setCurrentSet] = useState(1);
+    const [timeLeft, setTimeLeft] = useState(60); // Default rest time
+
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     const [splashVisible, setSplashVisible] = useState(true);
 
@@ -24,6 +27,19 @@ export default function Home() {
         const timer = setTimeout(() => setSplashVisible(false), 2500);
         return () => clearTimeout(timer);
     }, []);
+    
+    useEffect(() => {
+        if (screen === 'rest' && timeLeft > 0) {
+            timerRef.current = setTimeout(() => {
+                setTimeLeft(timeLeft - 1);
+            }, 1000);
+        } else if (timeLeft === 0 && screen === 'rest') {
+            finishRest();
+        }
+        return () => {
+            if(timerRef.current) clearTimeout(timerRef.current)
+        };
+    }, [screen, timeLeft]);
 
     const addExercise = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -56,9 +72,22 @@ export default function Home() {
     
     const completeSet = () => {
         const currentExercise = exercises[currentExerciseIndex];
+        const isLastSet = currentSet >= parseInt(currentExercise.sets);
+        const isLastExercise = currentExerciseIndex >= exercises.length - 1;
+
+        if (isLastSet && isLastExercise) {
+            setScreen('finished');
+        } else {
+            setTimeLeft(60); // Reset timer
+            setScreen('rest');
+        }
+    };
+
+    const finishRest = () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        const currentExercise = exercises[currentExerciseIndex];
         if (currentSet < parseInt(currentExercise.sets)) {
             setCurrentSet(currentSet + 1);
-            // Could add a rest screen here
         } else {
             if (currentExerciseIndex < exercises.length - 1) {
                 setCurrentExerciseIndex(currentExerciseIndex + 1);
@@ -67,7 +96,8 @@ export default function Home() {
                 setScreen('finished');
             }
         }
-    };
+        setScreen('workout');
+    }
     
     const startNewWorkout = () => {
         setExercises([]);
@@ -232,6 +262,16 @@ export default function Home() {
                             <button onClick={completeSet} className="w-full max-w-xs mx-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-4 rounded-lg text-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
                                 CONCLUIR SÉRIE
                             </button>
+                        </div>
+                    )}
+
+                    {screen === 'rest' && (
+                        <div className="min-h-full p-4 flex flex-col justify-center items-center text-center">
+                             <h2 className="text-4xl font-bold text-cyan-400 mb-4">DESCANSO</h2>
+                             <p className="text-8xl font-bold text-white mb-8">{timeLeft}s</p>
+                             <button onClick={finishRest} className="w-full max-w-xs mx-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all transform hover:scale-105">
+                                 PULAR
+                             </button>
                         </div>
                     )}
 
