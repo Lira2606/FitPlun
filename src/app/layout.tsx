@@ -144,6 +144,14 @@ export default function RootLayout({
             .animate-slide-out {
                 animation: slide-out 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
             }
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus,
+            input:-webkit-autofill:active {
+                -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
+                -webkit-text-fill-color: #fff !important;
+                caret-color: #fff !important;
+            }
         ` }} />
       </head>
       <body className="text-white antialiased flex items-center justify-center p-4">
