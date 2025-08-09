@@ -172,6 +172,17 @@ export default function RootLayout({
             input[type=number] {
                 -moz-appearance: textfield; /* Firefox */
             }
+            @keyframes lift-weight {
+              0%, 100% {
+                transform: translateY(0);
+              }
+              50% {
+                transform: translateY(-20px);
+              }
+            }
+            .lifter-animation .barbell {
+              animation: lift-weight 2s ease-in-out infinite;
+            }
              @media (max-width: 420px) {
                 body {
                     padding: 0;
@@ -196,3 +207,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    
