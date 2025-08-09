@@ -141,11 +141,11 @@ export default function RootLayout({
                 z-index: 1;
             }
             @keyframes slide-in {
-                from { opacity: 0; transform: scale(0.9) translateX(-20px); }
-                to { opacity: 1; transform: scale(1) translateX(0); }
+                from { opacity: 0; transform: translateX(-20px); }
+                to { opacity: 1; transform: translateX(0); }
             }
             .animate-slide-in {
-                animation: slide-in 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+                animation: slide-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             }
             @keyframes slide-out {
                 from { opacity: 1; transform: scale(1); }
@@ -155,11 +155,11 @@ export default function RootLayout({
                 animation: slide-out 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
             }
             @keyframes fade-in {
-                from { opacity: 0; transform: scale(0.98); }
+                from { opacity: 0; transform: scale(0.95); }
                 to { opacity: 1; transform: scale(1); }
             }
             .animate-fade-in {
-                animation: fade-in 0.3s ease-out forwards;
+                animation: fade-in 0.5s ease-out forwards;
             }
             input:-webkit-autofill,
             input:-webkit-autofill:hover,

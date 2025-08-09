@@ -63,7 +63,16 @@ export default function Home() {
     };
 
     const removeExercise = (id: number) => {
-        setExercises(exercises.filter(ex => ex.id !== id));
+        const exerciseElement = document.getElementById(`exercise-${id}`);
+        if (exerciseElement) {
+            exerciseElement.classList.remove('animate-slide-in');
+            exerciseElement.classList.add('animate-slide-out');
+            setTimeout(() => {
+                setExercises(exercises.filter(ex => ex.id !== id));
+            }, 400);
+        } else {
+             setExercises(exercises.filter(ex => ex.id !== id));
+        }
     };
 
     const startWorkout = () => {
@@ -214,8 +223,8 @@ export default function Home() {
                                             <h2 className="text-xl font-semibold mb-5 text-white">Seu Treino</h2>
                                             <div id="workout-list-container" className="flex-grow">
                                                 <ul id="workout-list" className="space-y-3">
-                                                    {exercises.map((ex) => (
-                                                        <li key={ex.id} className="bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02] animate-slide-in">
+                                                    {exercises.map((ex, index) => (
+                                                        <li id={`exercise-${ex.id}`} key={ex.id} className="bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02] animate-slide-in" style={{ animationDelay: `${index * 100}ms`}}>
                                                             <div className="flex-grow pr-4">
                                                                 <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
                                                                 <div className="text-sm text-gray-300 mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
