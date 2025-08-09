@@ -22,10 +22,14 @@ export default function Home() {
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     const [splashVisible, setSplashVisible] = useState(true);
+    const [showSplashIcon, setShowSplashIcon] = useState(false);
+
 
     useEffect(() => {
-        const timer = setTimeout(() => setSplashVisible(false), 2500);
-        return () => clearTimeout(timer);
+        const splashTimer = setTimeout(() => setSplashVisible(false), 2500);
+        // Render the icon only on the client-side to prevent FOUC
+        setShowSplashIcon(true);
+        return () => clearTimeout(splashTimer);
     }, []);
     
     useEffect(() => {
@@ -112,13 +116,15 @@ export default function Home() {
             <div className="phone-frame">
                 {splashVisible && (
                     <div id="splash-screen">
-                        <svg className="splash-icon w-24 h-24 text-cyan-400" viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <g transform="rotate(-30 32 32)">
-                                <rect x="22" y="30" width="20" height="4" rx="2" fill="#9ca3af"/>
-                                <path d="M18 18C12.4772 18 8 22.4772 8 28V36C8 41.5228 12.4772 46 18 46H20V18H18Z"/>
-                                <path d="M46 18H44V46H46C51.5228 46 56 41.5228 56 36V28C56 22.4772 51.5228 18 46 18Z"/>
-                            </g>
-                        </svg>
+                        {showSplashIcon && (
+                            <svg className="splash-icon w-24 h-24 text-cyan-400" viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <g transform="rotate(-30 32 32)">
+                                    <rect x="22" y="30" width="20" height="4" rx="2" fill="#9ca3af"/>
+                                    <path d="M18 18C12.4772 18 8 22.4772 8 28V36C8 41.5228 12.4772 46 18 46H20V18H18Z"/>
+                                    <path d="M46 18H44V46H46C51.5228 46 56 41.5228 56 36V28C56 22.4772 51.5228 18 46 18Z"/>
+                                </g>
+                            </svg>
+                        )}
                     </div>
                 )}
 
