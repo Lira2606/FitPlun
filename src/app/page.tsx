@@ -63,16 +63,7 @@ export default function Home() {
     };
 
     const removeExercise = (id: number) => {
-        const exerciseElement = document.getElementById(`exercise-${id}`);
-        if (exerciseElement) {
-            exerciseElement.classList.remove('animate-slide-in');
-            exerciseElement.classList.add('animate-slide-out');
-            setTimeout(() => {
-                setExercises(exercises.filter(ex => ex.id !== id));
-            }, 400);
-        } else {
-             setExercises(exercises.filter(ex => ex.id !== id));
-        }
+        setExercises(exercises.filter(ex => ex.id !== id));
     };
 
     const startWorkout = () => {
@@ -302,3 +293,5 @@ export default function Home() {
         </>
     );
 }
+
+    
