@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight } from 'lucide-react';
+import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
@@ -91,6 +91,13 @@ export default function Home() {
     const [lastPosition, setLastPosition] = useState<GeolocationPosition | null>(null);
     const [locationError, setLocationError] = useState<string | null>(null);
     const watchIdRef = useRef<number | null>(null);
+    
+    // Secondary Metrics State
+    const [calories, setCalories] = useState(0);
+    const [heartRate, setHeartRate] = useState(0);
+    const [elevationGain, setElevationGain] = useState(0);
+    const [cadence, setCadence] = useState(0);
+
 
     // Haversine formula to calculate distance between two points
     const calculateDistance = (pos1: GeolocationPosition, pos2: GeolocationPosition) => {
@@ -120,6 +127,12 @@ export default function Home() {
             (position) => {
                 if (lastPosition) {
                     setDistance((prevDistance) => prevDistance + calculateDistance(lastPosition, position));
+                    
+                    // Calculate elevation gain
+                    const altitudeChange = (position.coords.altitude || 0) - (lastPosition.coords.altitude || 0);
+                    if (altitudeChange > 0) {
+                        setElevationGain(prevGain => prevGain + altitudeChange);
+                    }
                 }
                 setLastPosition(position);
                 setLocationError(null);
@@ -158,6 +171,10 @@ export default function Home() {
         setDistance(0);
         setLastPosition(null);
         setLocationError(null);
+        setElevationGain(0);
+        setCalories(0);
+        setHeartRate(0);
+        setCadence(0);
         stopLocationTracking();
     }
     
@@ -295,6 +312,7 @@ export default function Home() {
 
         if (currentExercise.type !== 'musculacao') {
             // This is now the "Stop" button for cardio
+            setCardioState('idle');
             stopLocationTracking(); // Stop GPS
             
             if (isLastExercise) {
@@ -545,27 +563,50 @@ export default function Home() {
                                 <button onClick={() => setScreen('builder')} className="absolute top-4 left-4 text-cyan-400 hover:text-cyan-300 transition-colors z-10 p-2">
                                     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
                                 </button>
-                                <div className="mt-12">
-                                    <p className="text-cyan-400 font-semibold mb-2">{currentExercise.name}</p>
+                                <div className="mt-8">
+                                    <p className="text-cyan-400 font-semibold mb-1">{currentExercise.name}</p>
                                     <h2 className="text-6xl font-bold text-white">{formatCardioTime(cardioTime)}</h2>
-                                    <p className="text-gray-400 mt-2 text-sm">Duração</p>
+                                    <p className="text-gray-400 mt-1 text-sm">Duração</p>
                                 </div>
 
                                  {locationError && (
-                                    <Alert variant="destructive" className="my-4">
+                                    <Alert variant="destructive" className="my-2 text-xs">
                                         <AlertTitle>Erro de Localização</AlertTitle>
                                         <AlertDescription>{locationError}</AlertDescription>
                                     </Alert>
                                 )}
 
-                                <div className="grid grid-cols-2 gap-4 my-8 text-white">
+                                <div className="grid grid-cols-2 gap-4 my-4 text-white">
                                     <div>
-                                        <p className="text-4xl font-bold">{distance.toFixed(2)}</p>
+                                        <p className="text-3xl font-bold">{distance.toFixed(2)}</p>
                                         <p className="text-gray-400 text-sm">Distância (km)</p>
                                     </div>
                                      <div>
-                                        <p className="text-4xl font-bold">{calculatePace()}</p>
+                                        <p className="text-3xl font-bold">{calculatePace()}</p>
                                         <p className="text-gray-400 text-sm">Ritmo (min/km)</p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-4 gap-2 my-4 text-white text-center">
+                                    <div>
+                                        <Zap className="w-5 h-5 mx-auto text-yellow-400 mb-1" />
+                                        <p className="text-lg font-bold">{calories}</p>
+                                        <p className="text-gray-500 text-xs">Calorias</p>
+                                    </div>
+                                    <div>
+                                        <Heart className="w-5 h-5 mx-auto text-red-500 mb-1" />
+                                        <p className="text-lg font-bold">{heartRate || '--'}</p>
+                                        <p className="text-gray-500 text-xs">BPM</p>
+                                    </div>
+                                    <div>
+                                        <Mountain className="w-5 h-5 mx-auto text-cyan-400 mb-1" />
+                                        <p className="text-lg font-bold">{elevationGain.toFixed(0)}</p>
+                                        <p className="text-gray-500 text-xs">Elevação (m)</p>
+                                    </div>
+                                    <div>
+                                        <Wind className="w-5 h-5 mx-auto text-gray-400 mb-1" />
+                                        <p className="text-lg font-bold">{cadence || '--'}</p>
+                                        <p className="text-gray-500 text-xs">Cadência</p>
                                     </div>
                                 </div>
 
@@ -581,7 +622,7 @@ export default function Home() {
                                         <Pause className="w-12 h-12" />
                                     </button>
                                 )}
-                                <button onClick={completeSet} className="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition hover:scale-110">
+                                <button onClick={completeSet} className="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition hover:scale-110 disabled:opacity-50" disabled={cardioState === 'idle'}>
                                     <Square className="w-10 h-10" />
                                 </button>
                                 </div>
