@@ -147,13 +147,6 @@ export default function RootLayout({
             .animate-slide-in {
                 animation: slide-in 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
             }
-            @keyframes slide-out {
-                from { opacity: 1; transform: scale(1); }
-                to { opacity: 0; transform: scale(0.8) translateX(50px); height: 0; padding: 0; margin: 0; border: 0; }
-            }
-            .animate-slide-out {
-                animation: slide-out 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
-            }
             @keyframes fade-in {
                 from { opacity: 0; transform: scale(0.95); }
                 to { opacity: 1; transform: scale(1); }
@@ -165,9 +158,10 @@ export default function RootLayout({
             input:-webkit-autofill:hover,
             input:-webkit-autofill:focus,
             input:-webkit-autofill:active {
-                -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
+                -webkit-box-shadow: 0 0 0 30px #4a5568 inset !important; /* Cor de fundo cinza escuro */
                 -webkit-text-fill-color: #fff !important;
                 caret-color: #fff !important;
+                transition: background-color 5000s ease-in-out 0s;
             }
             /* Hide number input arrows */
             input[type=number]::-webkit-inner-spin-button,
