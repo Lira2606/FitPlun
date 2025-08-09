@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
+import { Dumbbell } from 'lucide-react';
 
 interface Exercise {
     id: number;
@@ -165,7 +166,7 @@ export default function Home() {
                                                               <path d="M15 18v-2" />
                                                           </svg>
                                                       </span>
-                                                      <input type="text" id="exercise-name" name="exercise-name" placeholder="Ex: Supino Reto" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
+                                                      <input type="text" id="exercise-name" name="exercise-name" placeholder="Ex: Supino Reto" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                   </div>
                                               </div>
                                               <div className="grid grid-cols-2 gap-4">
@@ -193,7 +194,7 @@ export default function Home() {
                                                       <label htmlFor="exercise-weight" className="block text-sm font-medium text-gray-300 mb-1">Peso (opcional)</label>
                                                       <div className="relative">
                                                           <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 3v18"/><path d="M9 3v18"/><path d="M2 8h20"/><path d="M2 16h20"/><path d="M17 3v18"/><path d="M21 3v18"/></svg>
+                                                              <Dumbbell className="h-5 w-5 text-gray-400" />
                                                           </span>
                                                           <input type="text" id="exercise-weight" name="exercise-weight" placeholder="Ex: 40kg" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                       </div>
