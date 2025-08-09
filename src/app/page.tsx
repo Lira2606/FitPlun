@@ -13,12 +13,24 @@ interface Exercise {
     notes: string;
 }
 
+const motivationalQuotes = [
+    "A dor que você sente hoje é a força que você sentirá amanhã.",
+    "Cada repetição conta. Continue firme!",
+    "Seu único limite é você. Supere-o!",
+    "A consistência é a chave para o sucesso.",
+    "Não pare quando estiver cansado. Pare quando terminar.",
+    "Você é mais forte do que imagina. Acredite!",
+    "Transforme a dor em poder. Vamos lá!",
+    "Hoje é um bom dia para treinar pesado!"
+];
+
 export default function Home() {
     const [screen, setScreen] = useState('builder'); // 'builder', 'workout', 'rest', 'finished'
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
     const [currentSet, setCurrentSet] = useState(1);
     const [timeLeft, setTimeLeft] = useState(60); // Default rest time
+    const [motivationalQuote, setMotivationalQuote] = useState('');
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -45,6 +57,13 @@ export default function Home() {
             if(timerRef.current) clearTimeout(timerRef.current)
         };
     }, [screen, timeLeft]);
+    
+    useEffect(() => {
+        if (screen === 'workout') {
+            const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
+            setMotivationalQuote(motivationalQuotes[randomIndex]);
+        }
+    }, [screen, currentExerciseIndex, currentSet]);
 
     const addExercise = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -285,6 +304,10 @@ export default function Home() {
                                 <p className="text-8xl font-bold text-white">{currentSet}</p>
                             </div>
                             
+                            <div className="mb-4 h-10 flex items-center justify-center">
+                                <p className="text-gray-400 italic text-center animate-fade-in">{motivationalQuote}</p>
+                            </div>
+
                             <button onClick={completeSet} className="w-full max-w-xs mx-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-4 rounded-lg text-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
                                 CONCLUIR SÉRIE
                             </button>
