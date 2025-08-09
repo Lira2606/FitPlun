@@ -559,7 +559,7 @@ export default function Home() {
                             </div>
                         ) : (
                             // Cardio UI
-                            <div className="min-h-full p-4 flex flex-col justify-between text-center relative">
+                            <div className="min-h-full p-4 flex flex-col justify-start text-center relative">
                                 <button onClick={() => setScreen('builder')} className="absolute top-4 left-4 text-cyan-400 hover:text-cyan-300 transition-colors z-10 p-2">
                                     <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
                                 </button>
@@ -609,10 +609,7 @@ export default function Home() {
                                         <p className="text-gray-500 text-xs">Cadência</p>
                                     </div>
                                 </div>
-
-                                <div className="flex-grow"></div> 
-
-                                <div className="flex items-center justify-center gap-4 mb-4">
+                                <div className="mt-auto flex items-center justify-center gap-4 mb-4">
                                 {cardioState === 'idle' || cardioState === 'paused' ? (
                                     <button onClick={() => setCardioState('running')} className="w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition hover:scale-110">
                                         <Play className="w-12 h-12" />
