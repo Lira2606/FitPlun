@@ -67,11 +67,16 @@ export default function RootLayout({
                 pointer-events: none;
             }
             .splash-icon {
-                animation: pulse 2s infinite ease-in-out;
+                opacity: 0;
+                animation: pulse 2s infinite ease-in-out, fade-in-splash 0.5s 0.2s ease-out forwards;
             }
             @keyframes pulse {
-                0%, 100% { transform: scale(1); opacity: 1; }
-                50% { transform: scale(1.1); opacity: 0.8; }
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.1); }
+            }
+            @keyframes fade-in-splash {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
             }
             .phone-frame {
                 max-width: 390px;
