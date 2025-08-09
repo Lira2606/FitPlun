@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, Footprints, Route, Weight } from 'lucide-react';
+import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight } from 'lucide-react';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
 
@@ -78,6 +78,10 @@ export default function Home() {
     const [restQuote, setRestQuote] = useState('');
     const [exerciseType, setExerciseType] = useState<ExerciseType>('musculacao');
 
+    const [cardioState, setCardioState] = useState<'idle' | 'running' | 'paused'>('idle');
+    const [cardioTime, setCardioTime] = useState(0);
+    
+    const cardioTimerRef = useRef<NodeJS.Timeout | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     const [splashVisible, setSplashVisible] = useState(true);
@@ -86,7 +90,6 @@ export default function Home() {
 
     useEffect(() => {
         const splashTimer = setTimeout(() => setSplashVisible(false), 2500);
-        // Render the icon only on the client-side to prevent FOUC
         setShowSplashIcon(true);
         return () => clearTimeout(splashTimer);
     }, []);
@@ -103,6 +106,19 @@ export default function Home() {
             if(timerRef.current) clearTimeout(timerRef.current)
         };
     }, [screen, timeLeft]);
+
+    useEffect(() => {
+        if (cardioState === 'running') {
+            cardioTimerRef.current = setInterval(() => {
+                setCardioTime(prev => prev + 1);
+            }, 1000);
+        } else {
+            if (cardioTimerRef.current) clearInterval(cardioTimerRef.current);
+        }
+        return () => {
+            if (cardioTimerRef.current) clearInterval(cardioTimerRef.current);
+        };
+    }, [cardioState]);
     
     useEffect(() => {
         if (screen === 'workout') {
@@ -115,6 +131,11 @@ export default function Home() {
         }
     }, [screen, currentExerciseIndex, currentSet]);
 
+    const formatCardioTime = (timeInSeconds: number) => {
+        const minutes = Math.floor(timeInSeconds / 60).toString().padStart(2, '0');
+        const seconds = (timeInSeconds % 60).toString().padStart(2, '0');
+        return `${minutes}:${seconds}`;
+    };
 
     const addExercise = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -159,6 +180,9 @@ export default function Home() {
             setCurrentExerciseIndex(0);
             setCurrentSet(1);
             setScreen('workout');
+            // Reset cardio state when starting a new workout
+            setCardioState('idle');
+            setCardioTime(0);
         }
     };
     
@@ -167,11 +191,17 @@ export default function Home() {
         const isLastExercise = currentExerciseIndex >= exercises.length - 1;
 
         if (currentExercise.type !== 'musculacao') {
+            // This button is for cardio completion
+            if (cardioTimerRef.current) clearInterval(cardioTimerRef.current);
+            
             if (isLastExercise) {
                 setScreen('finished');
             } else {
                 setCurrentExerciseIndex(currentExerciseIndex + 1);
-                setScreen('workout');
+                setScreen('workout'); // Go to next exercise
+                 // Reset cardio state for the next one
+                setCardioState('idle');
+                setCardioTime(0);
             }
             return;
         }
@@ -379,61 +409,81 @@ export default function Home() {
                     )}
 
                     {screen === 'workout' && currentExercise && (
-                        <div className="min-h-full p-4 flex flex-col justify-between text-center relative">
-                             <button onClick={() => setScreen('builder')} className="absolute top-4 left-4 text-cyan-400 hover:text-cyan-300 transition-colors z-10 p-2">
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
-                            </button>
-                            <div className="mt-12">
-                                <p className="text-cyan-400 font-semibold mb-2">Exercício {currentExerciseIndex + 1} de {exercises.length}</p>
-                                <h2 className="text-5xl font-bold text-white truncate">{currentExercise.name}</h2>
-                                <div className="text-gray-300 text-lg mt-2">
-                                    {currentExercise.type === 'musculacao' ? (
-                                        <>
-                                            {currentExercise.reps && <span>{currentExercise.reps} Reps</span>}
-                                            {currentExercise.weight && <span> / {currentExercise.weight}</span>}
-                                        </>
-                                    ) : (
-                                        <>
-                                            {currentExercise.time && <span>{currentExercise.time}</span>}
-                                            {currentExercise.distance && <span> / {currentExercise.distance}</span>}
-                                        </>
-                                    )}
+                        currentExercise.type === 'musculacao' ? (
+                            // Musculação UI
+                            <div className="min-h-full p-4 flex flex-col justify-between text-center relative">
+                                <button onClick={() => setScreen('builder')} className="absolute top-4 left-4 text-cyan-400 hover:text-cyan-300 transition-colors z-10 p-2">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
+                                </button>
+                                <div className="mt-12">
+                                    <p className="text-cyan-400 font-semibold mb-2">Exercício {currentExerciseIndex + 1} de {exercises.length}</p>
+                                    <h2 className="text-5xl font-bold text-white truncate">{currentExercise.name}</h2>
+                                    <div className="text-gray-300 text-lg mt-2">
+                                        {currentExercise.reps && <span>{currentExercise.reps} Reps</span>}
+                                        {currentExercise.weight && <span> / {currentExercise.weight}</span>}
+                                    </div>
+                                </div>
+                                
+                                <div className="my-8 w-full max-w-[200px] mx-auto">
+                                    <BicepCurlAnimation />
+                                </div>
+                                
+                                <div className="flex-grow flex flex-col items-center justify-center">
+                                    <p className="text-gray-400 text-2xl mb-2">SÉRIE ATUAL</p>
+                                    <p className="text-8xl font-bold text-white">{currentSet}</p>
+                                </div>
+                                
+                                <div className="mb-4 h-10 flex items-center justify-center">
+                                    <p className="text-gray-400 italic text-center animate-fade-in">{motivationalQuote}</p>
+                                </div>
+
+                                <button onClick={completeSet} className="w-full max-w-xs mx-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-4 rounded-lg text-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
+                                    CONCLUIR SÉRIE
+                                </button>
+                            </div>
+                        ) : (
+                            // Cardio UI
+                            <div className="min-h-full p-4 flex flex-col justify-between text-center relative">
+                                <button onClick={() => setScreen('builder')} className="absolute top-4 left-4 text-cyan-400 hover:text-cyan-300 transition-colors z-10 p-2">
+                                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
+                                </button>
+                                <div className="mt-12">
+                                    <p className="text-cyan-400 font-semibold mb-2">{currentExercise.name}</p>
+                                    <h2 className="text-6xl font-bold text-white">{formatCardioTime(cardioTime)}</h2>
+                                    <p className="text-gray-400 mt-2 text-sm">Duração</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4 my-8 text-white">
+                                    <div>
+                                        <p className="text-4xl font-bold">1.25</p>
+                                        <p className="text-gray-400 text-sm">Distância (km)</p>
+                                    </div>
+                                     <div>
+                                        <p className="text-4xl font-bold">6:20</p>
+                                        <p className="text-gray-400 text-sm">Ritmo (min/km)</p>
+                                    </div>
+                                </div>
+
+                                <div className="flex-grow"></div> 
+
+                                <div className="flex items-center justify-center gap-4 mb-4">
+                                {cardioState === 'idle' || cardioState === 'paused' ? (
+                                    <button onClick={() => setCardioState('running')} className="w-24 h-24 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition hover:scale-110">
+                                        <Play className="w-12 h-12" />
+                                    </button>
+                                ) : (
+                                    <button onClick={() => setCardioState('paused')} className="w-24 h-24 bg-yellow-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition hover:scale-110">
+                                        <Pause className="w-12 h-12" />
+                                    </button>
+                                )}
+                                <button onClick={completeSet} className="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition hover:scale-110">
+                                    <Square className="w-10 h-10" />
+                                </button>
                                 </div>
                             </div>
-                            
-                            <div className="my-8 w-full max-w-[200px] mx-auto">
-                                {currentExercise.type === 'musculacao' && <BicepCurlAnimation />}
-                                {currentExercise.type !== 'musculacao' && (
-                                     <svg className="w-full h-auto text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M5 12l2-2 2 2 5-5 2 2 3-3"/>
-                                        <path d="M5 17l2-2 2 2 5-5 2 2 3-3"/>
-                                    </svg>
-                                )}
-                            </div>
-                            
-                            <div className="flex-grow flex flex-col items-center justify-center">
-                                {currentExercise.type === 'musculacao' ? (
-                                    <>
-                                        <p className="text-gray-400 text-2xl mb-2">SÉRIE ATUAL</p>
-                                        <p className="text-8xl font-bold text-white">{currentSet}</p>
-                                    </>
-                                ) : (
-                                    <>
-                                       <p className="text-gray-400 text-2xl mb-2">FOCO</p>
-                                       <p className="text-8xl font-bold text-white">{currentExercise.time}</p>
-                                    </>
-                                )}
-                            </div>
-                            
-                            <div className="mb-4 h-10 flex items-center justify-center">
-                                <p className="text-gray-400 italic text-center animate-fade-in">{motivationalQuote}</p>
-                            </div>
-
-                            <button onClick={completeSet} className="w-full max-w-xs mx-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-4 rounded-lg text-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
-                                {currentExercise.type === 'musculacao' ? 'CONCLUIR SÉRIE' : 'CONCLUIR CARDIO'}
-                            </button>
-                        </div>
+                        )
                     )}
+
 
                     {screen === 'rest' && (
                         <div className="min-h-full p-4 flex flex-col justify-center items-center text-center">
