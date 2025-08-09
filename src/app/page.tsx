@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
 import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
 
@@ -78,15 +79,95 @@ export default function Home() {
     const [motivationalQuote, setMotivationalQuote] = useState('');
     const [restQuote, setRestQuote] = useState('');
     const [exerciseType, setExerciseType] = useState<ExerciseType>('musculacao');
-
     const [cardioState, setCardioState] = useState<'idle' | 'running' | 'paused'>('idle');
     const [cardioTime, setCardioTime] = useState(0);
-    
     const cardioTimerRef = useRef<NodeJS.Timeout | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-
     const [splashVisible, setSplashVisible] = useState(true);
     const [showSplashIcon, setShowSplashIcon] = useState(false);
+    
+    // GPS Tracking State
+    const [distance, setDistance] = useState(0); // in kilometers
+    const [lastPosition, setLastPosition] = useState<GeolocationPosition | null>(null);
+    const [locationError, setLocationError] = useState<string | null>(null);
+    const watchIdRef = useRef<number | null>(null);
+
+    // Haversine formula to calculate distance between two points
+    const calculateDistance = (pos1: GeolocationPosition, pos2: GeolocationPosition) => {
+        const toRad = (value: number) => (value * Math.PI) / 180;
+        const R = 6371; // Earth radius in km
+        const dLat = toRad(pos2.coords.latitude - pos1.coords.latitude);
+        const dLon = toRad(pos2.coords.longitude - pos1.coords.longitude);
+        const lat1 = toRad(pos1.coords.latitude);
+        const lat2 = toRad(pos2.coords.latitude);
+
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    };
+    
+    const startLocationTracking = () => {
+        if (!navigator.geolocation) {
+            setLocationError("Geolocalização não é suportada pelo seu navegador.");
+            return;
+        }
+
+        setLocationError(null);
+        
+        watchIdRef.current = navigator.geolocation.watchPosition(
+            (position) => {
+                if (lastPosition) {
+                    setDistance((prevDistance) => prevDistance + calculateDistance(lastPosition, position));
+                }
+                setLastPosition(position);
+                setLocationError(null);
+            },
+            (error) => {
+                if (error.code === error.PERMISSION_DENIED) {
+                     setLocationError("Acesso à localização negado. Habilite a permissão para rastrear sua atividade.");
+                } else {
+                     setLocationError("Não foi possível obter a localização.");
+                }
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    };
+
+    const stopLocationTracking = () => {
+        if (watchIdRef.current && navigator.geolocation) {
+            navigator.geolocation.clearWatch(watchIdRef.current);
+            watchIdRef.current = null;
+        }
+        setLastPosition(null);
+    };
+
+    useEffect(() => {
+        if (cardioState === 'running') {
+            startLocationTracking();
+        } else {
+            stopLocationTracking();
+        }
+        return stopLocationTracking;
+    }, [cardioState]);
+
+    const resetCardioState = () => {
+        setCardioState('idle');
+        setCardioTime(0);
+        setDistance(0);
+        setLastPosition(null);
+        setLocationError(null);
+        stopLocationTracking();
+    }
+    
+    const calculatePace = () => {
+        if (distance === 0 || cardioTime === 0) return "0:00";
+        const pace = cardioTime / 60 / distance; // minutes per km
+        const minutes = Math.floor(pace);
+        const seconds = Math.round((pace - minutes) * 60);
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    };
 
 
     useEffect(() => {
@@ -182,9 +263,7 @@ export default function Home() {
             setCurrentExerciseIndex(0);
             setCurrentSet(1);
             setScreen('workout');
-            // Reset cardio state when starting a new workout
-            setCardioState('idle');
-            setCardioTime(0);
+            resetCardioState();
         }
     };
     
@@ -198,6 +277,10 @@ export default function Home() {
             if (currentExerciseIndex < exercises.length - 1) {
                 setCurrentExerciseIndex(currentExerciseIndex + 1);
                 setCurrentSet(1);
+                 // Check if the next exercise is cardio and reset state
+                if (exercises[currentExerciseIndex + 1].type !== 'musculacao') {
+                   resetCardioState();
+                }
             } else {
                 setScreen('finished');
                 return;
@@ -211,15 +294,15 @@ export default function Home() {
         const isLastExercise = currentExerciseIndex >= exercises.length - 1;
 
         if (currentExercise.type !== 'musculacao') {
-            if (cardioTimerRef.current) clearInterval(cardioTimerRef.current);
+            // This is now the "Stop" button for cardio
+            stopLocationTracking(); // Stop GPS
             
             if (isLastExercise) {
                 setScreen('finished');
             } else {
                 setCurrentExerciseIndex(currentExerciseIndex + 1);
                 setScreen('workout');
-                setCardioState('idle');
-                setCardioTime(0);
+                resetCardioState();
             }
             return;
         }
@@ -356,11 +439,11 @@ export default function Home() {
                                                     <>
                                                         <div className="grid grid-cols-2 gap-4">
                                                             <div>
-                                                                <label htmlFor="exercise-time" className="block text-sm font-medium text-gray-300 mb-1">Tempo</label>
+                                                                <label htmlFor="exercise-time" className="block text-sm font-medium text-gray-300 mb-1">Tempo (meta)</label>
                                                                  <input type="text" id="exercise-time" name="exercise-time" placeholder="Ex: 30min" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                             </div>
                                                             <div>
-                                                                <label htmlFor="exercise-distance" className="block text-sm font-medium text-gray-300 mb-1">Distância (opcional)</label>
+                                                                <label htmlFor="exercise-distance" className="block text-sm font-medium text-gray-300 mb-1">Distância (meta)</label>
                                                                 <input type="text" id="exercise-distance" name="exercise-distance" placeholder="Ex: 5km" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                             </div>
                                                         </div>
@@ -468,13 +551,20 @@ export default function Home() {
                                     <p className="text-gray-400 mt-2 text-sm">Duração</p>
                                 </div>
 
+                                 {locationError && (
+                                    <Alert variant="destructive" className="my-4">
+                                        <AlertTitle>Erro de Localização</AlertTitle>
+                                        <AlertDescription>{locationError}</AlertDescription>
+                                    </Alert>
+                                )}
+
                                 <div className="grid grid-cols-2 gap-4 my-8 text-white">
                                     <div>
-                                        <p className="text-4xl font-bold">1.25</p>
+                                        <p className="text-4xl font-bold">{distance.toFixed(2)}</p>
                                         <p className="text-gray-400 text-sm">Distância (km)</p>
                                     </div>
                                      <div>
-                                        <p className="text-4xl font-bold">6:20</p>
+                                        <p className="text-4xl font-bold">{calculatePace()}</p>
                                         <p className="text-gray-400 text-sm">Ritmo (min/km)</p>
                                     </div>
                                 </div>
