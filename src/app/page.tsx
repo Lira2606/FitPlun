@@ -33,7 +33,7 @@ export default function Home() {
             timerRef.current = setTimeout(() => {
                 setTimeLeft(timeLeft - 1);
             }, 1000);
-        } else if (timeLeft === 0 && screen === 'rest') {
+        } else if (timeLeft <= 0 && screen === 'rest') {
             finishRest();
         }
         return () => {

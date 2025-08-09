@@ -74,8 +74,11 @@ export default function RootLayout({
                 50% { transform: scale(1.1); opacity: 0.8; }
             }
             .phone-frame {
-                width: 390px;
-                height: 844px;
+                max-width: 390px;
+                max-height: 844px;
+                width: 100%;
+                height: 100%;
+                aspect-ratio: 390 / 844;
                 border: 8px solid #1f2937;
                 border-top-width: 16px;
                 border-bottom-width: 16px;
@@ -86,6 +89,8 @@ export default function RootLayout({
                 overflow: hidden;
                 margin: 2rem auto;
                 z-index: 10;
+                display: flex;
+                flex-direction: column;
             }
             .phone-frame::before {
                 content: '';
@@ -159,9 +164,25 @@ export default function RootLayout({
                 -webkit-text-fill-color: #fff !important;
                 caret-color: #fff !important;
             }
+             @media (max-width: 420px) {
+                body {
+                    padding: 0;
+                }
+                .phone-frame {
+                    width: 100vw;
+                    height: 100vh;
+                    max-height: none;
+                    border-radius: 0;
+                    border: none;
+                    margin: 0;
+                }
+                .phone-frame::before {
+                   display: none;
+                }
+            }
         ` }} />
       </head>
-      <body className="text-white antialiased flex items-center justify-center p-4">
+      <body className="text-white antialiased flex items-center justify-center min-h-screen">
         {children}
       </body>
     </html>
