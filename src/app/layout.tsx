@@ -122,11 +122,6 @@ export default function RootLayout({
                 top: 0; right: 0; bottom: 0; left: 0;
                 background: linear-gradient(135deg, #06b6d4, #10b981);
                 z-index: 0;
-                animation: rotateGradient 5s linear infinite;
-            }
-            @keyframes rotateGradient {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
             }
             .gradient-border-content {
                 background: #1f2937;
