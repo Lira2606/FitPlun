@@ -158,10 +158,9 @@ export default function RootLayout({
             input:-webkit-autofill:hover,
             input:-webkit-autofill:focus,
             input:-webkit-autofill:active {
-                -webkit-box-shadow: 0 0 0 30px #4a5568 inset !important; /* Cor de fundo cinza escuro */
+                -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
                 -webkit-text-fill-color: #fff !important;
                 caret-color: #fff !important;
-                transition: background-color 5000s ease-in-out 0s;
             }
             /* Hide number input arrows */
             input[type=number]::-webkit-inner-spin-button,
@@ -172,16 +171,20 @@ export default function RootLayout({
             input[type=number] {
                 -moz-appearance: textfield; /* Firefox */
             }
-            @keyframes lift-weight {
-              0%, 100% {
-                transform: translateY(0);
-              }
-              50% {
-                transform: translateY(-20px);
-              }
+            #bicep-curl-arms {
+                animation: curl-arms 2.5s ease-in-out infinite;
+                transform-origin: center 40px;
             }
-            .lifter-animation .barbell {
-              animation: lift-weight 2s ease-in-out infinite;
+            #bicep-curl-barbell {
+                animation: curl-barbell 2.5s ease-in-out infinite;
+            }
+            @keyframes curl-arms {
+                0%, 100% { transform: scaleY(1); }
+                50% { transform: scaleY(0.5); }
+            }
+            @keyframes curl-barbell {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-15px); }
             }
              @media (max-width: 420px) {
                 body {
@@ -207,5 +210,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    
