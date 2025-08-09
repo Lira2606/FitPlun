@@ -169,6 +169,15 @@ export default function RootLayout({
                 -webkit-text-fill-color: #fff !important;
                 caret-color: #fff !important;
             }
+            /* Hide number input arrows */
+            input[type=number]::-webkit-inner-spin-button,
+            input[type=number]::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+            input[type=number] {
+                -moz-appearance: textfield; /* Firefox */
+            }
              @media (max-width: 420px) {
                 body {
                     padding: 0;
