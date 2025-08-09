@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
@@ -358,8 +359,8 @@ export default function Home() {
                 <header className="text-center mb-6">
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
                         {exerciseType === 'musculacao' && 'Monte seu Treino'}
-                        {exerciseType === 'corrida' && 'Configure sua Corrida'}
-                        {exerciseType === 'caminhada' && 'Configure sua Caminhada'}
+                        {exerciseType === 'corrida' && 'Defina sua Corrida'}
+                        {exerciseType === 'caminhada' && 'Defina sua Caminhada'}
                     </h1>
                     <p className="text-gray-400 mt-2 text-sm">Adicione os exercícios para sua rotina.</p>
                 </header>
