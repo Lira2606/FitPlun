@@ -268,7 +268,7 @@ export default function Home() {
                     {screen === 'rest' && (
                         <div className="min-h-full p-4 flex flex-col justify-center items-center text-center">
                              <h2 className="text-4xl font-bold text-cyan-400 mb-4">DESCANSO</h2>
-                             <p className="text-8xl font-bold text-white mb-8">{timeLeft}s</p>
+                             <p className="text-8xl font-bold text-white mb-8">{timeLeft}</p>
                              <button onClick={finishRest} className="w-full max-w-xs mx-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all transform hover:scale-105">
                                  PULAR
                              </button>
