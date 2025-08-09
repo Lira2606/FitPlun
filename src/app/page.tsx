@@ -5,8 +5,6 @@ import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, M
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
-type ActiveScreen = 'treino' | 'progresso' | 'perfil';
-
 
 interface Exercise {
     id: number;
@@ -74,7 +72,6 @@ const restQuotes = [
 
 export default function Home() {
     const [screen, setScreen] = useState('builder'); // 'builder', 'workout', 'rest', 'finished'
-    const [activeScreen, setActiveScreen] = useState<ActiveScreen>('treino');
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
     const [currentSet, setCurrentSet] = useState(1);
@@ -355,24 +352,15 @@ export default function Home() {
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderContent = () => {
-      switch(activeScreen) {
-        case 'treino':
-          return renderTreinoScreen();
-        case 'progresso':
-          return <div className="p-4 text-white text-center">Tela de Progresso (em construção)</div>;
-        case 'perfil':
-          return <div className="p-4 text-white text-center">Tela de Perfil (em construção)</div>;
-        default:
-          return renderTreinoScreen();
-      }
-    }
-    
-    const renderTreinoScreen = () => {
        if (screen === 'builder') {
          return (
             <div className="flex flex-col min-h-full p-4 pt-10">
                 <header className="text-center mb-6">
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">Monte seu Treino</h1>
+                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
+                        {exerciseType === 'musculacao' && 'Monte seu Treino'}
+                        {exerciseType === 'corrida' && 'Configure sua Corrida'}
+                        {exerciseType === 'caminhada' && 'Configure sua Caminhada'}
+                    </h1>
                     <p className="text-gray-400 mt-2 text-sm">Adicione os exercícios para sua rotina.</p>
                 </header>
 
@@ -382,22 +370,6 @@ export default function Home() {
                             <h2 className="text-xl font-semibold mb-5 text-white">Adicionar Exercício</h2>
                             <form id="add-exercise-form" className="space-y-4 flex-grow flex flex-col" onSubmit={addExercise}>
                                 <div className="flex-grow space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">Tipo de Exercício</label>
-                                        <div className="grid grid-cols-3 gap-2 rounded-lg bg-gray-700/50 p-1">
-                                            {(['musculacao', 'corrida', 'caminhada'] as ExerciseType[]).map(type => (
-                                                <button
-                                                    key={type}
-                                                    type="button"
-                                                    onClick={() => setExerciseType(type)}
-                                                    className={`px-2 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none ${exerciseType === type ? 'bg-cyan-500 text-gray-900' : 'text-gray-300 hover:bg-gray-600'}`}
-                                                >
-                                                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
                                     {exerciseType === 'musculacao' && (
                                         <>
                                             <div>
@@ -462,7 +434,7 @@ export default function Home() {
                                     </div>
                                 </div>
                                 <button type="submit" className="mt-auto w-full bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/50">
-                                    Adicionar Exercício
+                                    Adicionar à Rotina
                                 </button>
                             </form>
                         </div>
@@ -471,7 +443,7 @@ export default function Home() {
                     {filteredExercises.length > 0 && (
                         <div className="gradient-border animate-fade-in mt-8 flex-grow flex flex-col">
                             <div className="gradient-border-content flex-grow flex flex-col">
-                                <h2 className="text-xl font-semibold mb-5 text-white">Seu Treino de {exerciseType.charAt(0).toUpperCase() + exerciseType.slice(1)}</h2>
+                                <h2 className="text-xl font-semibold mb-5 text-white">Sua Rotina de {exerciseType.charAt(0).toUpperCase() + exerciseType.slice(1)}</h2>
                                 <div id="workout-list-container" className="flex-grow">
                                     <ul id="workout-list" className="space-y-3">
                                         {filteredExercises.map((ex, index) => (
@@ -691,25 +663,25 @@ export default function Home() {
                 <nav className="bottom-nav bg-gray-800/50 backdrop-blur-md border-t border-gray-700">
                     <div className="flex justify-around items-center h-16">
                         <button 
-                            onClick={() => setActiveScreen('treino')} 
-                            className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeScreen === 'treino' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                            onClick={() => setExerciseType('musculacao')} 
+                            className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
                             <Weight className="w-7 h-7" />
-                            <span className="text-xs mt-1">Treino</span>
+                            <span className="text-xs mt-1">Musculação</span>
                         </button>
                         <button 
-                            onClick={() => setActiveScreen('progresso')} 
-                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeScreen === 'progresso' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                            onClick={() => setExerciseType('corrida')} 
+                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${exerciseType === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
-                            <BarChart2 className="w-7 h-7" />
-                            <span className="text-xs mt-1">Progresso</span>
+                            <Route className="w-7 h-7" />
+                            <span className="text-xs mt-1">Corrida</span>
                         </button>
                         <button 
-                            onClick={() => setActiveScreen('perfil')} 
-                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeScreen === 'perfil' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                            onClick={() => setExerciseType('caminhada')} 
+                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${exerciseType === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
-                            <User className="w-7 h-7" />
-                            <span className="text-xs mt-1">Perfil</span>
+                            <Footprints className="w-7 h-7" />
+                            <span className="text-xs mt-1">Caminhada</span>
                         </button>
                     </div>
                 </nav>
