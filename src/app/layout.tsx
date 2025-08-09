@@ -159,7 +159,7 @@ export default function RootLayout({
                 to { opacity: 1; transform: scale(1); }
             }
             .animate-fade-in {
-                animation: fade-in 0.5s ease-out forwards;
+                animation: fade-in 0.8s ease-out forwards;
             }
             input:-webkit-autofill,
             input:-webkit-autofill:hover,
