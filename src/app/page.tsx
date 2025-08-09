@@ -12,6 +12,7 @@ interface Exercise {
     sets?: string;
     reps?: string;
     weight?: string;
+    restTime?: string;
     time?: string;
     distance?: string;
     notes?: string;
@@ -151,6 +152,7 @@ export default function Home() {
                 sets: formData.get('exercise-sets') as string,
                 reps: formData.get('exercise-reps') as string,
                 weight: formData.get('exercise-weight') as string,
+                restTime: formData.get('exercise-rest-time') as string,
                 notes: formData.get('exercise-notes') as string,
             };
         } else {
@@ -212,7 +214,7 @@ export default function Home() {
         if (isLastSet && isLastExercise) {
             setScreen('finished');
         } else {
-            setTimeLeft(60); // Reset timer
+            setTimeLeft(currentExercise.restTime ? parseInt(currentExercise.restTime) : 60); // Use specific rest time
             setScreen('rest');
         }
     };
@@ -328,11 +330,17 @@ export default function Home() {
                                                                 <input type="text" id="exercise-reps" name="exercise-reps" placeholder="Ex: 8-12" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                             </div>
                                                         </div>
-                                                        <div>
-                                                            <label htmlFor="exercise-weight" className="block text-sm font-medium text-gray-300 mb-1">Peso (opcional)</label>
-                                                            <div className="relative">
-                                                                <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Dumbbell className="h-5 w-5 text-gray-400" /></span>
-                                                                <input type="text" id="exercise-weight" name="exercise-weight" placeholder="Ex: 40kg" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <div>
+                                                                <label htmlFor="exercise-weight" className="block text-sm font-medium text-gray-300 mb-1">Peso (opcional)</label>
+                                                                <div className="relative">
+                                                                    <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Dumbbell className="h-5 w-5 text-gray-400" /></span>
+                                                                    <input type="text" id="exercise-weight" name="exercise-weight" placeholder="Ex: 40kg" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso (s)</label>
+                                                                <input type="number" id="exercise-rest-time" name="exercise-rest-time" placeholder="Ex: 60" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                             </div>
                                                         </div>
                                                     </>
@@ -385,6 +393,7 @@ export default function Home() {
                                                                         {ex.sets && <span><strong>Séries:</strong> {ex.sets}</span>}
                                                                         {ex.reps && <span><strong>Reps:</strong> {ex.reps}</span>}
                                                                         {ex.weight && <span><strong>Peso:</strong> {ex.weight}</span>}
+                                                                        {ex.restTime && <span><strong>Descanso:</strong> {ex.restTime}s</span>}
                                                                         {ex.time && <span><strong>Tempo:</strong> {ex.time}</span>}
                                                                         {ex.distance && <span><strong>Distância:</strong> {ex.distance}</span>}
                                                                     </div>
@@ -512,5 +521,3 @@ export default function Home() {
         </>
     );
 }
-
-    
