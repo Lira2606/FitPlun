@@ -1,7 +1,5 @@
-
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { LiftingAnimation } from '@/components/icons/LiftingAnimation';
 
 interface Exercise {
     id: number;
@@ -259,7 +257,7 @@ export default function Home() {
                                 </div>
                             </div>
                             
-                            <LiftingAnimation />
+                            <div className="flex-grow" />
                             
                             <div className="my-8">
                                 <p className="text-gray-400 text-2xl mb-2">SÉRIE ATUAL</p>
@@ -296,7 +294,3 @@ export default function Home() {
         </>
     );
 }
-
-    
-
-    
