@@ -112,6 +112,14 @@ export default function Home() {
 
     return (
         <>
+        <style>{`
+            input:-webkit-autofill {
+                -webkit-text-fill-color: #ffffff !important;
+                -webkit-box-shadow: 0 0 0 1000px rgba(55, 65, 81, 0.5) inset !important;
+                transition: background-color 5000s ease-in-out 0s;
+                caret-color: #fff !important;
+            }
+        `}</style>
             <div className="gym-background"></div>
             <div className="phone-frame">
                 {splashVisible && (
@@ -146,7 +154,12 @@ export default function Home() {
                                                   <label htmlFor="exercise-name" className="block text-sm font-medium text-gray-300 mb-1">Nome do Exercício</label>
                                                   <div className="relative">
                                                       <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                         <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h20"/><path d="M5 12V6a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v6"/><path d="M5 12v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+                                                         <svg className="h-5 w-5 text-gray-400"  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M12 5H9.261a2 2 0 0 0-1.926 1.517l-1.412 5.647a2 2 0 0 0 .11 1.34l1.732 2.598a2 2 0 0 0 1.62 1.9l4.379 1.46a2 2 0 0 0 2.22-.53l1.838-2.144a2 2 0 0 0 .22-1.772l-1.21-4.235a2 2 0 0 0-1.814-1.414H12Z"/>
+                                                            <path d="M12 5V2"/>
+                                                            <path d="m7 12-2-2"/>
+                                                            <path d="m17 12 2-2"/>
+                                                          </svg>
                                                       </span>
                                                       <input type="text" id="exercise-name" name="exercise-name" placeholder="Ex: Supino Reto" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                   </div>
@@ -158,7 +171,7 @@ export default function Home() {
                                                           <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                               <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
                                                           </span>
-                                                          <input type="number" id="exercise-sets" name="exercise-sets" placeholder="Ex: 4" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200" />
+                                                          <input type="number" id="exercise-sets" name="exercise-sets" placeholder="Ex: 4" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                       </div>
                                                   </div>
                                                   <div>
@@ -167,7 +180,7 @@ export default function Home() {
                                                           <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                               <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.664 0l3.18-3.185m-3.18 3.182v-4.992m0 0h-4.992m4.992 0l-3.181-3.182a8.25 8.25 0 00-11.664 0l-3.18 3.185" /></svg>
                                                           </span>
-                                                          <input type="text" id="exercise-reps" name="exercise-reps" placeholder="Ex: 8-12" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200" />
+                                                          <input type="text" id="exercise-reps" name="exercise-reps" placeholder="Ex: 8-12" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                       </div>
                                                   </div>
                                               </div>
@@ -176,9 +189,9 @@ export default function Home() {
                                                       <label htmlFor="exercise-weight" className="block text-sm font-medium text-gray-300 mb-1">Peso (opcional)</label>
                                                       <div className="relative">
                                                           <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.036.243c-2.132 0-4.14-.818-5.62-2.24l-2.62-2.62a5.988 5.988 0 01-1.68-4.243V6.345c0-1.22.67-2.312 1.719-2.816.52-.252 1.07-.432 1.64-.563m13.5 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.036.243c-2.132 0-4.14-.818-5.62-2.24l-2.62-2.62a5.988 5.988 0 01-1.68-4.243V6.345c0-1.22.67-2.312 1.719-2.816.52-.252 1.07-.432 1.64-.563" /></svg>
+                                                              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 3v18"/><path d="M9 3v18"/><path d="M2 8h20"/><path d="M2 16h20"/><path d="M17 3v18"/><path d="M21 3v18"/></svg>
                                                           </span>
-                                                          <input type="text" id="exercise-weight" name="exercise-weight" placeholder="Ex: 40kg" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200" />
+                                                          <input type="text" id="exercise-weight" name="exercise-weight" placeholder="Ex: 40kg" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                       </div>
                                                   </div>
                                                   <div>
@@ -187,7 +200,7 @@ export default function Home() {
                                                           <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                               <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                                           </span>
-                                                          <input type="text" id="exercise-time" name="exercise-time" placeholder="Ex: 30s" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200" />
+                                                          <input type="text" id="exercise-time" name="exercise-time" placeholder="Ex: 30s" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                       </div>
                                                   </div>
                                               </div>
@@ -197,7 +210,7 @@ export default function Home() {
                                                       <span className="pointer-events-none absolute inset-y-0 left-0 flex items-start pl-3 pt-3">
                                                           <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
                                                       </span>
-                                                      <textarea id="exercise-notes" name="exercise-notes" rows={3} placeholder="Ex: Aumentar a carga..." className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-all duration-200"></textarea>
+                                                      <textarea id="exercise-notes" name="exercise-notes" rows={3} placeholder="Ex: Aumentar a carga..." className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"></textarea>
                                                   </div>
                                               </div>
                                             </div>

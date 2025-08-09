@@ -154,15 +154,6 @@ export default function RootLayout({
             .animate-fade-in {
                 animation: fade-in 0.8s ease-out forwards;
             }
-            input:-webkit-autofill,
-            input:-webkit-autofill:hover,
-            input:-webkit-autofill:focus,
-            input:-webkit-autofill:active {
-                -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
-                -webkit-text-fill-color: #fff !important;
-                caret-color: #fff !important;
-                -webkit-background-clip: text;
-            }
             /* Hide number input arrows */
             input[type=number]::-webkit-inner-spin-button,
             input[type=number]::-webkit-outer-spin-button {
