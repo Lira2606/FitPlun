@@ -188,39 +188,7 @@ export default function Home() {
         }
     };
     
-    const completeSet = () => {
-        const currentExercise = exercises[currentExerciseIndex];
-        const isLastExercise = currentExerciseIndex >= exercises.length - 1;
-
-        if (currentExercise.type !== 'musculacao') {
-            // This button is for cardio completion
-            if (cardioTimerRef.current) clearInterval(cardioTimerRef.current);
-            
-            if (isLastExercise) {
-                setScreen('finished');
-            } else {
-                setCurrentExerciseIndex(currentExerciseIndex + 1);
-                setScreen('workout'); // Go to next exercise
-                 // Reset cardio state for the next one
-                setCardioState('idle');
-                setCardioTime(0);
-            }
-            return;
-        }
-
-        const totalSets = currentExercise.sets ? parseInt(currentExercise.sets) : 1;
-        const isLastSet = currentSet >= totalSets;
-
-        if (isLastSet && isLastExercise) {
-            setScreen('finished');
-        } else {
-            setTimeLeft(currentExercise.restTime ? parseInt(currentExercise.restTime) : 60); // Use specific rest time
-            setScreen('rest');
-        }
-    };
-
-    const finishRest = () => {
-        if (timerRef.current) clearTimeout(timerRef.current);
+    const moveToNextSetOrExercise = () => {
         const currentExercise = exercises[currentExerciseIndex];
         const totalSets = currentExercise.sets ? parseInt(currentExercise.sets) : 1;
 
@@ -232,9 +200,46 @@ export default function Home() {
                 setCurrentSet(1);
             } else {
                 setScreen('finished');
+                return;
             }
         }
         setScreen('workout');
+    };
+
+    const completeSet = () => {
+        const currentExercise = exercises[currentExerciseIndex];
+        const isLastExercise = currentExerciseIndex >= exercises.length - 1;
+
+        if (currentExercise.type !== 'musculacao') {
+            if (cardioTimerRef.current) clearInterval(cardioTimerRef.current);
+            
+            if (isLastExercise) {
+                setScreen('finished');
+            } else {
+                setCurrentExerciseIndex(currentExerciseIndex + 1);
+                setScreen('workout');
+                setCardioState('idle');
+                setCardioTime(0);
+            }
+            return;
+        }
+
+        const totalSets = currentExercise.sets ? parseInt(currentExercise.sets) : 1;
+        const isLastSet = currentSet >= totalSets;
+
+        if (isLastSet && isLastExercise) {
+            setScreen('finished');
+        } else if (currentExercise.restTime && parseInt(currentExercise.restTime) > 0) {
+            setTimeLeft(parseInt(currentExercise.restTime));
+            setScreen('rest');
+        } else {
+            moveToNextSetOrExercise();
+        }
+    };
+
+    const finishRest = () => {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        moveToNextSetOrExercise();
     }
     
     const startNewWorkout = () => {
