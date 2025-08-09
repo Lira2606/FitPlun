@@ -113,7 +113,10 @@ export default function Home() {
     return (
         <>
         <style>{`
-            input:-webkit-autofill {
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus,
+            input:-webkit-autofill:active {
                 -webkit-text-fill-color: #ffffff !important;
                 -webkit-box-shadow: 0 0 0 1000px rgba(55, 65, 81, 0.5) inset !important;
                 transition: background-color 5000s ease-in-out 0s;
@@ -154,11 +157,12 @@ export default function Home() {
                                                   <label htmlFor="exercise-name" className="block text-sm font-medium text-gray-300 mb-1">Nome do Exercício</label>
                                                   <div className="relative">
                                                       <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                         <svg className="h-5 w-5 text-gray-400"  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                            <path d="M12 5H9.261a2 2 0 0 0-1.926 1.517l-1.412 5.647a2 2 0 0 0 .11 1.34l1.732 2.598a2 2 0 0 0 1.62 1.9l4.379 1.46a2 2 0 0 0 2.22-.53l1.838-2.144a2 2 0 0 0 .22-1.772l-1.21-4.235a2 2 0 0 0-1.814-1.414H12Z"/>
-                                                            <path d="M12 5V2"/>
-                                                            <path d="m7 12-2-2"/>
-                                                            <path d="m17 12 2-2"/>
+                                                          <svg className="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                              <path d="M2 14h20" />
+                                                              <path d="M4 14v-4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
+                                                              <path d="M4 18h16" />
+                                                              <path d="M9 18v-2" />
+                                                              <path d="M15 18v-2" />
                                                           </svg>
                                                       </span>
                                                       <input type="text" id="exercise-name" name="exercise-name" placeholder="Ex: Supino Reto" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
