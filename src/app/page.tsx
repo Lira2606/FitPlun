@@ -182,7 +182,7 @@ export default function Home() {
                                                       </div>
                                                   </div>
                                                   <div>
-                                                      <label htmlFor="exercise-time" className="block text-sm font-medium text-gray-300 mb-1">Tempo (opcional)</label>
+                                                      <label htmlFor="exercise-time" className="block text-sm font-medium text-gray-300 mb-1">Tempo</label>
                                                       <div className="relative">
                                                           <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                                                               <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
