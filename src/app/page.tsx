@@ -44,6 +44,26 @@ const motivationalQuotes = [
     "Não é sobre o peso que você perde, mas sobre a vida que você ganha."
 ];
 
+const restQuotes = [
+    "O descanso não é preguiça, é estratégia. É no descanso que o músculo cresce e se fortalece.",
+    "Treinar é o estímulo. Comer é a matéria-prima. Descansar é a construção.",
+    "Não confunda descanso com desistência. Seu corpo precisa de uma pausa para entregar o resultado que você busca.",
+    "Um guerreiro inteligente sabe a hora de recuar para afiar sua espada. Seu descanso é o seu afiar.",
+    "O arco só pode lançar a flecha com força total se antes for tensionado para trás. Permita-se recuar para avançar com mais potência.",
+    "Respeitar seu descanso é respeitar sua meta.",
+    "Seu corpo sussurra antes de gritar. Ouça os sinais de cansaço e dê a ele a pausa que merece.",
+    "Hoje, a sua única meta é a recuperação. Relaxe a mente, descanse o corpo e recarregue a alma.",
+    "O silêncio do descanso permite que você ouça as necessidades do seu corpo com mais clareza.",
+    "Forte não é aquele que nunca para, mas aquele que sabe a hora de parar para voltar ainda mais forte.",
+    "Honre seus limites de hoje para poder superá-los amanhã.",
+    "Recarregue hoje para se superar amanhã. A energia que você economiza no descanso será seu combustível no próximo treino.",
+    "Aproveite a calmaria. A tempestade de um treino intenso virá, e você estará preparado.",
+    "Feche os olhos e visualize seus músculos se recuperando, sua mente se acalmando e sua determinação se fortalecendo.",
+    "O descanso é o botão de 'reset' que seu corpo e mente precisam para continuar evoluindo.",
+    "Permita-se uma pausa. O mundo não vai parar, mas você voltará a ele com muito mais vigor e foco."
+];
+
+
 export default function Home() {
     const [screen, setScreen] = useState('builder'); // 'builder', 'workout', 'rest', 'finished'
     const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -51,6 +71,8 @@ export default function Home() {
     const [currentSet, setCurrentSet] = useState(1);
     const [timeLeft, setTimeLeft] = useState(60); // Default rest time
     const [motivationalQuote, setMotivationalQuote] = useState('');
+    const [restQuote, setRestQuote] = useState('');
+
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -83,7 +105,12 @@ export default function Home() {
             const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
             setMotivationalQuote(motivationalQuotes[randomIndex]);
         }
+        if (screen === 'rest') {
+            const randomIndex = Math.floor(Math.random() * restQuotes.length);
+            setRestQuote(restQuotes[randomIndex]);
+        }
     }, [screen, currentExerciseIndex, currentSet]);
+
 
     const addExercise = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -338,6 +365,9 @@ export default function Home() {
                         <div className="min-h-full p-4 flex flex-col justify-center items-center text-center">
                              <h2 className="text-4xl font-bold text-cyan-400 mb-4">DESCANSO</h2>
                              <p className="text-8xl font-bold text-white mb-8">{timeLeft}</p>
+                             <div className="mb-8 h-10 flex items-center justify-center">
+                                <p className="text-gray-400 italic text-center animate-fade-in">{restQuote}</p>
+                            </div>
                              <button onClick={finishRest} className="w-full max-w-xs mx-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all transform hover:scale-105">
                                  PULAR
                              </button>
