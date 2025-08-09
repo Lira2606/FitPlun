@@ -200,18 +200,11 @@ export default function Home() {
                                     </div>
                                 </div>
 
-                                <div className="gradient-border">
-                                    <div className="gradient-border-content">
-                                        <h2 className="text-xl font-semibold mb-5 text-white">Seu Treino</h2>
-                                        <div id="workout-list-container" className="flex-grow">
-                                            {exercises.length === 0 ? (
-                                                <div id="empty-state" className="text-center py-8 text-gray-500 transition-opacity duration-300">
-                                                    <svg className="mx-auto h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                        <path vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                                                    </svg>
-                                                    <p className="mt-3 text-sm">Nenhum exercício adicionado.</p>
-                                                </div>
-                                            ) : (
+                                {exercises.length > 0 && (
+                                    <div className="gradient-border">
+                                        <div className="gradient-border-content">
+                                            <h2 className="text-xl font-semibold mb-5 text-white">Seu Treino</h2>
+                                            <div id="workout-list-container" className="flex-grow">
                                                 <ul id="workout-list" className="space-y-3">
                                                     {exercises.map((ex) => (
                                                         <li key={ex.id} className="bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02] animate-slide-in">
@@ -231,13 +224,14 @@ export default function Home() {
                                                         </li>
                                                     ))}
                                                 </ul>
-                                            )}
+                                            </div>
+                                            <button onClick={startWorkout} id="start-workout-btn" className="mt-6 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50" disabled={exercises.length === 0}>
+                                                Iniciar Treino
+                                            </button>
                                         </div>
-                                        <button onClick={startWorkout} id="start-workout-btn" className="mt-6 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none" disabled={exercises.length === 0}>
-                                            Iniciar Treino
-                                        </button>
                                     </div>
-                                </div>
+                                )}
+
                             </div>
                         </div>
                     )}
