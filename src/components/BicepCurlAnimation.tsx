@@ -14,8 +14,6 @@ export function BicepCurlAnimation() {
         <div className="w-full h-auto" style={{aspectRatio: '1'}}>
             <svg viewBox="0 0 100 100" className="w-full h-full" style={{overflow: 'visible'}}>
                 <g transform="translate(0, -5)">
-                    <line x1="-10" y1="95" x2="110" y2="95" stroke="#d1d5db" strokeWidth="2" strokeLinecap="round" />
-                    
                     <g transform="translate(0, 32)">
                         {/* Shoes */}
                         <g>
