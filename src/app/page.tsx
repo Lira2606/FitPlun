@@ -661,7 +661,7 @@ export default function Home() {
                   {renderContent()}
                 </div>
 
-                <nav className="bottom-nav bg-gray-800/50 backdrop-blur-md border-t border-gray-700">
+                <nav className="bottom-nav bg-gray-800/10 backdrop-blur-md border-t border-gray-700/50">
                     <div className="flex justify-around items-center h-16">
                         <button 
                             onClick={() => setExerciseType('musculacao')} 
