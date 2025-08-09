@@ -248,6 +248,7 @@ export default function Home() {
     }
 
     const currentExercise = exercises[currentExerciseIndex];
+    const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     return (
         <>
@@ -378,13 +379,13 @@ export default function Home() {
                                     </div>
                                 </div>
 
-                                {exercises.length > 0 && (
+                                {filteredExercises.length > 0 && (
                                     <div className="gradient-border animate-fade-in mt-8 flex-grow flex flex-col">
                                         <div className="gradient-border-content flex-grow flex flex-col">
-                                            <h2 className="text-xl font-semibold mb-5 text-white">Seu Treino</h2>
+                                            <h2 className="text-xl font-semibold mb-5 text-white">Seu Treino de {exerciseType.charAt(0).toUpperCase() + exerciseType.slice(1)}</h2>
                                             <div id="workout-list-container" className="flex-grow">
                                                 <ul id="workout-list" className="space-y-3">
-                                                    {exercises.map((ex, index) => (
+                                                    {filteredExercises.map((ex, index) => (
                                                         <li id={`exercise-${ex.id}`} key={ex.id} className="bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02] animate-slide-in" style={{ animationDelay: `${index * 100}ms`}}>
                                                             <div className="flex items-center flex-grow pr-4">
                                                                 <div className="mr-4 text-cyan-400">
