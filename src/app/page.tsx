@@ -288,8 +288,8 @@ export default function Home() {
                             </header>
 
                             <div className="flex flex-col flex-grow">
-                                <div className={`gradient-border ${exercises.length > 0 ? 'flex-shrink' : 'flex-grow flex'}`}>
-                                    <div className={`gradient-border-content ${exercises.length === 0 ? 'w-full flex flex-col' : ''}`}>
+                                <div className={`gradient-border ${filteredExercises.length > 0 ? 'flex-shrink' : 'flex-grow flex'}`}>
+                                    <div className={`gradient-border-content ${filteredExercises.length === 0 ? 'w-full flex flex-col' : ''}`}>
                                         <h2 className="text-xl font-semibold mb-5 text-white">Adicionar Exercício</h2>
                                         <form id="add-exercise-form" className="space-y-4 flex-grow flex flex-col" onSubmit={addExercise}>
                                             <div className="flex-grow space-y-4">
