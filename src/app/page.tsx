@@ -14,14 +14,34 @@ interface Exercise {
 }
 
 const motivationalQuotes = [
-    "A dor que você sente hoje é a força que você sentirá amanhã.",
-    "Cada repetição conta. Continue firme!",
-    "Seu único limite é você. Supere-o!",
-    "A consistência é a chave para o sucesso.",
-    "Não pare quando estiver cansado. Pare quando terminar.",
-    "Você é mais forte do que imagina. Acredite!",
-    "Transforme a dor em poder. Vamos lá!",
-    "Hoje é um bom dia para treinar pesado!"
+    "O corpo alcança o que a mente acredita. Acredite no seu potencial.",
+    "A dor que você sente hoje é a força que você sentirá amanhã. Não desista!",
+    "Feito é melhor que perfeito. Mesmo um treino curto é melhor que nenhum treino.",
+    "Você não precisa estar motivado para treinar, você precisa ser disciplinado.",
+    "Daqui a uma hora, você terá desejado ter começado agora.",
+    "O suor de hoje é o sorriso de amanhã.",
+    "Vá por você e para você. Sua saúde não é negociável.",
+    "Lembre-se do sentimento de dever cumprido e da energia que você sente depois de cada treino.",
+    "A disciplina é a ponte entre suas metas e suas realizações.",
+    "Não é sobre ter tempo, é sobre fazer tempo.",
+    "O segredo do sucesso é a constância no objetivo.",
+    "Um pequeno progresso a cada dia resulta em grandes conquistas.",
+    "O hábito de treinar é construído, não encontrado. Continue construindo o seu.",
+    "Não pare quando estiver cansado, pare quando terminar.",
+    "A força de vontade deve ser mais forte que a habilidade.",
+    "O que não te desafia, não te transforma.",
+    "Seus únicos limites são aqueles que você impõe a si mesmo.",
+    "Acredite na sua força. Você é mais capaz do que imagina.",
+    "Cada repetição, cada série, cada gota de suor te deixa mais perto da sua melhor versão.",
+    "As dificuldades preparam pessoas comuns para destinos extraordinários.",
+    "Seja mais forte que a sua melhor desculpa.",
+    "A jornada de mil quilômetros começa com um único passo. Continue caminhando.",
+    "Apaixone-se pelo processo e os resultados aparecerão.",
+    "Não compare o seu capítulo 1 com o capítulo 20 de outra pessoa.",
+    "Olhe para trás e veja o quanto você já progrediu. Use isso como combustível.",
+    "Cada treino é uma vitória contra a preguiça e a procrastinação. Comemore!",
+    "Seu corpo é seu maior projeto. Divirta-se construindo-o.",
+    "Não é sobre o peso que você perde, mas sobre a vida que você ganha."
 ];
 
 export default function Home() {
