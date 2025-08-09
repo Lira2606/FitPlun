@@ -257,9 +257,7 @@ export default function Home() {
                                 </div>
                             </div>
                             
-                            <div className="flex-grow" />
-                            
-                            <div className="my-8">
+                            <div className="flex-grow flex flex-col items-center justify-center my-8">
                                 <p className="text-gray-400 text-2xl mb-2">SÉRIE ATUAL</p>
                                 <p className="text-8xl font-bold text-white">{currentSet}</p>
                             </div>
