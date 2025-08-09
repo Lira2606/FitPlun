@@ -243,8 +243,11 @@ export default function Home() {
                     )}
 
                     {screen === 'workout' && currentExercise && (
-                        <div className="min-h-full p-4 flex flex-col justify-between text-center">
-                            <div>
+                        <div className="min-h-full p-4 flex flex-col justify-between text-center relative">
+                             <button onClick={() => setScreen('builder')} className="absolute top-4 left-4 text-cyan-400 hover:text-cyan-300 transition-colors">
+                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
+                            </button>
+                            <div className="mt-12">
                                 <p className="text-cyan-400 font-semibold mb-2">Exercício {currentExerciseIndex + 1} de {exercises.length}</p>
                                 <h2 className="text-5xl font-bold text-white truncate">{currentExercise.name}</h2>
                                 <div className="text-gray-300 text-lg mt-2">
