@@ -1,16 +1,20 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell } from 'lucide-react';
+import { Dumbbell, Footprints, Route, Weight } from 'lucide-react';
+
+type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
 
 interface Exercise {
     id: number;
     name: string;
-    sets: string;
-    reps: string;
-    weight: string;
-    time: string;
-    notes: string;
+    type: ExerciseType;
+    sets?: string;
+    reps?: string;
+    weight?: string;
+    time?: string;
+    distance?: string;
+    notes?: string;
 }
 
 const motivationalQuotes = [
@@ -72,7 +76,7 @@ export default function Home() {
     const [timeLeft, setTimeLeft] = useState(60); // Default rest time
     const [motivationalQuote, setMotivationalQuote] = useState('');
     const [restQuote, setRestQuote] = useState('');
-
+    const [exerciseType, setExerciseType] = useState<ExerciseType>('musculacao');
 
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -115,18 +119,35 @@ export default function Home() {
     const addExercise = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
-        const newExercise: Exercise = {
-            id: Date.now(),
-            name: formData.get('exercise-name') as string,
-            sets: formData.get('exercise-sets') as string,
-            reps: formData.get('exercise-reps') as string,
-            weight: formData.get('exercise-weight') as string,
-            time: formData.get('exercise-time') as string,
-            notes: formData.get('exercise-notes') as string,
-        };
+        
+        let newExercise: Exercise;
+
+        if (exerciseType === 'musculacao') {
+             newExercise = {
+                id: Date.now(),
+                name: formData.get('exercise-name') as string,
+                type: 'musculacao',
+                sets: formData.get('exercise-sets') as string,
+                reps: formData.get('exercise-reps') as string,
+                weight: formData.get('exercise-weight') as string,
+                notes: formData.get('exercise-notes') as string,
+            };
+        } else {
+             newExercise = {
+                id: Date.now(),
+                name: exerciseType === 'corrida' ? 'Corrida' : 'Caminhada',
+                type: exerciseType,
+                time: formData.get('exercise-time') as string,
+                distance: formData.get('exercise-distance') as string,
+                notes: formData.get('exercise-notes') as string,
+            };
+        }
+
         setExercises([...exercises, newExercise]);
         e.currentTarget.reset();
-        (document.getElementById('exercise-name') as HTMLInputElement)?.focus();
+        if (exerciseType === 'musculacao') {
+            (document.getElementById('exercise-name') as HTMLInputElement)?.focus();
+        }
     };
 
     const removeExercise = (id: number) => {
@@ -143,9 +164,20 @@ export default function Home() {
     
     const completeSet = () => {
         const currentExercise = exercises[currentExerciseIndex];
+        const isLastExercise = currentExerciseIndex >= exercises.length - 1;
+
+        if (currentExercise.type !== 'musculacao') {
+            if (isLastExercise) {
+                setScreen('finished');
+            } else {
+                setCurrentExerciseIndex(currentExerciseIndex + 1);
+                setScreen('workout');
+            }
+            return;
+        }
+
         const totalSets = currentExercise.sets ? parseInt(currentExercise.sets) : 1;
         const isLastSet = currentSet >= totalSets;
-        const isLastExercise = currentExerciseIndex >= exercises.length - 1;
 
         if (isLastSet && isLastExercise) {
             setScreen('finished');
@@ -179,7 +211,6 @@ export default function Home() {
     }
 
     const currentExercise = exercises[currentExerciseIndex];
-    const isCardio = currentExercise && (!currentExercise.sets || !currentExercise.reps);
 
     return (
         <>
@@ -224,70 +255,78 @@ export default function Home() {
                                         <h2 className="text-xl font-semibold mb-5 text-white">Adicionar Exercício</h2>
                                         <form id="add-exercise-form" className="space-y-4 flex-grow flex flex-col" onSubmit={addExercise}>
                                             <div className="flex-grow space-y-4">
-                                              <div>
-                                                  <label htmlFor="exercise-name" className="block text-sm font-medium text-gray-300 mb-1">Nome do Exercício</label>
-                                                  <div className="relative">
-                                                      <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                          <svg className="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                              <path d="M2 14h20" />
-                                                              <path d="M4 14v-4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
-                                                              <path d="M4 18h16" />
-                                                              <path d="M9 18v-2" />
-                                                              <path d="M15 18v-2" />
-                                                          </svg>
-                                                      </span>
-                                                      <input type="text" id="exercise-name" name="exercise-name" placeholder="Ex: Supino Reto, Corrida" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
-                                                  </div>
-                                              </div>
-                                              <div className="grid grid-cols-2 gap-4">
-                                                  <div>
-                                                      <label htmlFor="exercise-sets" className="block text-sm font-medium text-gray-300 mb-1">Séries (opcional)</label>
-                                                      <div className="relative">
-                                                          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
-                                                          </span>
-                                                          <input type="number" id="exercise-sets" name="exercise-sets" placeholder="Ex: 4" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
-                                                      </div>
-                                                  </div>
-                                                  <div>
-                                                      <label htmlFor="exercise-reps" className="block text-sm font-medium text-gray-300 mb-1">Reps (opcional)</label>
-                                                      <div className="relative">
-                                                          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.664 0l3.18-3.185m-3.18 3.182v-4.992m0 0h-4.992m4.992 0l-3.181-3.182a8.25 8.25 0 00-11.664 0l-3.18 3.185" /></svg>
-                                                          </span>
-                                                          <input type="text" id="exercise-reps" name="exercise-reps" placeholder="Ex: 8-12" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                              <div className="grid grid-cols-2 gap-4">
-                                                  <div>
-                                                      <label htmlFor="exercise-weight" className="block text-sm font-medium text-gray-300 mb-1">Peso (opcional)</label>
-                                                      <div className="relative">
-                                                          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                              <Dumbbell className="h-5 w-5 text-gray-400" />
-                                                          </span>
-                                                          <input type="text" id="exercise-weight" name="exercise-weight" placeholder="Ex: 40kg" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
-                                                      </div>
-                                                  </div>
-                                                  <div>
-                                                      <label htmlFor="exercise-time" className="block text-sm font-medium text-gray-300 mb-1">Tempo (opcional)</label>
-                                                      <div className="relative">
-                                                          <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                              <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                          </span>
-                                                          <input type="text" id="exercise-time" name="exercise-time" placeholder="Ex: 30s" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                              <div>
-                                                  <label htmlFor="exercise-notes" className="block text-sm font-medium text-gray-300 mb-1">Notas (opcional)</label>
-                                                  <div className="relative">
-                                                      <span className="pointer-events-none absolute inset-y-0 left-0 flex items-start pl-3 pt-3">
-                                                          <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
-                                                      </span>
-                                                      <textarea id="exercise-notes" name="exercise-notes" rows={3} placeholder="Ex: Aumentar a carga, manter ritmo..." className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"></textarea>
-                                                  </div>
-                                              </div>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-300 mb-2">Tipo de Exercício</label>
+                                                    <div className="grid grid-cols-3 gap-2 rounded-lg bg-gray-700/50 p-1">
+                                                        {(['musculacao', 'corrida', 'caminhada'] as ExerciseType[]).map(type => (
+                                                            <button
+                                                                key={type}
+                                                                type="button"
+                                                                onClick={() => setExerciseType(type)}
+                                                                className={`px-2 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none ${exerciseType === type ? 'bg-cyan-500 text-gray-900' : 'text-gray-300 hover:bg-gray-600'}`}
+                                                            >
+                                                                {type.charAt(0).toUpperCase() + type.slice(1)}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                {exerciseType === 'musculacao' && (
+                                                    <>
+                                                        <div>
+                                                            <label htmlFor="exercise-name" className="block text-sm font-medium text-gray-300 mb-1">Nome do Exercício</label>
+                                                            <div className="relative">
+                                                                <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                                     <svg className="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                        <path d="M2 14h20" />
+                                                                        <path d="M4 14v-4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
+                                                                        <path d="M4 18h16" />
+                                                                        <path d="M9 18v-2" />
+                                                                        <path d="M15 18v-2" />
+                                                                    </svg>
+                                                                </span>
+                                                                <input type="text" id="exercise-name" name="exercise-name" placeholder="Ex: Supino Reto" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
+                                                            </div>
+                                                        </div>
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <div>
+                                                                <label htmlFor="exercise-sets" className="block text-sm font-medium text-gray-300 mb-1">Séries</label>
+                                                                <input type="number" id="exercise-sets" name="exercise-sets" placeholder="Ex: 4" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
+                                                            </div>
+                                                            <div>
+                                                                <label htmlFor="exercise-reps" className="block text-sm font-medium text-gray-300 mb-1">Reps</label>
+                                                                <input type="text" id="exercise-reps" name="exercise-reps" placeholder="Ex: 8-12" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <label htmlFor="exercise-weight" className="block text-sm font-medium text-gray-300 mb-1">Peso (opcional)</label>
+                                                            <div className="relative">
+                                                                <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Dumbbell className="h-5 w-5 text-gray-400" /></span>
+                                                                <input type="text" id="exercise-weight" name="exercise-weight" placeholder="Ex: 40kg" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
+
+                                                { (exerciseType === 'corrida' || exerciseType === 'caminhada') && (
+                                                    <>
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            <div>
+                                                                <label htmlFor="exercise-time" className="block text-sm font-medium text-gray-300 mb-1">Tempo</label>
+                                                                 <input type="text" id="exercise-time" name="exercise-time" placeholder="Ex: 30min" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
+                                                            </div>
+                                                            <div>
+                                                                <label htmlFor="exercise-distance" className="block text-sm font-medium text-gray-300 mb-1">Distância (opcional)</label>
+                                                                <input type="text" id="exercise-distance" name="exercise-distance" placeholder="Ex: 5km" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
+
+                                                <div>
+                                                    <label htmlFor="exercise-notes" className="block text-sm font-medium text-gray-300 mb-1">Notas (opcional)</label>
+                                                    <textarea id="exercise-notes" name="exercise-notes" rows={2} placeholder="Ex: Manter ritmo, observar postura..." className="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500"></textarea>
+                                                </div>
                                             </div>
                                             <button type="submit" className="mt-auto w-full bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/50">
                                                 Adicionar Exercício
@@ -304,15 +343,23 @@ export default function Home() {
                                                 <ul id="workout-list" className="space-y-3">
                                                     {exercises.map((ex, index) => (
                                                         <li id={`exercise-${ex.id}`} key={ex.id} className="bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02] animate-slide-in" style={{ animationDelay: `${index * 100}ms`}}>
-                                                            <div className="flex-grow pr-4">
-                                                                <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
-                                                                <div className="text-sm text-gray-300 mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
-                                                                    {ex.sets && <span><strong>Séries:</strong> {ex.sets}</span>}
-                                                                    {ex.reps && <span><strong>Reps:</strong> {ex.reps}</span>}
-                                                                    {ex.weight && <span><strong>Peso:</strong> {ex.weight}</span>}
-                                                                    {ex.time && <span><strong>Tempo:</strong> {ex.time}</span>}
+                                                            <div className="flex items-center flex-grow pr-4">
+                                                                <div className="mr-4 text-cyan-400">
+                                                                    {ex.type === 'musculacao' && <Weight className="w-6 h-6" />}
+                                                                    {ex.type === 'corrida' && <Route className="w-6 h-6" />}
+                                                                    {ex.type === 'caminhada' && <Footprints className="w-6 h-6" />}
                                                                 </div>
-                                                                {ex.notes && <p className="text-xs text-gray-400 mt-2 italic"><strong>Nota:</strong> {ex.notes}</p>}
+                                                                <div className="flex-grow">
+                                                                    <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
+                                                                    <div className="text-sm text-gray-300 mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+                                                                        {ex.sets && <span><strong>Séries:</strong> {ex.sets}</span>}
+                                                                        {ex.reps && <span><strong>Reps:</strong> {ex.reps}</span>}
+                                                                        {ex.weight && <span><strong>Peso:</strong> {ex.weight}</span>}
+                                                                        {ex.time && <span><strong>Tempo:</strong> {ex.time}</span>}
+                                                                        {ex.distance && <span><strong>Distância:</strong> {ex.distance}</span>}
+                                                                    </div>
+                                                                    {ex.notes && <p className="text-xs text-gray-400 mt-2 italic"><strong>Nota:</strong> {ex.notes}</p>}
+                                                                </div>
                                                             </div>
                                                             <button onClick={() => removeExercise(ex.id)} className="remove-btn flex-shrink-0 text-gray-500 hover:text-red-500 transition-colors">
                                                                 <svg className="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -340,15 +387,23 @@ export default function Home() {
                                 <p className="text-cyan-400 font-semibold mb-2">Exercício {currentExerciseIndex + 1} de {exercises.length}</p>
                                 <h2 className="text-5xl font-bold text-white truncate">{currentExercise.name}</h2>
                                 <div className="text-gray-300 text-lg mt-2">
-                                    {currentExercise.reps && <span>{currentExercise.reps} Reps</span>}
-                                    {currentExercise.weight && <span> / {currentExercise.weight}</span>}
-                                    {currentExercise.time && <span> / {currentExercise.time}</span>}
+                                    {currentExercise.type === 'musculacao' ? (
+                                        <>
+                                            {currentExercise.reps && <span>{currentExercise.reps} Reps</span>}
+                                            {currentExercise.weight && <span> / {currentExercise.weight}</span>}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {currentExercise.time && <span>{currentExercise.time}</span>}
+                                            {currentExercise.distance && <span> / {currentExercise.distance}</span>}
+                                        </>
+                                    )}
                                 </div>
                             </div>
                             
                             <div className="my-8 w-full max-w-[200px] mx-auto">
-                                {!isCardio && <BicepCurlAnimation />}
-                                {isCardio && (
+                                {currentExercise.type === 'musculacao' && <BicepCurlAnimation />}
+                                {currentExercise.type !== 'musculacao' && (
                                      <svg className="w-full h-auto text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M5 12l2-2 2 2 5-5 2 2 3-3"/>
                                         <path d="M5 17l2-2 2 2 5-5 2 2 3-3"/>
@@ -357,15 +412,14 @@ export default function Home() {
                             </div>
                             
                             <div className="flex-grow flex flex-col items-center justify-center">
-                                {!isCardio && (
+                                {currentExercise.type === 'musculacao' ? (
                                     <>
                                         <p className="text-gray-400 text-2xl mb-2">SÉRIE ATUAL</p>
                                         <p className="text-8xl font-bold text-white">{currentSet}</p>
                                     </>
-                                )}
-                                {isCardio && (
+                                ) : (
                                     <>
-                                       <p className="text-gray-400 text-2xl mb-2">TEMPO</p>
+                                       <p className="text-gray-400 text-2xl mb-2">FOCO</p>
                                        <p className="text-8xl font-bold text-white">{currentExercise.time}</p>
                                     </>
                                 )}
@@ -376,7 +430,7 @@ export default function Home() {
                             </div>
 
                             <button onClick={completeSet} className="w-full max-w-xs mx-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-4 rounded-lg text-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
-                                {isCardio ? 'CONCLUIR CARDIO' : 'CONCLUIR SÉRIE'}
+                                {currentExercise.type === 'musculacao' ? 'CONCLUIR SÉRIE' : 'CONCLUIR CARDIO'}
                             </button>
                         </div>
                     )}
@@ -408,3 +462,5 @@ export default function Home() {
         </>
     );
 }
+
+    
