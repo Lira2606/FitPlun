@@ -124,7 +124,7 @@ export default function Home() {
 
                 <div className="phone-content custom-scrollbar">
                     {screen === 'builder' && (
-                        <div className="min-h-full p-4">
+                        <div className="min-h-full p-4 pt-10">
                             <header className="text-center mb-6">
                                 <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">Monte seu Treino</h1>
                                 <p className="text-gray-400 mt-2 text-sm">Adicione os exercícios para sua rotina.</p>
