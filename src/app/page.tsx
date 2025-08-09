@@ -201,7 +201,7 @@ export default function Home() {
                                 </div>
 
                                 {exercises.length > 0 && (
-                                    <div className="gradient-border">
+                                    <div className="gradient-border animate-fade-in">
                                         <div className="gradient-border-content">
                                             <h2 className="text-xl font-semibold mb-5 text-white">Seu Treino</h2>
                                             <div id="workout-list-container" className="flex-grow">

@@ -144,6 +144,13 @@ export default function RootLayout({
             .animate-slide-out {
                 animation: slide-out 0.4s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
             }
+            @keyframes fade-in {
+                from { opacity: 0; transform: scale(0.98); }
+                to { opacity: 1; transform: scale(1); }
+            }
+            .animate-fade-in {
+                animation: fade-in 0.3s ease-out forwards;
+            }
             input:-webkit-autofill,
             input:-webkit-autofill:hover,
             input:-webkit-autofill:focus,
