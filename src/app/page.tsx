@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, PersonStanding, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit, Trash2 } from 'lucide-react';
+import { Dumbbell, PersonStanding, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit, Trash2, LogOut } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
     AlertDialog,
@@ -109,6 +109,7 @@ export default function Home() {
     // Workout History State
     const [workoutHistory, setWorkoutHistory] = useState<WorkoutSummary[]>([]);
     const [workoutToDelete, setWorkoutToDelete] = useState<number | null>(null);
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
 
     // User Profile State
@@ -229,6 +230,17 @@ export default function Home() {
             console.error("Failed to save updated workout history to localStorage", error);
         }
         setWorkoutToDelete(null); // Close the dialog
+    };
+    
+    const handleLogout = () => {
+        try {
+            localStorage.removeItem('userProfile');
+            localStorage.removeItem('workoutHistory');
+            window.location.reload();
+        } catch (error) {
+            console.error("Failed to clear localStorage", error);
+            alert("Erro ao sair. Tente limpar os dados do seu navegador.");
+        }
     };
 
 
@@ -1082,6 +1094,31 @@ export default function Home() {
                         </ul>
                     )}
                 </div>
+
+                <div className="mt-8 mb-4">
+                    <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+                        <AlertDialogTrigger asChild>
+                            <button className="w-full bg-red-900/50 hover:bg-red-900/80 text-red-300 font-semibold py-2.5 px-4 rounded-lg transition-all text-sm flex items-center justify-center gap-2 mx-auto">
+                                <LogOut className="w-4 h-4"/>
+                                Sair do Aplicativo
+                            </button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Sair do Aplicativo</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Tem certeza que deseja sair? Todos os seus dados, incluindo perfil e histórico de treinos, serão apagados. Esta ação não pode ser desfeita.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleLogout}>Sair</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </div>
+
+
                  {workoutToDelete !== null && (
                     <AlertDialog open={workoutToDelete !== null} onOpenChange={(open) => !open && setWorkoutToDelete(null)}>
                         <AlertDialogContent>
