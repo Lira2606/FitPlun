@@ -42,6 +42,7 @@ interface UserProfile {
     age: number;
     height: number;
     gender: Gender;
+    profilePicture?: string;
 }
 
 interface WorkoutSummary {
@@ -118,9 +119,12 @@ export default function Home() {
         age: 30,
         height: 175,
         gender: 'male',
+        profilePicture: undefined,
     });
     const [tempProfile, setTempProfile] = useState<UserProfile>(userProfile);
     const [showProfileForm, setShowProfileForm] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
 
     // Calorie Calculation
     const calorieTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -163,6 +167,24 @@ export default function Home() {
         const { name, value } = e.target;
         const numericValue = ['weight', 'age', 'height'].includes(name) ? parseFloat(value) : value;
         setTempProfile(prev => ({ ...prev, [name]: numericValue }));
+    };
+
+    const handleAvatarClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleProfilePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+            reader.onload = (loadEvent) => {
+                const result = loadEvent.target?.result;
+                if (typeof result === 'string') {
+                    setTempProfile(prev => ({ ...prev, profilePicture: result }));
+                }
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
 
@@ -896,11 +918,22 @@ export default function Home() {
                 <div className="flex flex-col items-center">
                     <div className="relative mb-4">
                         <Avatar className="w-24 h-24 border-4 border-cyan-400">
+                           <AvatarImage src={userProfile.profilePicture} alt={userProfile.name} />
                             <AvatarFallback className="bg-gray-700 text-cyan-400 text-3xl font-bold">
                                 {userInitials}
                             </AvatarFallback>
                         </Avatar>
-                        <button className="absolute bottom-0 right-0 bg-gray-800 rounded-full p-1 border-2 border-gray-900">
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleProfilePictureChange}
+                            accept="image/*"
+                            className="hidden"
+                        />
+                        <button 
+                            onClick={handleAvatarClick}
+                            className="absolute bottom-0 right-0 bg-gray-800 rounded-full p-1 border-2 border-gray-900"
+                        >
                            <PlusCircle className="w-5 h-5 text-cyan-400" />
                         </button>
                     </div>
