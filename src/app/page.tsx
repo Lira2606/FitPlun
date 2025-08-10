@@ -1,9 +1,10 @@
 
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, BarChart2, User, PlusCircle } from 'lucide-react';
+import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, BarChart2, User, PlusCircle, Bluetooth } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useBluetoothHR } from '@/hooks/useBluetoothHR';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
 
@@ -95,9 +96,11 @@ export default function Home() {
     
     // Secondary Metrics State
     const [calories, setCalories] = useState(0);
-    const [heartRate, setHeartRate] = useState(0);
     const [elevationGain, setElevationGain] = useState(0);
     const [cadence, setCadence] = useState(0);
+
+    // Bluetooth Heart Rate Hook
+    const { heartRate, isConnected, requestDevice, disconnectDevice } = useBluetoothHR();
 
 
     // Haversine formula to calculate distance between two points
@@ -163,10 +166,14 @@ export default function Home() {
         } else {
             stopLocationTracking();
         }
-        return stopLocationTracking;
+
+        // Cleanup function
+        return () => {
+            stopLocationTracking();
+        };
     }, [cardioState]);
 
-    const resetCardioState = () => {
+    const resetCardioState = useCallback(() => {
         setCardioState('idle');
         setCardioTime(0);
         setDistance(0);
@@ -174,10 +181,10 @@ export default function Home() {
         setLocationError(null);
         setElevationGain(0);
         setCalories(0);
-        setHeartRate(0);
         setCadence(0);
         stopLocationTracking();
-    }
+        disconnectDevice();
+    },[disconnectDevice]);
     
     const calculatePace = () => {
         if (distance === 0 || cardioTime === 0) return "0:00";
@@ -451,7 +458,9 @@ export default function Home() {
                                             <li id={`exercise-${ex.id}`} key={ex.id} className="bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02] animate-slide-in" style={{ animationDelay: `${index * 100}ms`}}>
                                                 <div className="flex items-center flex-grow pr-4">
                                                     <div className="mr-4 text-cyan-400">
-                                                        {ex.type === 'musculacao' && <Dumbbell className="w-6 h-6" />}
+                                                        {ex.type === 'musculacao' && (
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4Z"></path><path d="M14 9V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2"></path><path d="M18 9h2"></path><path d="M6 13h2"></path><path d="M10 13h2"></path></svg>
+                                                        )}
                                                         {ex.type === 'corrida' && <Route className="w-6 h-6" />}
                                                         {ex.type === 'caminhada' && <Footprints className="w-6 h-6" />}
                                                     </div>
@@ -522,7 +531,7 @@ export default function Home() {
             ) : (
                 // Cardio UI
                 <div className="min-h-full p-4 flex flex-col justify-start text-center relative">
-                    <button onClick={() => setScreen('builder')} className="absolute top-4 left-4 text-cyan-400 hover:text-cyan-300 transition-colors z-10 p-2">
+                    <button onClick={() => { setScreen('builder'); resetCardioState(); }} className="absolute top-4 left-4 text-cyan-400 hover:text-cyan-300 transition-colors z-10 p-2">
                         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
                     <div className="mt-8">
@@ -555,7 +564,10 @@ export default function Home() {
                             <p className="text-lg font-bold">{calories}</p>
                             <p className="text-gray-500 text-xs">Calorias</p>
                         </div>
-                        <div>
+                        <div className="relative">
+                           <button onClick={isConnected ? disconnectDevice : requestDevice} className={`absolute -top-1 right-1 p-1 rounded-full ${isConnected ? 'text-blue-500' : 'text-gray-500'}`}>
+                                <Bluetooth size={14} />
+                            </button>
                             <Heart className="w-5 h-5 mx-auto text-red-500 mb-1" />
                             <p className="text-lg font-bold">{heartRate || '--'}</p>
                             <p className="text-gray-500 text-xs">BPM</p>
@@ -721,5 +733,7 @@ export default function Home() {
         </>
     );
 }
+
+    
 
     
