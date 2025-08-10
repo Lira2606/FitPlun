@@ -103,6 +103,7 @@ export default function Home() {
         gender: 'male',
     });
     const [tempProfile, setTempProfile] = useState<UserProfile>(userProfile);
+    const [showProfileForm, setShowProfileForm] = useState(false);
 
     // Calorie Calculation
     const calorieTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -118,11 +119,14 @@ export default function Home() {
                 const parsedProfile = JSON.parse(savedProfile);
                 setUserProfile(parsedProfile);
                 setTempProfile(parsedProfile);
+                setShowProfileForm(false);
             } else {
                 setTempProfile(userProfile);
+                setShowProfileForm(true);
             }
         } catch (error) {
             console.error("Failed to load data from localStorage", error);
+            setShowProfileForm(true);
         }
     }, []);
 
@@ -130,6 +134,7 @@ export default function Home() {
         setUserProfile(tempProfile);
         try {
             localStorage.setItem('userProfile', JSON.stringify(tempProfile));
+            setShowProfileForm(false);
              alert('Perfil salvo com sucesso!');
         } catch (error) {
             console.error("Failed to save profile to localStorage", error);
@@ -866,33 +871,36 @@ export default function Home() {
                     <p className="text-gray-400 text-sm">Juntou-se em {joinDate.toLocaleDateString('pt-BR', { month: 'long' })} de {joinDate.getFullYear()}</p>
                 </div>
                 
-                 <div className="gradient-border mt-6">
-                    <div className="gradient-border-content space-y-4">
-                        <h3 className="text-lg font-semibold text-white text-center">Meus Dados</h3>
-                         <div className="grid grid-cols-2 gap-4">
+                 {showProfileForm && (
+                    <div className="gradient-border mt-6">
+                        <div className="gradient-border-content space-y-4">
+                            <h3 className="text-lg font-semibold text-white text-center">Meus Dados</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label htmlFor="weight" className="block text-sm font-medium text-gray-400 mb-1">Peso (kg)</label>
+                                    <input type="number" id="weight" name="weight" value={tempProfile.weight || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                                </div>
+                                <div>
+                                    <label htmlFor="age" className="block text-sm font-medium text-gray-400 mb-1">Idade</label>
+                                    <input type="number" id="age" name="age" value={tempProfile.age || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                                </div>
+                            </div>
                             <div>
-                                <label htmlFor="weight" className="block text-sm font-medium text-gray-400 mb-1">Peso (kg)</label>
-                                <input type="number" id="weight" name="weight" value={tempProfile.weight || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                                <label htmlFor="gender" className="block text-sm font-medium text-gray-400 mb-1">Sexo</label>
+                                <select id="gender" name="gender" value={tempProfile.gender} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                    <option value="male">Masculino</option>
+                                    <option value="female">Feminino</option>
+                                    <option value="other">Outro</option>
+                                </select>
                             </div>
-                             <div>
-                                <label htmlFor="age" className="block text-sm font-medium text-gray-400 mb-1">Idade</label>
-                                <input type="number" id="age" name="age" value={tempProfile.age || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
-                            </div>
+                            <button onClick={saveProfile} className="w-full bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2.5 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                                <Save className="w-4 h-4"/>
+                                Salvar Dados
+                            </button>
                         </div>
-                        <div>
-                             <label htmlFor="gender" className="block text-sm font-medium text-gray-400 mb-1">Sexo</label>
-                             <select id="gender" name="gender" value={tempProfile.gender} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                                <option value="male">Masculino</option>
-                                <option value="female">Feminino</option>
-                                <option value="other">Outro</option>
-                             </select>
-                        </div>
-                         <button onClick={saveProfile} className="w-full bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2.5 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
-                            <Save className="w-4 h-4"/>
-                            Salvar Dados
-                        </button>
                     </div>
-                </div>
+                )}
+
 
                  <div className="gradient-border mt-6">
                     <div className="gradient-border-content">
