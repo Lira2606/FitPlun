@@ -2,7 +2,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, BarChart2, User, PlusCircle } from 'lucide-react';
+import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
@@ -97,7 +97,9 @@ export default function Home() {
     
     // Secondary Metrics State
     const [calories, setCalories] = useState(0);
-    const [heartRate, setHeartRate] = useState(0);
+    const [heartRate, setHeartRate] = useState(0); // This will be updated by bluetooth or stay as a placeholder
+    const [avgHeartRate, setAvgHeartRate] = useState(0);
+    const [heartRateValues, setHeartRateValues] = useState<number[]>([]);
     const [elevationGain, setElevationGain] = useState(0);
     const [cadence, setCadence] = useState(0);
 
@@ -181,16 +183,24 @@ export default function Home() {
         setCalories(0);
         setCadence(0);
         setHeartRate(0);
+        setAvgHeartRate(0);
+        setHeartRateValues([]);
         stopLocationTracking();
     },[]);
     
     const calculatePace = () => {
-        if (distance === 0 || cardioTime === 0) return "0:00";
+        if (distance === 0 || cardioTime === 0) return "0'00\"";
         const pace = cardioTime / 60 / distance; // minutes per km
         const minutes = Math.floor(pace);
         const seconds = Math.round((pace - minutes) * 60);
-        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        return `${minutes}'${seconds.toString().padStart(2, '0')}"`;
     };
+
+    const calculateAvgSpeed = () => {
+        if (distance === 0 || cardioTime === 0) return "0.0";
+        const avgSpeed = (distance / (cardioTime / 3600)); // km/h
+        return avgSpeed.toFixed(1);
+    }
 
 
     useEffect(() => {
@@ -237,9 +247,17 @@ export default function Home() {
     }, [screen, currentExerciseIndex, currentSet]);
 
     const formatCardioTime = (timeInSeconds: number) => {
-        const minutes = Math.floor(timeInSeconds / 60).toString().padStart(2, '0');
-        const seconds = (timeInSeconds % 60).toString().padStart(2, '0');
-        return `${minutes}:${seconds}`;
+        const hours = Math.floor(timeInSeconds / 3600);
+        const minutes = Math.floor((timeInSeconds % 3600) / 60);
+        const seconds = timeInSeconds % 60;
+        
+        const paddedMinutes = minutes.toString().padStart(2, '0');
+        const paddedSeconds = seconds.toString().padStart(2, '0');
+
+        if (hours > 0) {
+            return `${hours.toString().padStart(2, '0')}:${paddedMinutes}:${paddedSeconds}`;
+        }
+        return `${paddedMinutes}:${paddedSeconds}`;
     };
 
     const addExercise = (e: React.FormEvent<HTMLFormElement>) => {
@@ -320,6 +338,12 @@ export default function Home() {
             // This is now the "Stop" button for cardio
             setCardioState('idle');
             stopLocationTracking(); // Stop GPS
+            
+            const finalHeartRateValues = heartRateValues.filter(hr => hr > 0);
+            if (finalHeartRateValues.length > 0) {
+                const sum = finalHeartRateValues.reduce((a, b) => a + b, 0);
+                setAvgHeartRate(Math.round(sum / finalHeartRateValues.length));
+            }
             
             if (isLastExercise) {
                 setScreen('finished');
@@ -616,45 +640,121 @@ export default function Home() {
             );
         }
         if (screen === 'finished') {
+            const lastWorkout = exercises[exercises.length -1] || {};
+            const isCardio = lastWorkout.type === 'corrida' || lastWorkout.type === 'caminhada';
+
             return (
-              <div className="min-h-full p-4 flex flex-col justify-center items-center text-center">
-                  <h2 className="text-5xl font-bold text-emerald-400 mb-2">TREINO FINALIZADO!</h2>
-                  <p className="text-gray-300 text-lg mb-6">Parabéns! Confira seu resumo abaixo.</p>
-                  
-                  <div className="w-full max-w-sm flex-grow gradient-border mb-6">
-                      <div className="gradient-border-content h-full">
-                          <div className="h-full custom-scrollbar overflow-y-auto pr-2">
-                              <ul className="space-y-4 text-left">
-                                  {exercises.map((ex) => (
-                                      <li key={ex.id} className="bg-gray-700/50 p-3 rounded-lg">
-                                          <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
-                                           <div className="text-sm text-gray-300 mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
-                                              {ex.type === 'musculacao' ? (
-                                                  <>
-                                                      {ex.sets && <span><strong>Séries:</strong> {ex.sets}</span>}
-                                                      {ex.reps && <span><strong>Reps:</strong> {ex.reps}</span>}
-                                                      {ex.weight && <span><strong>Peso:</strong> {ex.weight}</span>}
-                                                      {ex.restTime && <span><strong>Descanso:</strong> {ex.restTime}s</span>}
-                                                  </>
-                                              ) : (
-                                                  <>
-                                                      {ex.time && <span><strong>Tempo:</strong> {ex.time}</span>}
-                                                      {ex.distance && <span><strong>Distância:</strong> {ex.distance}</span>}
-                                                  </>
-                                              )}
-                                          </div>
-                                          {ex.notes && <p className="text-xs text-gray-400 mt-2 italic"><strong>Nota:</strong> {ex.notes}</p>}
+               <div className="p-8 text-white space-y-6 overflow-y-auto custom-scrollbar h-full">
+                    {/* Cabeçalho */}
+                    <div className="text-center">
+                        <Trophy className="text-5xl text-yellow-400 mb-3 animate-pop-in mx-auto" />
+                        <h1 className="text-4xl font-black tracking-tighter uppercase animate-fade-in-up delay-100">Treino Finalizado!</h1>
+                        <p className="text-gray-400 mt-1 animate-fade-in-up delay-200">Parabéns! Você mandou muito bem.</p>
+                    </div>
+    
+                    {/* Resumo Principal do Treino */}
+                     <div className="bg-gray-800/50 rounded-2xl p-6 space-y-5 animate-fade-in-up delay-300 transition-transform duration-300 hover:-translate-y-1">
+                        <div className="flex justify-between items-center pb-4 border-b border-gray-700">
+                             <h2 className="text-xl font-bold">{isCardio ? lastWorkout.name : 'Musculação'}</h2>
+                            <span className="text-sm text-gray-400">{new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric'})}</span>
+                        </div>
+    
+                        {isCardio ? (
+                             <div className="grid grid-cols-3 gap-4 text-center">
+                                <div>
+                                    <p className="text-gray-400 text-sm">Tempo</p>
+                                    <p className="text-2xl font-bold">{formatCardioTime(cardioTime)}</p>
+                                    <p className="text-xs text-gray-500">min</p>
+                                </div>
+                                <div>
+                                    <p className="text-gray-400 text-sm">Distância</p>
+                                    <p className="text-2xl font-bold">{distance.toFixed(2)}</p>
+                                    <p className="text-xs text-gray-500">km</p>
+                                </div>
+                                <div>
+                                    <p className="text-gray-400 text-sm">Calorias</p>
+                                    <p className="text-2xl font-bold">{calories}</p>
+                                    <p className="text-xs text-gray-500">kcal</p>
+                                </div>
+                            </div>
+                        ) : (
+                             <div className="text-center py-4">
+                                <p className="text-lg">Confira o resumo dos seus exercícios abaixo.</p>
+                             </div>
+                        )}
+                    </div>
+
+                    {isCardio && (
+                         <>
+                         <div className="grid grid-cols-2 gap-4">
+                            <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-400 transition-transform duration-300 hover:-translate-y-1">
+                                <div className="bg-blue-500/20 p-2 rounded-full">
+                                    <Footprints className="text-blue-400 w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-gray-400 text-xs">Ritmo Médio</p>
+                                    <p className="font-bold animate-number-pop delay-500">{calculatePace()} <span className="text-sm font-normal text-gray-500">/km</span></p>
+                                </div>
+                            </div>
+                            <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-500 transition-transform duration-300 hover:-translate-y-1">
+                                <div className="bg-green-500/20 p-2 rounded-full">
+                                     <GaugeCircle className="text-green-400 w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-gray-400 text-xs">Veloc. Média</p>
+                                    <p className="font-bold animate-number-pop delay-600">{calculateAvgSpeed()} <span className="text-sm font-normal text-gray-500">km/h</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-600 transition-transform duration-300 hover:-translate-y-1">
+                            <div className="flex items-center space-x-3 mb-3">
+                                <div className="bg-red-500/20 p-2 rounded-full">
+                                    <HeartPulse className="text-red-400 w-5 h-5" />
+                                </div>
+                                <div>
+                                    <p className="text-gray-400 text-xs">Frequência Cardíaca</p>
+                                    <p className="font-bold animate-number-pop delay-700">{avgHeartRate || '--'} <span className="text-sm font-normal text-gray-500">bpm (média)</span></p>
+                                </div>
+                            </div>
+                            <div className="w-full bg-gray-700 rounded-full h-2.5">
+                              <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${(avgHeartRate / 200) * 100}%`}}></div>
+                            </div>
+                             <div className="text-xs text-gray-500 flex justify-between mt-1">
+                                <span>Zona 2</span>
+                                <span>Zona 3</span>
+                                <span>Zona 4</span>
+                                <span>Zona 5</span>
+                            </div>
+                        </div>
+                        </>
+                    )}
+    
+                     {!isCardio && (
+                         <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-400">
+                             <h3 className="font-bold text-lg mb-3 text-cyan-300">Resumo dos Exercícios</h3>
+                              <ul className="space-y-3">
+                                  {exercises.map((ex, index) => (
+                                      <li key={ex.id} className="text-sm border-b border-gray-700/50 pb-2 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms`}}>
+                                          <p className="font-bold">{ex.name}</p>
+                                          <p className="text-gray-400">{ex.sets} séries x {ex.reps} reps - {ex.weight}</p>
                                       </li>
                                   ))}
                               </ul>
-                          </div>
-                      </div>
-                  </div>
+                         </div>
+                     )}
 
-                  <button onClick={startNewWorkout} className="w-full max-w-xs mx-auto bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-4 px-4 rounded-lg text-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/50">
-                      Começar um Novo Treino
-                  </button>
-              </div>
+                    {/* Botões de Ação */}
+                    <div className="space-y-3 pt-4">
+                        <button className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 animate-fade-in-up delay-800 hover:-translate-y-1 hover:shadow-lg">
+                            <Share2 className="w-4 h-4"/>
+                            <span>Compartilhar Treino</span>
+                        </button>
+                        <button onClick={startNewWorkout} className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/20 animate-fade-in-up delay-900 hover:-translate-y-1 hover:shadow-xl">
+                            Começar um Novo Treino
+                        </button>
+                    </div>
+    
+                </div>
             )
           }
         return null;

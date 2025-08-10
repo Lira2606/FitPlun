@@ -18,7 +18,7 @@ export default function RootLayout({
         <script src="https://cdn.tailwindcss.com" async></script>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet" />
         <style dangerouslySetInnerHTML={{ __html: `
             body {
                 font-family: 'Inter', sans-serif;
@@ -194,6 +194,82 @@ export default function RootLayout({
                    display: none;
                 }
             }
+
+            /* Animações customizadas tela final */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            @keyframes popIn {
+                0% {
+                    opacity: 0;
+                    transform: scale(0.5);
+                }
+                80% {
+                    opacity: 1;
+                    transform: scale(1.1);
+                }
+                100% {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+
+            @keyframes number-pop {
+                from {
+                    opacity: 0;
+                    transform: scale(0.8) translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+            }
+
+            @keyframes fillWidth {
+                from {
+                    width: 0%;
+                }
+                to {
+                    width: 100%;
+                }
+            }
+
+            .animate-fade-in-up {
+                animation: fadeInUp 0.6s ease-out forwards;
+                opacity: 0; /* Inicia invisível */
+            }
+            
+            .animate-pop-in {
+                animation: popIn 0.6s ease-out forwards;
+                opacity: 0;
+            }
+
+            .animate-number-pop {
+                animation: number-pop 0.5s ease-out forwards;
+                opacity: 0;
+            }
+
+            .animate-fill-width {
+                animation: fillWidth 1.5s 1s ease-out forwards; /* 1s de delay */
+            }
+
+            .delay-100 { animation-delay: 0.1s; }
+            .delay-200 { animation-delay: 0.2s; }
+            .delay-300 { animation-delay: 0.3s; }
+            .delay-400 { animation-delay: 0.4s; }
+            .delay-500 { animation-delay: 0.5s; }
+            .delay-600 { animation-delay: 0.6s; }
+            .delay-700 { animation-delay: 0.7s; }
+            .delay-800 { animation-delay: 0.8s; }
+            .delay-900 { animation-delay: 0.9s; }
         ` }} />
       </head>
       <body className="text-white antialiased flex items-center justify-center min-h-screen">
