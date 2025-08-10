@@ -1,9 +1,8 @@
 
-
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History } from 'lucide-react';
+import { Dumbbell, PersonStanding, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
@@ -552,7 +551,7 @@ export default function Home() {
                                                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5H9.261a2 2 0 0 0-1.926 1.517l-1.412 5.647a2 2 0 0 0 .11 1.34l1.732 2.598a2 2 0 0 0 1.62 1.9l4.379 1.46a2 2 0 0 0 2.22-.53l1.838-2.144a2 2 0 0 0 .22-1.772l-1.21-4.235a2 2 0 0 0-1.814-1.414H12Z"></path><path d="M12 5V2"></path><path d="m7 12-2-2"></path><path d="m17 12 2-2"></path></svg>
                                                         )}
                                                         {ex.type === 'corrida' && <Route className="w-6 h-6" />}
-                                                        {ex.type === 'caminhada' && <Footprints className="w-6 h-6" />}
+                                                        {ex.type === 'caminhada' && <PersonStanding className="w-6 h-6" />}
                                                     </div>
                                                     <div className="flex-grow">
                                                         <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
@@ -752,7 +751,7 @@ export default function Home() {
                          <div className="grid grid-cols-2 gap-4">
                             <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-400 transition-transform duration-300 hover:-translate-y-1">
                                 <div className="bg-blue-500/20 p-2 rounded-full">
-                                    <Footprints className="text-blue-400 w-5 h-5" />
+                                    <PersonStanding className="text-blue-400 w-5 h-5" />
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-xs">Ritmo Médio</p>
@@ -881,7 +880,7 @@ export default function Home() {
                                         <div className="flex items-center gap-3">
                                             {workout.type === 'musculacao' && <Dumbbell className="w-6 h-6 text-cyan-400" />}
                                             {workout.type === 'corrida' && <Route className="w-6 h-6 text-cyan-400" />}
-                                            {workout.type === 'caminhada' && <Footprints className="w-6 h-6 text-cyan-400" />}
+                                            {workout.type === 'caminhada' && <PersonStanding className="w-6 h-6 text-cyan-400" />}
                                             <span className="font-bold text-lg">{workout.name}</span>
                                         </div>
                                         <span className="text-xs text-gray-400 flex items-center gap-1.5">
@@ -991,7 +990,7 @@ export default function Home() {
                             onClick={() => handleNavClick('caminhada')} 
                              className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
-                            <Footprints className="w-7 h-7" />
+                            <PersonStanding className="w-7 h-7" />
                             <span className="text-xs mt-1">Caminhada</span>
                         </button>
                          <button 
@@ -1020,3 +1019,5 @@ export default function Home() {
         </>
     );
 }
+
+    
