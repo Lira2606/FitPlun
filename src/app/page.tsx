@@ -2,9 +2,8 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, BarChart2, User, PlusCircle, Bluetooth } from 'lucide-react';
+import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, BarChart2, User, PlusCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useBluetoothHR } from '@/hooks/useBluetoothHR';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
 
@@ -96,12 +95,9 @@ export default function Home() {
     
     // Secondary Metrics State
     const [calories, setCalories] = useState(0);
+    const [heartRate, setHeartRate] = useState(0);
     const [elevationGain, setElevationGain] = useState(0);
     const [cadence, setCadence] = useState(0);
-
-    // Bluetooth Heart Rate Hook
-    const { heartRate, isConnected, requestDevice, disconnectDevice } = useBluetoothHR();
-
 
     // Haversine formula to calculate distance between two points
     const calculateDistance = (pos1: GeolocationPosition, pos2: GeolocationPosition) => {
@@ -182,9 +178,9 @@ export default function Home() {
         setElevationGain(0);
         setCalories(0);
         setCadence(0);
+        setHeartRate(0);
         stopLocationTracking();
-        disconnectDevice();
-    },[disconnectDevice]);
+    },[]);
     
     const calculatePace = () => {
         if (distance === 0 || cardioTime === 0) return "0:00";
@@ -564,10 +560,7 @@ export default function Home() {
                             <p className="text-lg font-bold">{calories}</p>
                             <p className="text-gray-500 text-xs">Calorias</p>
                         </div>
-                        <div className="relative">
-                           <button onClick={isConnected ? disconnectDevice : requestDevice} className={`absolute -top-1 right-1 p-1 rounded-full ${isConnected ? 'text-blue-500' : 'text-gray-500'}`}>
-                                <Bluetooth size={14} />
-                            </button>
+                        <div>
                             <Heart className="w-5 h-5 mx-auto text-red-500 mb-1" />
                             <p className="text-lg font-bold">{heartRate || '--'}</p>
                             <p className="text-gray-500 text-xs">BPM</p>
@@ -733,7 +726,3 @@ export default function Home() {
         </>
     );
 }
-
-    
-
-    

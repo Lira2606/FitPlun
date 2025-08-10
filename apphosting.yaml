@@ -6,8 +6,4 @@ runConfig:
   # more instances in response to increased traffic.
   maxInstances: 1
 
-headers:
-  - path: /
-    headers:
-      - key: Permissions-Policy
-        value: bluetooth=*
+headers: []
