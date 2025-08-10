@@ -919,7 +919,7 @@ export default function Home() {
                 <div className="flex flex-col items-center">
                     <div className="relative mb-4">
                         <Avatar className="w-24 h-24 border-4 border-cyan-400">
-                           <AvatarImage src={tempProfile.profilePicture} alt={tempProfile.name} />
+                           <AvatarImage src={tempProfile.profilePicture} alt={tempProfile.name} className="object-cover" />
                             <AvatarFallback className="bg-gray-700 text-cyan-400 text-3xl font-bold">
                                 {userInitials}
                             </AvatarFallback>
@@ -1021,7 +1021,7 @@ export default function Home() {
                     </div>
                 </div>
                 
-                <div className="mt-6">
+                <div className="mt-6 mb-4">
                     <h3 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
                         <History className="w-5 h-5 text-cyan-400"/>
                         Histórico de Treinos
@@ -1082,16 +1082,6 @@ export default function Home() {
                             ))}
                         </ul>
                     )}
-                </div>
-
-                 <div className="mt-8 mb-4">
-                    <button
-                        onClick={startNewWorkout}
-                        className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all text-sm flex items-center justify-center gap-2 mx-auto"
-                    >
-                        <LogOut className="w-4 h-4"/>
-                        Sair
-                    </button>
                 </div>
 
 
