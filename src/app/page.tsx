@@ -604,16 +604,47 @@ export default function Home() {
             );
         }
         if (screen === 'finished') {
-          return (
-            <div className="min-h-full p-4 flex flex-col justify-center items-center text-center">
-                <h2 className="text-5xl font-bold text-emerald-400 mb-4">TREINO FINALIZADO!</h2>
-                <p className="text-gray-300 text-lg mb-8">Parabéns! Você completou seu treino.</p>
-                <button onClick={startNewWorkout} className="w-full max-w-xs mx-auto bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-4 px-4 rounded-lg text-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/50">
-                    Começar um Novo Treino
-                </button>
-            </div>
-          )
-        }
+            return (
+              <div className="min-h-full p-4 flex flex-col justify-center items-center text-center">
+                  <h2 className="text-5xl font-bold text-emerald-400 mb-2">TREINO FINALIZADO!</h2>
+                  <p className="text-gray-300 text-lg mb-6">Parabéns! Confira seu resumo abaixo.</p>
+                  
+                  <div className="w-full max-w-sm flex-grow gradient-border mb-6">
+                      <div className="gradient-border-content h-full">
+                          <div className="h-full custom-scrollbar overflow-y-auto pr-2">
+                              <ul className="space-y-4 text-left">
+                                  {exercises.map((ex) => (
+                                      <li key={ex.id} className="bg-gray-700/50 p-3 rounded-lg">
+                                          <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
+                                           <div className="text-sm text-gray-300 mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+                                              {ex.type === 'musculacao' ? (
+                                                  <>
+                                                      {ex.sets && <span><strong>Séries:</strong> {ex.sets}</span>}
+                                                      {ex.reps && <span><strong>Reps:</strong> {ex.reps}</span>}
+                                                      {ex.weight && <span><strong>Peso:</strong> {ex.weight}</span>}
+                                                      {ex.restTime && <span><strong>Descanso:</strong> {ex.restTime}s</span>}
+                                                  </>
+                                              ) : (
+                                                  <>
+                                                      {ex.time && <span><strong>Tempo:</strong> {ex.time}</span>}
+                                                      {ex.distance && <span><strong>Distância:</strong> {ex.distance}</span>}
+                                                  </>
+                                              )}
+                                          </div>
+                                          {ex.notes && <p className="text-xs text-gray-400 mt-2 italic"><strong>Nota:</strong> {ex.notes}</p>}
+                                      </li>
+                                  ))}
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+
+                  <button onClick={startNewWorkout} className="w-full max-w-xs mx-auto bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-4 px-4 rounded-lg text-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/50">
+                      Começar um Novo Treino
+                  </button>
+              </div>
+            )
+          }
         return null;
     }
 
@@ -667,7 +698,7 @@ export default function Home() {
                             onClick={() => setExerciseType('musculacao')} 
                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
-                            <Dumbbell className="w-7 h-7" />
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4Z"></path><path d="M14 9V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2"></path><path d="M18 9h2"></path><path d="M6 13h2"></path><path d="M10 13h2"></path></svg>
                             <span className="text-xs mt-1">Musculação</span>
                         </button>
                         <button 
