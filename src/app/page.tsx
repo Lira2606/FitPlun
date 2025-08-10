@@ -651,7 +651,7 @@ export default function Home() {
                      <div className="bg-gray-800/50 rounded-2xl p-6 space-y-5 animate-fade-in-up delay-300 transition-transform duration-300 hover:-translate-y-1">
                         <div className="flex justify-between items-baseline pb-4 border-b border-gray-700">
                              <h2 className="text-lg font-bold">{isCardio ? lastWorkout.name : 'Musculação'}</h2>
-                            <span className="text-sm text-gray-400 ml-4">{new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} de {new Date().getFullYear()}</span>
+                            <span className="text-sm text-gray-400 ml-4 whitespace-nowrap">{new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} de {new Date().getFullYear()}</span>
                         </div>
     
                         {isCardio ? (
@@ -828,17 +828,6 @@ export default function Home() {
                 transition: background-color 5000s ease-in-out 0s;
                 caret-color: #fff !important;
             }
-            .phone-frame {
-                display: flex;
-                flex-direction: column;
-            }
-            .phone-content {
-                flex-grow: 1;
-                overflow-y: auto;
-            }
-            .bottom-nav {
-                flex-shrink: 0;
-            }
             .toggle-checkbox {
                 appearance: none;
                 width: 40px;
@@ -873,25 +862,11 @@ export default function Home() {
         `}</style>
             <div className="gym-background"></div>
             <div className="phone-frame">
-                {splashVisible && (
-                    <div id="splash-screen">
-                        {showSplashIcon && (
-                            <svg className="splash-icon w-24 h-24 text-cyan-400" viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <g transform="rotate(-30 32 32)">
-                                    <rect x="22" y="30" width="20" height="4" rx="2" fill="#9ca3af"/>
-                                    <path d="M18 18C12.4772 18 8 22.4772 8 28V36C8 41.5228 12.4772 46 8 46H20V18H18Z"/>
-                                    <path d="M46 18H44V46H46C51.5228 46 56 41.5228 56 36V28C56 22.4772 51.5228 18 46 18Z"/>
-                                </g>
-                            </svg>
-                        )}
-                    </div>
-                )}
-
                 <div className="phone-content custom-scrollbar">
                   {activeTab === 'workout' ? renderWorkoutContent() : renderProfileContent()}
                 </div>
 
-                <nav className="bottom-nav bg-transparent backdrop-blur-md border-t border-gray-700/50">
+                <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
                     <div className="flex justify-around items-center h-16">
                         <button 
                             onClick={() => handleNavClick('musculacao')} 
@@ -923,12 +898,20 @@ export default function Home() {
                         </button>
                     </div>
                 </nav>
+                 {splashVisible && (
+                    <div id="splash-screen">
+                        {showSplashIcon && (
+                            <svg className="splash-icon w-24 h-24 text-cyan-400" viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <g transform="rotate(-30 32 32)">
+                                    <rect x="22" y="30" width="20" height="4" rx="2" fill="#9ca3af"/>
+                                    <path d="M18 18C12.4772 18 8 22.4772 8 28V36C8 41.5228 12.4772 46 8 46H20V18H18Z"/>
+                                    <path d="M46 18H44V46H46C51.5228 46 56 41.5228 56 36V28C56 22.4772 51.5228 18 46 18Z"/>
+                                </g>
+                            </svg>
+                        )}
+                    </div>
+                )}
             </div>
         </>
     );
 }
-
-    
-
-    
-
