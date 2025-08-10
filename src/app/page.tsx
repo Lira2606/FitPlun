@@ -451,7 +451,7 @@ export default function Home() {
                                             <li id={`exercise-${ex.id}`} key={ex.id} className="bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02] animate-slide-in" style={{ animationDelay: `${index * 100}ms`}}>
                                                 <div className="flex items-center flex-grow pr-4">
                                                     <div className="mr-4 text-cyan-400">
-                                                        {ex.type === 'musculacao' && <Weight className="w-6 h-6" />}
+                                                        {ex.type === 'musculacao' && <Dumbbell className="w-6 h-6" />}
                                                         {ex.type === 'corrida' && <Route className="w-6 h-6" />}
                                                         {ex.type === 'caminhada' && <Footprints className="w-6 h-6" />}
                                                     </div>
@@ -667,7 +667,7 @@ export default function Home() {
                             onClick={() => setExerciseType('musculacao')} 
                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
-                            <Weight className="w-7 h-7" />
+                            <Dumbbell className="w-7 h-7" />
                             <span className="text-xs mt-1">Musculação</span>
                         </button>
                         <button 
@@ -690,3 +690,5 @@ export default function Home() {
         </>
     );
 }
+
+    
