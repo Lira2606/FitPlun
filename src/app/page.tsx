@@ -1100,19 +1100,19 @@ export default function Home() {
                         <AlertDialogTrigger asChild>
                             <button className="w-full bg-red-900/50 hover:bg-red-900/80 text-red-300 font-semibold py-2.5 px-4 rounded-lg transition-all text-sm flex items-center justify-center gap-2 mx-auto">
                                 <LogOut className="w-4 h-4"/>
-                                Sair do Aplicativo
+                                Resetar e Sair
                             </button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Sair do Aplicativo</AlertDialogTitle>
+                                <AlertDialogTitle>Resetar e Sair do Aplicativo?</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    Tem certeza que deseja sair? Todos os seus dados, incluindo perfil e histórico de treinos, serão apagados. Esta ação não pode ser desfeita.
+                                    Tem certeza? Todos os seus dados, incluindo perfil e histórico de treinos, serão apagados permanentemente. Esta ação não pode ser desfeita.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction onClick={handleLogout}>Sair</AlertDialogAction>
+                                <AlertDialogAction onClick={handleLogout}>Resetar e Sair</AlertDialogAction>
                             </AlertDialogFooter>
                         </AlertDialogContent>
                     </AlertDialog>
