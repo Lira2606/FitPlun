@@ -648,7 +648,7 @@ export default function Home() {
                     {/* Cabeçalho */}
                     <div className="text-center">
                         <Trophy className="text-5xl text-yellow-400 mb-3 animate-pop-in mx-auto" />
-                        <h1 className="text-4xl font-black tracking-tighter uppercase animate-fade-in-up delay-100">Treino Finalizado!</h1>
+                        <h1 className="text-4xl font-black tracking-tighter uppercase animate-fade-in-up delay-100 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400">Treino Finalizado!</h1>
                         <p className="text-gray-400 mt-1 animate-fade-in-up delay-200">Parabéns! Você mandou muito bem.</p>
                     </div>
     
@@ -932,5 +932,7 @@ export default function Home() {
         </>
     );
 }
+
+    
 
     
