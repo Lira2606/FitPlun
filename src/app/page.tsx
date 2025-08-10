@@ -1,4 +1,5 @@
 
+
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
@@ -411,13 +412,7 @@ export default function Home() {
                                                 <label htmlFor="exercise-name" className="block text-sm font-medium text-gray-300 mb-1">Nome do Exercício</label>
                                                 <div className="relative">
                                                     <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                         <svg className="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                            <path d="M2 14h20" />
-                                                            <path d="M4 14v-4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4" />
-                                                            <path d="M4 18h16" />
-                                                            <path d="M9 18v-2" />
-                                                            <path d="M15 18v-2" />
-                                                        </svg>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5H9.261a2 2 0 0 0-1.926 1.517l-1.412 5.647a2 2 0 0 0 .11 1.34l1.732 2.598a2 2 0 0 0 1.62 1.9l4.379 1.46a2 2 0 0 0 2.22-.53l1.838-2.144a2 2 0 0 0 .22-1.772l-1.21-4.235a2 2 0 0 0-1.814-1.414H12Z"></path><path d="M12 5V2"></path><path d="m7 12-2-2"></path><path d="m17 12 2-2"></path></svg>
                                                     </span>
                                                     <input type="text" id="exercise-name" name="exercise-name" placeholder="Ex: Supino Reto" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                 </div>
@@ -486,7 +481,7 @@ export default function Home() {
                                                 <div className="flex items-center flex-grow pr-4">
                                                     <div className="mr-4 text-cyan-400">
                                                         {ex.type === 'musculacao' && (
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4Z"></path><path d="M14 9V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2"></path><path d="M18 9h2"></path><path d="M6 13h2"></path><path d="M10 13h2"></path></svg>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5H9.261a2 2 0 0 0-1.926 1.517l-1.412 5.647a2 2 0 0 0 .11 1.34l1.732 2.598a2 2 0 0 0 1.62 1.9l4.379 1.46a2 2 0 0 0 2.22-.53l1.838-2.144a2 2 0 0 0 .22-1.772l-1.21-4.235a2 2 0 0 0-1.814-1.414H12Z"></path><path d="M12 5V2"></path><path d="m7 12-2-2"></path><path d="m17 12 2-2"></path></svg>
                                                         )}
                                                         {ex.type === 'corrida' && <Route className="w-6 h-6" />}
                                                         {ex.type === 'caminhada' && <Footprints className="w-6 h-6" />}
@@ -656,7 +651,7 @@ export default function Home() {
                      <div className="bg-gray-800/50 rounded-2xl p-6 space-y-5 animate-fade-in-up delay-300 transition-transform duration-300 hover:-translate-y-1">
                         <div className="flex justify-between items-baseline pb-4 border-b border-gray-700">
                              <h2 className="text-lg font-bold">{isCardio ? lastWorkout.name : 'Musculação'}</h2>
-                            <span className="text-sm text-gray-400 ml-4">{new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric'})}</span>
+                            <span className="text-sm text-gray-400 ml-4">{new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} de {new Date().getFullYear()}</span>
                         </div>
     
                         {isCardio ? (
@@ -896,13 +891,13 @@ export default function Home() {
                   {activeTab === 'workout' ? renderWorkoutContent() : renderProfileContent()}
                 </div>
 
-                <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50">
+                <nav className="bottom-nav bg-transparent backdrop-blur-md border-t border-gray-700/50">
                     <div className="flex justify-around items-center h-16">
                         <button 
                             onClick={() => handleNavClick('musculacao')} 
                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
-                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4Z"></path><path d="M14 9V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2"></path><path d="M18 9h2"></path><path d="M6 13h2"></path><path d="M10 13h2"></path></svg>
+                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5H9.261a2 2 0 0 0-1.926 1.517l-1.412 5.647a2 2 0 0 0 .11 1.34l1.732 2.598a2 2 0 0 0 1.62 1.9l4.379 1.46a2 2 0 0 0 2.22-.53l1.838-2.144a2 2 0 0 0 .22-1.772l-1.21-4.235a2 2 0 0 0-1.814-1.414H12Z"></path><path d="M12 5V2"></path><path d="m7 12-2-2"></path><path d="m17 12 2-2"></path></svg>
                             <span className="text-xs mt-1">Musculação</span>
                         </button>
                         <button 
@@ -936,3 +931,4 @@ export default function Home() {
     
 
     
+
