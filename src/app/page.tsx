@@ -918,7 +918,7 @@ export default function Home() {
                 <div className="flex flex-col items-center">
                     <div className="relative mb-4">
                         <Avatar className="w-24 h-24 border-4 border-cyan-400">
-                           <AvatarImage src={userProfile.profilePicture} alt={userProfile.name} />
+                           <AvatarImage src={tempProfile.profilePicture} alt={tempProfile.name} />
                             <AvatarFallback className="bg-gray-700 text-cyan-400 text-3xl font-bold">
                                 {userInitials}
                             </AvatarFallback>
