@@ -1,12 +1,13 @@
-
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, PersonStanding, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History } from 'lucide-react';
+import { Dumbbell, PersonStanding, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { calculateCalories, CalorieCalculationMethod } from '@/lib/calorie-calculator';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
 type ActiveTab = 'workout' | 'profile';
+type Gender = 'male' | 'female' | 'other';
 
 interface Exercise {
     id: number;
@@ -21,13 +22,20 @@ interface Exercise {
     notes?: string;
 }
 
+interface UserProfile {
+    name: string;
+    joinDate: string;
+    weight: number;
+    age: number;
+    gender: Gender;
+}
+
 interface WorkoutSummary {
     id: number;
     date: string;
     type: ExerciseType;
     name: string;
     exercises: Exercise[];
-    // Cardio specific summary
     cardioTime?: number;
     distance?: number;
     calories?: number;
@@ -41,50 +49,12 @@ const motivationalQuotes = [
     "O corpo alcança o que a mente acredita. Acredite no seu potencial.",
     "A dor que você sente hoje é a força que você sentirá amanhã. Não desista!",
     "Feito é melhor que perfeito. Mesmo um treino curto é melhor que nenhum treino.",
-    "Você não precisa estar motivado para treinar, você precisa ser disciplinado.",
-    "Daqui a uma hora, você terá desejado ter começado agora.",
-    "O suor de hoje é o sorriso de amanhã.",
-    "Vá por você e para você. Sua saúde não é negociável.",
-    "Lembre-se do sentimento de dever cumprido e da energia que você sente depois de cada treino.",
-    "A disciplina é a ponte entre suas metas e suas realizações.",
-    "Não é sobre ter tempo, é sobre fazer tempo.",
-    "O segredo do sucesso é a constância no objetivo.",
-    "Um pequeno progresso a cada dia resulta em grandes conquistas.",
-    "O hábito de treinar é construído, não encontrado. Continue construindo o seu.",
-    "Não pare quando estiver cansado, pare quando terminar.",
-    "A força de vontade deve ser mais forte que a habilidade.",
-    "O que não te desafia, não te transforma.",
-    "Seus únicos limites são aqueles que você impõe a si mesmo.",
-    "Acredite na sua força. Você é mais capaz do que imagina.",
-    "Cada repetição, cada série, cada gota de suor te deixa mais perto da sua melhor versão.",
-    "As dificuldades preparam pessoas comuns para destinos extraordinários.",
-    "Seja mais forte que a sua melhor desculpa.",
-    "A jornada de mil quilômetros começa com um único passo. Continue caminhando.",
-    "Apaixone-se pelo processo e os resultados aparecerão.",
-    "Não compare o seu capítulo 1 com o capítulo 20 de outra pessoa.",
-    "Olhe para trás e veja o quanto você já progrediu. Use isso como combustível.",
-    "Cada treino é uma vitória contra a preguiça e a procrastinação. Comemore!",
-    "Seu corpo é seu maior projeto. Divirta-se construindo-o.",
-    "Não é sobre o peso que você perde, mas sobre a vida que você ganha."
 ];
 
 const restQuotes = [
     "O descanso não é preguiça, é estratégia. É no descanso que o músculo cresce e se fortalece.",
     "Treinar é o estímulo. Comer é a matéria-prima. Descansar é a construção.",
-    "Não confunda descanso com desistência. Seu corpo precisa de uma pausa para entregar o resultado que você busca.",
-    "Um guerreiro inteligente sabe a hora de recuar para afiar sua espada. Seu descanso é o seu afiar.",
-    "O arco só pode lançar a flecha com força total se antes for tensionado para trás. Permita-se recuar para avançar com mais potência.",
-    "Respeitar seu descanso é respeitar sua meta.",
-    "Seu corpo sussurra antes de gritar. Ouça os sinais de cansaço e dê a ele a pausa que merece.",
-    "Hoje, a sua única meta é a recuperação. Relaxe a mente, descanse o corpo e recarregue a alma.",
-    "O silêncio do descanso permite que você ouça as necessidades do seu corpo com mais clareza.",
-    "Forte não é aquele que nunca para, mas aquele que sabe a hora de parar para voltar ainda mais forte.",
-    "Honre seus limites de hoje para poder superá-los amanhã.",
-    "Recarregue hoje para se superar amanhã. A energia que você economiza no descanso será seu combustível no próximo treino.",
-    "Aproveite a calmaria. A tempestade de um treino intenso virá, e você estará preparado.",
-    "Feche os olhos e visualize seus músculos se recuperando, sua mente se acalmando e sua determinação se fortalecendo.",
-    "O descanso é o botão de 'reset' que seu corpo e mente precisam para continuar evoluindo.",
-    "Permita-se uma pausa. O mundo não vai parar, mas você voltará a ele com muito mais vigor e foco."
+    "Não confunda descanso com desistência.",
 ];
 
 
@@ -107,31 +77,71 @@ export default function Home() {
     
     // GPS Tracking State
     const [distance, setDistance] = useState(0); // in kilometers
+    const [currentSpeed, setCurrentSpeed] = useState(0); // in km/h
     const [lastPosition, setLastPosition] = useState<GeolocationPosition | null>(null);
     const [locationError, setLocationError] = useState<string | null>(null);
     const watchIdRef = useRef<number | null>(null);
     
     // Secondary Metrics State
     const [calories, setCalories] = useState(0);
-    const [heartRate, setHeartRate] = useState(0); // This will be updated by bluetooth or stay as a placeholder
+    const [heartRate, setHeartRate] = useState(0); 
     const [avgHeartRate, setAvgHeartRate] = useState(0);
     const [heartRateValues, setHeartRateValues] = useState<number[]>([]);
     const [elevationGain, setElevationGain] = useState(0);
+    const [currentIncline, setCurrentIncline] = useState(0);
     const [cadence, setCadence] = useState(0);
     
     // Workout History State
     const [workoutHistory, setWorkoutHistory] = useState<WorkoutSummary[]>([]);
 
+    // User Profile State
+    const [userProfile, setUserProfile] = useState<UserProfile>({
+        name: 'Usuário Fitness',
+        joinDate: new Date().toISOString(),
+        weight: 70,
+        age: 30,
+        gender: 'male',
+    });
+    const [tempProfile, setTempProfile] = useState<UserProfile>(userProfile);
+
+    // Calorie Calculation
+    const calorieTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Load data from localStorage on mount
     useEffect(() => {
         try {
             const savedHistory = localStorage.getItem('workoutHistory');
-            if (savedHistory) {
-                setWorkoutHistory(JSON.parse(savedHistory));
+            if (savedHistory) setWorkoutHistory(JSON.parse(savedHistory));
+
+            const savedProfile = localStorage.getItem('userProfile');
+            if (savedProfile) {
+                const parsedProfile = JSON.parse(savedProfile);
+                setUserProfile(parsedProfile);
+                setTempProfile(parsedProfile);
+            } else {
+                setTempProfile(userProfile);
             }
         } catch (error) {
-            console.error("Failed to load workout history from localStorage", error);
+            console.error("Failed to load data from localStorage", error);
         }
     }, []);
+
+    const saveProfile = () => {
+        setUserProfile(tempProfile);
+        try {
+            localStorage.setItem('userProfile', JSON.stringify(tempProfile));
+             alert('Perfil salvo com sucesso!');
+        } catch (error) {
+            console.error("Failed to save profile to localStorage", error);
+            alert('Erro ao salvar perfil.');
+        }
+    };
+    
+    const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setTempProfile(prev => ({ ...prev, [name]: name === 'weight' || name === 'age' ? parseFloat(value) : value }));
+    };
+
 
     const saveWorkoutToHistory = () => {
         const lastExercise = exercises[exercises.length - 1];
@@ -142,13 +152,13 @@ export default function Home() {
         const summary: WorkoutSummary = {
             id: Date.now(),
             date: new Date().toISOString(),
-            type: exercises[0].type, // Assume all exercises in a workout are of the same primary type
+            type: exercises[0].type,
             name: isCardio ? lastExercise.name : 'Musculação',
             exercises: [...exercises],
             ...(isCardio && {
                 cardioTime: cardioTime,
                 distance: distance,
-                calories: calories,
+                calories: Math.round(calories),
                 avgPace: calculatePace(),
                 avgSpeed: calculateAvgSpeed(),
                 avgHeartRate: avgHeartRate,
@@ -164,9 +174,7 @@ export default function Home() {
         }
     };
 
-
-    // Haversine formula to calculate distance between two points
-    const calculateDistance = (pos1: GeolocationPosition, pos2: GeolocationPosition) => {
+    const calculateDistanceHaversine = (pos1: GeolocationPosition, pos2: GeolocationPosition) => {
         const toRad = (value: number) => (value * Math.PI) / 180;
         const R = 6371; // Earth radius in km
         const dLat = toRad(pos2.coords.latitude - pos1.coords.latitude);
@@ -191,14 +199,23 @@ export default function Home() {
         
         watchIdRef.current = navigator.geolocation.watchPosition(
             (position) => {
+                setCurrentSpeed(position.coords.speed ? position.coords.speed * 3.6 : 0); // m/s to km/h
                 if (lastPosition) {
-                    setDistance((prevDistance) => prevDistance + calculateDistance(lastPosition, position));
+                    const segmentDistance = calculateDistanceHaversine(lastPosition, position);
+                    setDistance((prevDistance) => prevDistance + segmentDistance);
                     
-                    // Calculate elevation gain
+                    const timeDiff = (position.timestamp - lastPosition.timestamp) / 1000; // seconds
                     const altitudeChange = (position.coords.altitude || 0) - (lastPosition.coords.altitude || 0);
+
                     if (altitudeChange > 0) {
                         setElevationGain(prevGain => prevGain + altitudeChange);
                     }
+                    
+                    if(timeDiff > 0){
+                        const segmentIncline = (altitudeChange / (segmentDistance * 1000)) * 100;
+                        setCurrentIncline(segmentIncline || 0);
+                    }
+
                 }
                 setLastPosition(position);
                 setLocationError(null);
@@ -220,20 +237,49 @@ export default function Home() {
             watchIdRef.current = null;
         }
         setLastPosition(null);
+        setCurrentSpeed(0);
+        setCurrentIncline(0);
     };
 
+    const startCalorieCalculation = useCallback(() => {
+        calorieTimerRef.current = setInterval(() => {
+            setCalories(prevCalories => {
+                const caloriesPerInterval = calculateCalories({
+                    method: CalorieCalculationMethod.MET, // Default or dynamic method
+                    weight: userProfile.weight,
+                    age: userProfile.age,
+                    gender: userProfile.gender,
+                    duration: 5 / 3600, // 5 seconds in hours
+                    speed: currentSpeed,
+                    incline: currentIncline,
+                    heartRate: heartRate,
+                });
+                return prevCalories + caloriesPerInterval;
+            });
+        }, 5000); // Calculate every 5 seconds
+    }, [userProfile, currentSpeed, currentIncline, heartRate]);
+
+    const stopCalorieCalculation = () => {
+        if (calorieTimerRef.current) {
+            clearInterval(calorieTimerRef.current);
+            calorieTimerRef.current = null;
+        }
+    };
+    
     useEffect(() => {
         if (cardioState === 'running') {
             startLocationTracking();
+            startCalorieCalculation();
         } else {
             stopLocationTracking();
+            stopCalorieCalculation();
         }
-
-        // Cleanup function
         return () => {
             stopLocationTracking();
+            stopCalorieCalculation();
         };
-    }, [cardioState]);
+    }, [cardioState, startCalorieCalculation]);
+
 
     const resetCardioState = useCallback(() => {
         setCardioState('idle');
@@ -247,12 +293,15 @@ export default function Home() {
         setHeartRate(0);
         setAvgHeartRate(0);
         setHeartRateValues([]);
+        setCurrentSpeed(0);
+        setCurrentIncline(0);
         stopLocationTracking();
-    },[]);
+        stopCalorieCalculation();
+    },[stopCalorieCalculation]);
     
     const calculatePace = () => {
         if (distance === 0 || cardioTime === 0) return "0'00\"";
-        const pace = cardioTime / 60 / distance; // minutes per km
+        const pace = cardioTime / 60 / distance;
         const minutes = Math.floor(pace);
         const seconds = Math.round((pace - minutes) * 60);
         return `${minutes}'${seconds.toString().padStart(2, '0')}"`;
@@ -260,10 +309,9 @@ export default function Home() {
 
     const calculateAvgSpeed = () => {
         if (distance === 0 || cardioTime === 0) return "0.0";
-        const avgSpeed = (distance / (cardioTime / 3600)); // km/h
+        const avgSpeed = (distance / (cardioTime / 3600));
         return avgSpeed.toFixed(1);
     }
-
 
     useEffect(() => {
         const splashTimer = setTimeout(() => setSplashVisible(false), 2500);
@@ -273,9 +321,7 @@ export default function Home() {
     
     useEffect(() => {
         if (screen === 'rest' && timeLeft > 0) {
-            timerRef.current = setTimeout(() => {
-                setTimeLeft(timeLeft - 1);
-            }, 1000);
+            timerRef.current = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
         } else if (timeLeft <= 0 && screen === 'rest') {
             finishRest();
         }
@@ -286,9 +332,7 @@ export default function Home() {
 
     useEffect(() => {
         if (cardioState === 'running') {
-            cardioTimerRef.current = setInterval(() => {
-                setCardioTime(prev => prev + 1);
-            }, 1000);
+            cardioTimerRef.current = setInterval(() => setCardioTime(prev => prev + 1), 1000);
         } else {
             if (cardioTimerRef.current) clearInterval(cardioTimerRef.current);
         }
@@ -299,12 +343,10 @@ export default function Home() {
     
     useEffect(() => {
         if (screen === 'workout') {
-            const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
-            setMotivationalQuote(motivationalQuotes[randomIndex]);
+            setMotivationalQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
         }
         if (screen === 'rest') {
-            const randomIndex = Math.floor(Math.random() * restQuotes.length);
-            setRestQuote(restQuotes[randomIndex]);
+            setRestQuote(restQuotes[Math.floor(Math.random() * restQuotes.length)]);
         }
     }, [screen, currentExerciseIndex, currentSet]);
 
@@ -316,9 +358,7 @@ export default function Home() {
         const paddedMinutes = minutes.toString().padStart(2, '0');
         const paddedSeconds = seconds.toString().padStart(2, '0');
 
-        if (hours > 0) {
-            return `${hours.toString().padStart(2, '0')}:${paddedMinutes}:${paddedSeconds}`;
-        }
+        if (hours > 0) return `${hours.toString().padStart(2, '0')}:${paddedMinutes}:${paddedSeconds}`;
         return `${paddedMinutes}:${paddedSeconds}`;
     };
 
@@ -326,40 +366,30 @@ export default function Home() {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         
-        let newExercise: Exercise;
-
-        if (exerciseType === 'musculacao') {
-             newExercise = {
-                id: Date.now(),
-                name: formData.get('exercise-name') as string,
-                type: 'musculacao',
-                sets: formData.get('exercise-sets') as string,
-                reps: formData.get('exercise-reps') as string,
-                weight: formData.get('exercise-weight') as string,
-                restTime: formData.get('exercise-rest-time') as string,
-                notes: formData.get('exercise-notes') as string,
-            };
-        } else {
-             newExercise = {
-                id: Date.now(),
-                name: exerciseType === 'corrida' ? 'Corrida' : 'Caminhada',
-                type: exerciseType,
-                time: formData.get('exercise-time') as string,
-                distance: formData.get('exercise-distance') as string,
-                notes: formData.get('exercise-notes') as string,
-            };
-        }
+        let newExercise: Exercise = exerciseType === 'musculacao' ? {
+            id: Date.now(),
+            name: formData.get('exercise-name') as string,
+            type: 'musculacao',
+            sets: formData.get('exercise-sets') as string,
+            reps: formData.get('exercise-reps') as string,
+            weight: formData.get('exercise-weight') as string,
+            restTime: formData.get('exercise-rest-time') as string,
+            notes: formData.get('exercise-notes') as string,
+        } : {
+            id: Date.now(),
+            name: exerciseType === 'corrida' ? 'Corrida' : 'Caminhada',
+            type: exerciseType,
+            time: formData.get('exercise-time') as string,
+            distance: formData.get('exercise-distance') as string,
+            notes: formData.get('exercise-notes') as string,
+        };
 
         setExercises([...exercises, newExercise]);
         e.currentTarget.reset();
-        if (exerciseType === 'musculacao') {
-            (document.getElementById('exercise-name') as HTMLInputElement)?.focus();
-        }
+        if (exerciseType === 'musculacao') (document.getElementById('exercise-name') as HTMLInputElement)?.focus();
     };
 
-    const removeExercise = (id: number) => {
-        setExercises(exercises.filter(ex => ex.id !== id));
-    };
+    const removeExercise = (id: number) => setExercises(exercises.filter(ex => ex.id !== id));
 
     const startWorkout = () => {
         if (exercises.length > 0) {
@@ -380,10 +410,7 @@ export default function Home() {
             if (currentExerciseIndex < exercises.length - 1) {
                 setCurrentExerciseIndex(currentExerciseIndex + 1);
                 setCurrentSet(1);
-                 // Check if the next exercise is cardio and reset state
-                if (exercises[currentExerciseIndex + 1].type !== 'musculacao') {
-                   resetCardioState();
-                }
+                if (exercises[currentExerciseIndex + 1].type !== 'musculacao') resetCardioState();
             } else {
                 saveWorkoutToHistory();
                 setScreen('finished');
@@ -398,16 +425,13 @@ export default function Home() {
         const isLastExercise = currentExerciseIndex >= exercises.length - 1;
 
         if (currentExercise.type !== 'musculacao') {
-            // This is now the "Stop" button for cardio
             setCardioState('idle');
-            stopLocationTracking(); // Stop GPS
-            
+            stopLocationTracking();
             const finalHeartRateValues = heartRateValues.filter(hr => hr > 0);
             if (finalHeartRateValues.length > 0) {
                 const sum = finalHeartRateValues.reduce((a, b) => a + b, 0);
                 setAvgHeartRate(Math.round(sum / finalHeartRateValues.length));
             }
-            
             if (isLastExercise) {
                 saveWorkoutToHistory();
                 setScreen('finished');
@@ -479,7 +503,7 @@ export default function Home() {
                                                 <label htmlFor="exercise-name" className="block text-sm font-medium text-gray-300 mb-1">Nome do Exercício</label>
                                                 <div className="relative">
                                                     <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5H9.261a2 2 0 0 0-1.926 1.517l-1.412 5.647a2 2 0 0 0 .11 1.34l1.732 2.598a2 2 0 0 0 1.62 1.9l4.379 1.46a2 2 0 0 0 2.22-.53l1.838-2.144a2 2 0 0 0 .22-1.772l-1.21-4.235a2 2 0 0 0-1.814-1.414H12Z"></path><path d="M12 5V2"></path><path d="m7 12-2-2"></path><path d="m17 12 2-2"></path></svg>
+                                                        <Dumbbell className="w-5 h-5 text-gray-400" />
                                                     </span>
                                                     <input type="text" id="exercise-name" name="exercise-name" placeholder="Ex: Supino Reto" required className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                 </div>
@@ -498,7 +522,7 @@ export default function Home() {
                                                 <div>
                                                     <label htmlFor="exercise-weight" className="block text-sm font-medium text-gray-300 mb-1">Peso (opcional)</label>
                                                     <div className="relative">
-                                                        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Dumbbell className="h-5 w-5 text-gray-400" /></span>
+                                                        <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Weight className="h-5 w-5 text-gray-400" /></span>
                                                         <input type="text" id="exercise-weight" name="exercise-weight" placeholder="Ex: 40kg" className="w-full bg-gray-700/50 border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                     </div>
                                                 </div>
@@ -547,9 +571,7 @@ export default function Home() {
                                             <li id={`exercise-${ex.id}`} key={ex.id} className="bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02] animate-slide-in" style={{ animationDelay: `${index * 100}ms`}}>
                                                 <div className="flex items-center flex-grow pr-4">
                                                     <div className="mr-4 text-cyan-400">
-                                                        {ex.type === 'musculacao' && (
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5H9.261a2 2 0 0 0-1.926 1.517l-1.412 5.647a2 2 0 0 0 .11 1.34l1.732 2.598a2 2 0 0 0 1.62 1.9l4.379 1.46a2 2 0 0 0 2.22-.53l1.838-2.144a2 2 0 0 0 .22-1.772l-1.21-4.235a2 2 0 0 0-1.814-1.414H12Z"></path><path d="M12 5V2"></path><path d="m7 12-2-2"></path><path d="m17 12 2-2"></path></svg>
-                                                        )}
+                                                        {ex.type === 'musculacao' && <Dumbbell className="w-6 h-6" />}
                                                         {ex.type === 'corrida' && <Route className="w-6 h-6" />}
                                                         {ex.type === 'caminhada' && <PersonStanding className="w-6 h-6" />}
                                                     </div>
@@ -650,7 +672,7 @@ export default function Home() {
                     <div className="grid grid-cols-4 gap-2 my-4 text-white text-center">
                         <div>
                             <Zap className="w-5 h-5 mx-auto text-yellow-400 mb-1" />
-                            <p className="text-lg font-bold">{calories}</p>
+                            <p className="text-lg font-bold">{Math.round(calories)}</p>
                             <p className="text-gray-500 text-xs">Calorias</p>
                         </div>
                         <div>
@@ -702,41 +724,39 @@ export default function Home() {
             );
         }
         if (screen === 'finished') {
-            const lastWorkout = exercises[exercises.length -1] || {};
+            const lastWorkout = workoutHistory[0] || {};
             const isCardio = lastWorkout.type === 'corrida' || lastWorkout.type === 'caminhada';
 
             return (
                <div className="p-8 text-white space-y-6 overflow-y-auto custom-scrollbar h-full">
-                    {/* Cabeçalho */}
                     <div className="text-center">
                         <Trophy className="text-5xl text-yellow-400 mb-3 animate-pop-in mx-auto" />
                         <h1 className="text-4xl font-black tracking-tighter uppercase animate-fade-in-up delay-100 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400">Treino Finalizado!</h1>
                         <p className="text-gray-400 mt-1 animate-fade-in-up delay-200">Parabéns! Você mandou muito bem.</p>
                     </div>
     
-                    {/* Resumo Principal do Treino */}
                      <div className="bg-gray-800/50 rounded-2xl p-6 space-y-5 animate-fade-in-up delay-300 transition-transform duration-300 hover:-translate-y-1">
                         <div className="flex justify-between items-baseline pb-4 border-b border-gray-700">
-                             <h2 className="text-lg font-bold">{isCardio ? lastWorkout.name : 'Musculação'}</h2>
-                            <span className="text-sm text-gray-400 ml-4 whitespace-nowrap">{new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} de {new Date().getFullYear()}</span>
+                             <h2 className="text-lg font-bold">{lastWorkout.name}</h2>
+                            <span className="text-sm text-gray-400 ml-4 whitespace-nowrap">{new Date(lastWorkout.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} de {new Date(lastWorkout.date).getFullYear()}</span>
                         </div>
     
                         {isCardio ? (
                              <div className="grid grid-cols-3 gap-4 text-center">
                                 <div>
                                     <p className="text-gray-400 text-sm">Tempo</p>
-                                    <p className="text-2xl font-bold">{formatCardioTime(cardioTime)}</p>
+                                    <p className="text-2xl font-bold">{formatCardioTime(lastWorkout.cardioTime || 0)}</p>
                                     <p className="text-xs text-gray-500">min</p>
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-sm">Distância</p>
-                                    <p className="text-2xl font-bold">{distance.toFixed(2)}</p>
+                                    <p className="text-2xl font-bold">{(lastWorkout.distance || 0).toFixed(2)}</p>
                                     <p className="text-xs text-gray-500">km</p>
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-sm">Calorias</p>
-                                    <p className="text-2xl font-bold">{calories}</p>
-                                    <p className="text-xs text-gray-500">kcal</p>
+                                    <p className="text-2xl font-bold">{lastWorkout.calories || 0}</p>
+                                    <p className="text-xs text-gray-500">kcal (estimativa)</p>
                                 </div>
                             </div>
                         ) : (
@@ -755,7 +775,7 @@ export default function Home() {
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-xs">Ritmo Médio</p>
-                                    <p className="font-bold animate-number-pop delay-500">{calculatePace()} <span className="text-sm font-normal text-gray-500">/km</span></p>
+                                    <p className="font-bold animate-number-pop delay-500">{lastWorkout.avgPace} <span className="text-sm font-normal text-gray-500">/km</span></p>
                                 </div>
                             </div>
                             <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-500 transition-transform duration-300 hover:-translate-y-1">
@@ -764,7 +784,7 @@ export default function Home() {
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-xs">Veloc. Média</p>
-                                    <p className="font-bold animate-number-pop delay-600">{calculateAvgSpeed()} <span className="text-sm font-normal text-gray-500">km/h</span></p>
+                                    <p className="font-bold animate-number-pop delay-600">{lastWorkout.avgSpeed} <span className="text-sm font-normal text-gray-500">km/h</span></p>
                                 </div>
                             </div>
                         </div>
@@ -775,11 +795,11 @@ export default function Home() {
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-xs">Frequência Cardíaca</p>
-                                    <p className="font-bold animate-number-pop delay-700">{avgHeartRate || '--'} <span className="text-sm font-normal text-gray-500">bpm (média)</span></p>
+                                    <p className="font-bold animate-number-pop delay-700">{lastWorkout.avgHeartRate || '--'} <span className="text-sm font-normal text-gray-500">bpm (média)</span></p>
                                 </div>
                             </div>
                             <div className="w-full bg-gray-700 rounded-full h-2.5">
-                              <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${(avgHeartRate / 200) * 100}%`}}></div>
+                              <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${( (lastWorkout.avgHeartRate || 0) / 200) * 100}%`}}></div>
                             </div>
                              <div className="text-xs text-gray-500 flex justify-between mt-1">
                                 <span>Zona 2</span>
@@ -795,7 +815,7 @@ export default function Home() {
                          <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-400">
                              <h3 className="font-bold text-lg mb-3 text-cyan-300">Resumo dos Exercícios</h3>
                               <ul className="space-y-3">
-                                  {exercises.map((ex, index) => (
+                                  {lastWorkout.exercises.map((ex: Exercise, index: number) => (
                                       <li key={ex.id} className="text-sm border-b border-gray-700/50 pb-2 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms`}}>
                                           <p className="font-bold">{ex.name}</p>
                                           <p className="text-gray-400">{ex.sets} séries x {ex.reps} reps - {ex.weight}</p>
@@ -805,7 +825,6 @@ export default function Home() {
                          </div>
                      )}
 
-                    {/* Botões de Ação */}
                     <div className="space-y-3 pt-4">
                         <button className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 animate-fade-in-up delay-800 hover:-translate-y-1 hover:shadow-lg">
                             <Share2 className="w-4 h-4"/>
@@ -825,30 +844,59 @@ export default function Home() {
     const renderProfileContent = () => {
         const totalWorkouts = workoutHistory.length;
         const totalCalories = workoutHistory.reduce((acc, workout) => acc + (workout.calories || 0), 0);
+        const joinDate = new Date(userProfile.joinDate);
 
         return (
             <div className="p-4 pt-10 text-white custom-scrollbar h-full overflow-y-auto">
-                <header className="text-center mb-10">
+                <header className="text-center mb-6">
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
                         Meu Perfil
                     </h1>
                 </header>
 
                 <div className="flex flex-col items-center">
-                    <div className="relative mb-6">
+                    <div className="relative mb-4">
                         <img className="w-24 h-24 rounded-full border-4 border-cyan-400 object-cover" src="https://placehold.co/100x100.png" alt="Foto do Perfil" data-ai-hint="profile picture" />
                         <button className="absolute bottom-0 right-0 bg-gray-800 rounded-full p-1 border-2 border-gray-900">
                            <PlusCircle className="w-5 h-5 text-cyan-400" />
                         </button>
                     </div>
 
-                    <h2 className="text-2xl font-bold">Usuário Fitness</h2>
-                    <p className="text-gray-400">Juntou-se em {new Date().getFullYear()}</p>
+                    <h2 className="text-2xl font-bold">{tempProfile.name}</h2>
+                    <p className="text-gray-400 text-sm">Juntou-se em {joinDate.toLocaleDateString('pt-BR', { month: 'long' })} de {joinDate.getFullYear()}</p>
                 </div>
                 
-                 <div className="gradient-border mt-8">
+                 <div className="gradient-border mt-6">
+                    <div className="gradient-border-content space-y-4">
+                        <h3 className="text-lg font-semibold text-white text-center">Meus Dados</h3>
+                         <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label htmlFor="weight" className="block text-sm font-medium text-gray-400 mb-1">Peso (kg)</label>
+                                <input type="number" id="weight" name="weight" value={tempProfile.weight} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                            </div>
+                             <div>
+                                <label htmlFor="age" className="block text-sm font-medium text-gray-400 mb-1">Idade</label>
+                                <input type="number" id="age" name="age" value={tempProfile.age} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                            </div>
+                        </div>
+                        <div>
+                             <label htmlFor="gender" className="block text-sm font-medium text-gray-400 mb-1">Sexo</label>
+                             <select id="gender" name="gender" value={tempProfile.gender} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                <option value="male">Masculino</option>
+                                <option value="female">Feminino</option>
+                                <option value="other">Outro</option>
+                             </select>
+                        </div>
+                         <button onClick={saveProfile} className="w-full bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2.5 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
+                            <Save className="w-4 h-4"/>
+                            Salvar Dados
+                        </button>
+                    </div>
+                </div>
+
+                 <div className="gradient-border mt-6">
                     <div className="gradient-border-content">
-                        <h3 className="text-lg font-semibold mb-4 text-white">Estatísticas Gerais</h3>
+                        <h3 className="text-lg font-semibold mb-4 text-white text-center">Estatísticas Gerais</h3>
                         <div className="grid grid-cols-2 gap-4 text-center">
                             <div>
                                 <p className="text-2xl font-bold text-cyan-400">{totalWorkouts}</p>
@@ -932,37 +980,6 @@ export default function Home() {
                 transition: background-color 5000s ease-in-out 0s;
                 caret-color: #fff !important;
             }
-            .toggle-checkbox {
-                appearance: none;
-                width: 40px;
-                height: 22px;
-                background-color: #4b5563;
-                border-radius: 9999px;
-                position: relative;
-                cursor: pointer;
-                transition: background-color 0.2s ease-in-out;
-            }
-            .toggle-checkbox:checked {
-                background-color: #10b981;
-            }
-            .toggle-checkbox::before {
-                content: '';
-                position: absolute;
-                width: 16px;
-                height: 16px;
-                background-color: white;
-                border-radius: 9999px;
-                top: 3px;
-                left: 3px;
-                transition: transform 0.2s ease-in-out;
-            }
-            .toggle-checkbox:checked::before {
-                transform: translateX(18px);
-            }
-             .toggle-checkbox:disabled {
-                opacity: 0.5;
-                cursor: not-allowed;
-            }
         `}</style>
             <div className="gym-background"></div>
             <div className="phone-frame">
@@ -970,13 +987,13 @@ export default function Home() {
                   {activeTab === 'workout' ? renderWorkoutContent() : renderProfileContent()}
                 </div>
 
-                <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
+                <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 mt-auto" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
                     <div className="flex justify-around items-center h-16">
                         <button 
                             onClick={() => handleNavClick('musculacao')} 
                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
-                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5H9.261a2 2 0 0 0-1.926 1.517l-1.412 5.647a2 2 0 0 0 .11 1.34l1.732 2.598a2 2 0 0 0 1.62 1.9l4.379 1.46a2 2 0 0 0 2.22-.53l1.838-2.144a2 2 0 0 0 .22-1.772l-1.21-4.235a2 2 0 0 0-1.814-1.414H12Z"></path><path d="M12 5V2"></path><path d="m7 12-2-2"></path><path d="m17 12 2-2"></path></svg>
+                             <Dumbbell className="w-7 h-7" />
                             <span className="text-xs mt-1">Musculação</span>
                         </button>
                         <button 
@@ -1008,8 +1025,8 @@ export default function Home() {
                             <svg className="splash-icon w-24 h-24 text-cyan-400" viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <g transform="rotate(-30 32 32)">
                                     <rect x="22" y="30" width="20" height="4" rx="2" fill="#9ca3af"/>
-                                    <path d="M18 18C12.4772 18 8 22.4772 8 28V36C8 41.5228 12.4772 46 8 46H20V18H18Z"/>
-                                    <path d="M46 18H44V46H46C51.5228 46 56 41.5228 56 36V28C56 22.4772 51.5228 18 46 18Z"/>
+                                    <path d="M18 18C12.4772 18 8 22.4772 8 28V36C8 41.5228 12.4772 46 8 46H20V18H18Z" fill="currentColor"/>
+                                    <path d="M46 18H44V46H46C51.5228 46 56 41.5228 56 36V28C56 22.4772 51.5228 18 46 18Z" fill="currentColor"/>
                                 </g>
                             </svg>
                         )}
@@ -1019,5 +1036,3 @@ export default function Home() {
         </>
     );
 }
-
-    
