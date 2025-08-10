@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit, Trash2, PersonStanding } from 'lucide-react';
+import { Dumbbell, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit, Trash2, Footprints } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
     AlertDialog,
@@ -632,7 +632,7 @@ export default function Home() {
                                                     <div className="mr-4 text-cyan-400">
                                                         {ex.type === 'musculacao' && <Dumbbell className="w-6 h-6" />}
                                                         {ex.type === 'corrida' && <Route className="w-6 h-6" />}
-                                                        {ex.type === 'caminhada' && <PersonStanding className="w-6 h-6" />}
+                                                        {ex.type === 'caminhada' && <Footprints className="w-6 h-6" />}
                                                     </div>
                                                     <div className="flex-grow">
                                                         <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
@@ -832,7 +832,7 @@ export default function Home() {
                          <div className="grid grid-cols-2 gap-4">
                             <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-400 transition-transform duration-300 hover:-translate-y-1">
                                 <div className="bg-blue-500/20 p-2 rounded-full">
-                                    <PersonStanding className="text-blue-400 w-5 h-5" />
+                                    <Footprints className="text-blue-400 w-5 h-5" />
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-xs">Ritmo Médio</p>
@@ -1040,7 +1040,7 @@ export default function Home() {
                                             <div className="flex items-center gap-3">
                                                 {workout.type === 'musculacao' && <Dumbbell className="w-6 h-6 text-cyan-400" />}
                                                 {workout.type === 'corrida' && <Route className="w-6 h-6 text-cyan-400" />}
-                                                {workout.type === 'caminhada' && <PersonStanding className="w-6 h-6 text-cyan-400" />}
+                                                {workout.type === 'caminhada' && <Footprints className="w-6 h-6 text-cyan-400" />}
                                             </div>
                                             <span className="font-bold text-lg">{workout.name}</span>
                                             <span className="text-xs text-gray-400 flex items-center gap-1.5">
@@ -1144,7 +1144,7 @@ export default function Home() {
                             onClick={() => handleNavClick('caminhada')} 
                              className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
-                            <PersonStanding className="w-7 h-7" />
+                            <Footprints className="w-7 h-7" />
                             <span className="text-xs mt-1">Caminhada</span>
                         </button>
                          <button 
