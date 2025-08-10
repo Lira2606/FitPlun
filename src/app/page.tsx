@@ -380,6 +380,9 @@ export default function Home() {
     }
 
     const handleNavClick = (type: ExerciseType) => {
+        if (screen === 'finished') {
+            startNewWorkout();
+        }
         setActiveTab('workout');
         setExerciseType(type);
     };
