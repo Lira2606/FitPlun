@@ -655,7 +655,7 @@ export default function Home() {
                     {/* Resumo Principal do Treino */}
                      <div className="bg-gray-800/50 rounded-2xl p-6 space-y-5 animate-fade-in-up delay-300 transition-transform duration-300 hover:-translate-y-1">
                         <div className="flex justify-between items-baseline pb-4 border-b border-gray-700">
-                             <h2 className="text-xl font-bold">{isCardio ? lastWorkout.name : 'Musculação'}</h2>
+                             <h2 className="text-lg font-bold">{isCardio ? lastWorkout.name : 'Musculação'}</h2>
                             <span className="text-sm text-gray-400 ml-4">{new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric'})}</span>
                         </div>
     
@@ -902,7 +902,7 @@ export default function Home() {
                             onClick={() => handleNavClick('musculacao')} 
                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4Z"></path><path d="M14 9V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2"></path><path d="M18 9h2"></path><path d="M6 13h2"></path><path d="M10 13h2"></path></svg>
+                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4Z"></path><path d="M14 9V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2"></path><path d="M18 9h2"></path><path d="M6 13h2"></path><path d="M10 13h2"></path></svg>
                             <span className="text-xs mt-1">Musculação</span>
                         </button>
                         <button 
