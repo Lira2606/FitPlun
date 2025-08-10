@@ -746,7 +746,9 @@ export default function Home() {
                      <div className="bg-gray-800/50 rounded-2xl p-6 space-y-5 animate-fade-in-up delay-300 transition-transform duration-300 hover:-translate-y-1">
                         <div className="flex justify-between items-baseline pb-4 border-b border-gray-700">
                              <h2 className="text-lg font-bold">{lastWorkout.name}</h2>
-                            <span className="text-sm text-gray-400 ml-4 whitespace-nowrap">{new Date(lastWorkout.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} de {new Date(lastWorkout.date).getFullYear()}</span>
+                            <span className="text-sm text-gray-400 whitespace-nowrap ml-4">
+                                {new Date(lastWorkout.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} de {new Date(lastWorkout.date).getFullYear()}
+                            </span>
                         </div>
     
                         {isCardio ? (
@@ -916,15 +918,15 @@ export default function Home() {
                     <div className="mt-6 text-center">
                         <div className="bg-gray-800/50 rounded-2xl p-4 grid grid-cols-3 gap-4">
                             <div>
-                               <p className="font-bold text-lg">{userProfile.weight}<span className="text-sm text-gray-400">kg</span></p>
+                               <p className="font-bold text-lg text-gray-400">{userProfile.weight}<span className="text-sm">kg</span></p>
                                <p className="text-xs text-gray-500">Peso</p>
                             </div>
                              <div>
-                               <p className="font-bold text-lg">{userProfile.height}<span className="text-sm text-gray-400">cm</span></p>
+                               <p className="font-bold text-lg text-gray-400">{userProfile.height}<span className="text-sm">cm</span></p>
                                <p className="text-xs text-gray-500">Altura</p>
                             </div>
                              <div>
-                               <p className="font-bold text-lg">{userProfile.age}<span className="text-sm text-gray-400">anos</span></p>
+                               <p className="font-bold text-lg text-gray-400">{userProfile.age}<span className="text-sm">anos</span></p>
                                <p className="text-xs text-gray-500">Idade</p>
                             </div>
                         </div>
