@@ -3,7 +3,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2 } from 'lucide-react';
+import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
@@ -21,6 +21,22 @@ interface Exercise {
     distance?: string;
     notes?: string;
 }
+
+interface WorkoutSummary {
+    id: number;
+    date: string;
+    type: ExerciseType;
+    name: string;
+    exercises: Exercise[];
+    // Cardio specific summary
+    cardioTime?: number;
+    distance?: number;
+    calories?: number;
+    avgPace?: string;
+    avgSpeed?: string;
+    avgHeartRate?: number;
+}
+
 
 const motivationalQuotes = [
     "O corpo alcança o que a mente acredita. Acredite no seu potencial.",
@@ -103,6 +119,52 @@ export default function Home() {
     const [heartRateValues, setHeartRateValues] = useState<number[]>([]);
     const [elevationGain, setElevationGain] = useState(0);
     const [cadence, setCadence] = useState(0);
+    
+    // Workout History State
+    const [workoutHistory, setWorkoutHistory] = useState<WorkoutSummary[]>([]);
+
+    useEffect(() => {
+        try {
+            const savedHistory = localStorage.getItem('workoutHistory');
+            if (savedHistory) {
+                setWorkoutHistory(JSON.parse(savedHistory));
+            }
+        } catch (error) {
+            console.error("Failed to load workout history from localStorage", error);
+        }
+    }, []);
+
+    const saveWorkoutToHistory = () => {
+        const lastExercise = exercises[exercises.length - 1];
+        if (!lastExercise) return;
+
+        const isCardio = lastExercise.type === 'corrida' || lastExercise.type === 'caminhada';
+
+        const summary: WorkoutSummary = {
+            id: Date.now(),
+            date: new Date().toISOString(),
+            type: exercises[0].type, // Assume all exercises in a workout are of the same primary type
+            name: isCardio ? lastExercise.name : 'Musculação',
+            exercises: [...exercises],
+            ...(isCardio && {
+                cardioTime: cardioTime,
+                distance: distance,
+                calories: calories,
+                avgPace: calculatePace(),
+                avgSpeed: calculateAvgSpeed(),
+                avgHeartRate: avgHeartRate,
+            })
+        };
+
+        const updatedHistory = [summary, ...workoutHistory];
+        setWorkoutHistory(updatedHistory);
+        try {
+            localStorage.setItem('workoutHistory', JSON.stringify(updatedHistory));
+        } catch (error) {
+            console.error("Failed to save workout history to localStorage", error);
+        }
+    };
+
 
     // Haversine formula to calculate distance between two points
     const calculateDistance = (pos1: GeolocationPosition, pos2: GeolocationPosition) => {
@@ -324,6 +386,7 @@ export default function Home() {
                    resetCardioState();
                 }
             } else {
+                saveWorkoutToHistory();
                 setScreen('finished');
                 return;
             }
@@ -347,6 +410,7 @@ export default function Home() {
             }
             
             if (isLastExercise) {
+                saveWorkoutToHistory();
                 setScreen('finished');
             } else {
                 setCurrentExerciseIndex(currentExerciseIndex + 1);
@@ -360,6 +424,7 @@ export default function Home() {
         const isLastSet = currentSet >= totalSets;
 
         if (isLastSet && isLastExercise) {
+            saveWorkoutToHistory();
             setScreen('finished');
         } else if (currentExercise.restTime && parseInt(currentExercise.restTime) > 0) {
             setTimeLeft(parseInt(currentExercise.restTime));
@@ -759,8 +824,11 @@ export default function Home() {
     }
     
     const renderProfileContent = () => {
+        const totalWorkouts = workoutHistory.length;
+        const totalCalories = workoutHistory.reduce((acc, workout) => acc + (workout.calories || 0), 0);
+
         return (
-            <div className="p-4 pt-10 text-white">
+            <div className="p-4 pt-10 text-white custom-scrollbar h-full overflow-y-auto">
                 <header className="text-center mb-10">
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
                         Meu Perfil
@@ -776,43 +844,77 @@ export default function Home() {
                     </div>
 
                     <h2 className="text-2xl font-bold">Usuário Fitness</h2>
-                    <p className="text-gray-400">Desde 2024</p>
+                    <p className="text-gray-400">Juntou-se em {new Date().getFullYear()}</p>
                 </div>
                 
                  <div className="gradient-border mt-8">
                     <div className="gradient-border-content">
-                        <h3 className="text-lg font-semibold mb-4 text-white">Estatísticas</h3>
+                        <h3 className="text-lg font-semibold mb-4 text-white">Estatísticas Gerais</h3>
                         <div className="grid grid-cols-2 gap-4 text-center">
                             <div>
-                                <p className="text-2xl font-bold text-cyan-400">15</p>
+                                <p className="text-2xl font-bold text-cyan-400">{totalWorkouts}</p>
                                 <p className="text-sm text-gray-400">Treinos Concluídos</p>
                             </div>
                             <div>
-                                <p className="text-2xl font-bold text-cyan-400">1250</p>
+                                <p className="text-2xl font-bold text-cyan-400">{totalCalories.toLocaleString('pt-BR')}</p>
                                 <p className="text-sm text-gray-400">Calorias Queimadas</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                 <div className="gradient-border mt-6">
-                    <div className="gradient-border-content">
-                        <h3 className="text-lg font-semibold mb-4 text-white">Configurações</h3>
-                        <ul className="space-y-3">
-                            <li className="flex justify-between items-center bg-gray-700/50 p-3 rounded-lg">
-                                <span>Notificações</span>
-                                <input type="checkbox" className="toggle-checkbox" defaultChecked />
-                            </li>
-                             <li className="flex justify-between items-center bg-gray-700/50 p-3 rounded-lg">
-                                <span>Tema Escuro</span>
-                                <input type="checkbox" className="toggle-checkbox" defaultChecked disabled />
-                            </li>
-                             <li className="flex justify-between items-center bg-gray-700/50 p-3 rounded-lg">
-                                <span>Sair</span>
-                                <button className="text-red-500 font-semibold">Logout</button>
-                            </li>
+                <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+                        <History className="w-5 h-5 text-cyan-400"/>
+                        Histórico de Treinos
+                    </h3>
+                    {workoutHistory.length === 0 ? (
+                        <div className="text-center text-gray-500 bg-gray-800/50 rounded-lg p-6">
+                            <p>Nenhum treino registrado ainda.</p>
+                            <p className="text-sm mt-1">Complete seu primeiro treino para vê-lo aqui!</p>
+                        </div>
+                    ) : (
+                        <ul className="space-y-4">
+                            {workoutHistory.map(workout => (
+                                <li key={workout.id} className="bg-gray-800/50 rounded-xl p-4 transition-all hover:bg-gray-800/80 hover:scale-[1.02]">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <div className="flex items-center gap-3">
+                                            {workout.type === 'musculacao' && <Dumbbell className="w-6 h-6 text-cyan-400" />}
+                                            {workout.type === 'corrida' && <Route className="w-6 h-6 text-cyan-400" />}
+                                            {workout.type === 'caminhada' && <Footprints className="w-6 h-6 text-cyan-400" />}
+                                            <span className="font-bold text-lg">{workout.name}</span>
+                                        </div>
+                                        <span className="text-xs text-gray-400 flex items-center gap-1.5">
+                                            <Calendar className="w-3 h-3"/>
+                                            {new Date(workout.date).toLocaleDateString('pt-BR')}
+                                        </span>
+                                    </div>
+                                    {workout.type === 'musculacao' ? (
+                                        <ul className="text-sm space-y-1 text-gray-300 pl-2">
+                                            {workout.exercises.map(ex => (
+                                                <li key={ex.id}>- {ex.name}: {ex.sets}x{ex.reps} {ex.weight && ` com ${ex.weight}`}</li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <div className="grid grid-cols-3 gap-2 text-center text-sm pt-2 border-t border-gray-700/50">
+                                            <div>
+                                                <p className="font-bold">{formatCardioTime(workout.cardioTime || 0)}</p>
+                                                <p className="text-xs text-gray-500">Tempo</p>
+                                            </div>
+                                            <div>
+                                                <p className="font-bold">{(workout.distance || 0).toFixed(2)}</p>
+                                                <p className="text-xs text-gray-500">Dist (km)</p>
+                                            </div>
+                                            <div>
+                                                <p className="font-bold">{workout.calories || 0}</p>
+                                                <p className="text-xs text-gray-500">Calorias</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </li>
+                            ))}
                         </ul>
-                    </div>
+                    )}
                 </div>
 
             </div>
