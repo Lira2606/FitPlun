@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, PersonStanding, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit, Trash2, LogOut } from 'lucide-react';
+import { Dumbbell, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit, Trash2, PersonStanding } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
     AlertDialog,
@@ -919,7 +919,7 @@ export default function Home() {
                 <div className="flex flex-col items-center">
                     <div className="relative mb-4">
                         <Avatar className="w-24 h-24 border-4 border-cyan-400">
-                           <AvatarImage src={tempProfile.profilePicture} alt={tempProfile.name} className="object-cover" />
+                           <AvatarImage src={tempProfile.profilePicture} alt={tempProfile.name} />
                             <AvatarFallback className="bg-gray-700 text-cyan-400 text-3xl font-bold">
                                 {userInitials}
                             </AvatarFallback>
@@ -1041,8 +1041,8 @@ export default function Home() {
                                                 {workout.type === 'musculacao' && <Dumbbell className="w-6 h-6 text-cyan-400" />}
                                                 {workout.type === 'corrida' && <Route className="w-6 h-6 text-cyan-400" />}
                                                 {workout.type === 'caminhada' && <PersonStanding className="w-6 h-6 text-cyan-400" />}
-                                                <span className="font-bold text-lg">{workout.name}</span>
                                             </div>
+                                            <span className="font-bold text-lg">{workout.name}</span>
                                             <span className="text-xs text-gray-400 flex items-center gap-1.5">
                                                 <Calendar className="w-3 h-3"/>
                                                 {new Date(workout.date).toLocaleDateString('pt-BR')}
