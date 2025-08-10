@@ -867,7 +867,7 @@ export default function Home() {
                         </button>
                     </div>
 
-                    <h2 className="text-2xl font-bold">{tempProfile.name}</h2>
+                    <h2 className="text-2xl font-bold">{userProfile.name}</h2>
                     <p className="text-gray-400 text-sm">Juntou-se em {joinDate.toLocaleDateString('pt-BR', { month: 'long' })} de {joinDate.getFullYear()}</p>
                 </div>
                 
