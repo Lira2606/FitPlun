@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, PersonStanding, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save } from 'lucide-react';
+import { Dumbbell, PersonStanding, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { calculateCalories, CalorieCalculationMethod } from '@/lib/calorie-calculator';
 
@@ -27,6 +27,7 @@ interface UserProfile {
     joinDate: string;
     weight: number;
     age: number;
+    height: number;
     gender: Gender;
 }
 
@@ -100,6 +101,7 @@ export default function Home() {
         joinDate: new Date().toISOString(),
         weight: 70,
         age: 30,
+        height: 175,
         gender: 'male',
     });
     const [tempProfile, setTempProfile] = useState<UserProfile>(userProfile);
@@ -144,7 +146,8 @@ export default function Home() {
     
     const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setTempProfile(prev => ({ ...prev, [name]: name === 'weight' || name === 'age' ? parseFloat(value) : value }));
+        const numericValue = ['weight', 'age', 'height'].includes(name) ? parseFloat(value) : value;
+        setTempProfile(prev => ({ ...prev, [name]: numericValue }));
     };
 
 
@@ -871,33 +874,64 @@ export default function Home() {
                     <p className="text-gray-400 text-sm">Juntou-se em {joinDate.toLocaleDateString('pt-BR', { month: 'long' })} de {joinDate.getFullYear()}</p>
                 </div>
                 
-                 {showProfileForm && (
+                 {showProfileForm ? (
                     <div className="gradient-border mt-6">
                         <div className="gradient-border-content space-y-4">
                             <h3 className="text-lg font-semibold text-white text-center">Meus Dados</h3>
+                            <div>
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-1">Nome</label>
+                                <input type="text" id="name" name="name" value={tempProfile.name} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                            </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label htmlFor="weight" className="block text-sm font-medium text-gray-400 mb-1">Peso (kg)</label>
                                     <input type="number" id="weight" name="weight" value={tempProfile.weight || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
                                 </div>
                                 <div>
+                                    <label htmlFor="height" className="block text-sm font-medium text-gray-400 mb-1">Altura (cm)</label>
+                                    <input type="number" id="height" name="height" value={tempProfile.height || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                                </div>
+                            </div>
+                             <div className="grid grid-cols-2 gap-4">
+                                <div>
                                     <label htmlFor="age" className="block text-sm font-medium text-gray-400 mb-1">Idade</label>
                                     <input type="number" id="age" name="age" value={tempProfile.age || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
                                 </div>
-                            </div>
-                            <div>
-                                <label htmlFor="gender" className="block text-sm font-medium text-gray-400 mb-1">Sexo</label>
-                                <select id="gender" name="gender" value={tempProfile.gender} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                                    <option value="male">Masculino</option>
-                                    <option value="female">Feminino</option>
-                                    <option value="other">Outro</option>
-                                </select>
+                                <div>
+                                    <label htmlFor="gender" className="block text-sm font-medium text-gray-400 mb-1">Sexo</label>
+                                    <select id="gender" name="gender" value={tempProfile.gender} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 h-[42px]">
+                                        <option value="male">Masculino</option>
+                                        <option value="female">Feminino</option>
+                                        <option value="other">Outro</option>
+                                    </select>
+                                </div>
                             </div>
                             <button onClick={saveProfile} className="w-full bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-2.5 px-4 rounded-lg transition-all flex items-center justify-center gap-2">
                                 <Save className="w-4 h-4"/>
                                 Salvar Dados
                             </button>
                         </div>
+                    </div>
+                ) : (
+                    <div className="mt-6 text-center">
+                        <div className="bg-gray-800/50 rounded-2xl p-4 grid grid-cols-3 gap-4">
+                            <div>
+                               <p className="font-bold text-lg">{userProfile.weight}<span className="text-sm text-gray-400">kg</span></p>
+                               <p className="text-xs text-gray-500">Peso</p>
+                            </div>
+                             <div>
+                               <p className="font-bold text-lg">{userProfile.height}<span className="text-sm text-gray-400">cm</span></p>
+                               <p className="text-xs text-gray-500">Altura</p>
+                            </div>
+                             <div>
+                               <p className="font-bold text-lg">{userProfile.age}<span className="text-sm text-gray-400">anos</span></p>
+                               <p className="text-xs text-gray-500">Idade</p>
+                            </div>
+                        </div>
+                        <button onClick={() => setShowProfileForm(true)} className="mt-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all text-sm flex items-center justify-center gap-2 mx-auto">
+                            <Edit className="w-3 h-3"/>
+                            Editar Dados
+                        </button>
                     </div>
                 )}
 
