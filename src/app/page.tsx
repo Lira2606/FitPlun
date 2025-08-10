@@ -918,15 +918,15 @@ export default function Home() {
                     <div className="mt-6 text-center">
                         <div className="bg-gray-800/50 rounded-2xl p-4 grid grid-cols-3 gap-4">
                             <div>
-                               <p className="font-bold text-lg text-gray-400">{userProfile.weight}<span className="text-sm">kg</span></p>
+                               <p className="font-bold text-lg text-gray-400">{userProfile.weight} <span className="text-sm">kg</span></p>
                                <p className="text-xs text-gray-500">Peso</p>
                             </div>
                              <div>
-                               <p className="font-bold text-lg text-gray-400">{userProfile.height}<span className="text-sm">cm</span></p>
+                               <p className="font-bold text-lg text-gray-400">{userProfile.height} <span className="text-sm">cm</span></p>
                                <p className="text-xs text-gray-500">Altura</p>
                             </div>
                              <div>
-                               <p className="font-bold text-lg text-gray-400">{userProfile.age}<span className="text-sm">anos</span></p>
+                               <p className="font-bold text-lg text-gray-400">{userProfile.age} <span className="text-sm">anos</span></p>
                                <p className="text-xs text-gray-500">Idade</p>
                             </div>
                         </div>
