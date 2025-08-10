@@ -948,7 +948,7 @@ export default function Home() {
                             </div>
                             <div>
                                 <p className="text-2xl font-bold text-cyan-400">{totalCalories.toLocaleString('pt-BR')}</p>
-                                <p className="text-sm text-gray-400">Calorias Queimadas</p>
+                                <p className="text-sm text-gray-400">Total de Calorias</p>
                             </div>
                         </div>
                     </div>
