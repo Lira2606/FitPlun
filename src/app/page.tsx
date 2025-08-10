@@ -6,6 +6,7 @@ import { Dumbbell, Footprints, Pause, Play, Route, Square, Weight, Heart, Zap, M
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
+type ActiveTab = 'workout' | 'profile';
 
 interface Exercise {
     id: number;
@@ -80,6 +81,7 @@ export default function Home() {
     const [motivationalQuote, setMotivationalQuote] = useState('');
     const [restQuote, setRestQuote] = useState('');
     const [exerciseType, setExerciseType] = useState<ExerciseType>('musculacao');
+    const [activeTab, setActiveTab] = useState<ActiveTab>('workout');
     const [cardioState, setCardioState] = useState<'idle' | 'running' | 'paused'>('idle');
     const [cardioTime, setCardioTime] = useState(0);
     const cardioTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -352,10 +354,15 @@ export default function Home() {
         setScreen('builder');
     }
 
+    const handleNavClick = (type: ExerciseType) => {
+        setActiveTab('workout');
+        setExerciseType(type);
+    };
+
     const currentExercise = exercises[currentExerciseIndex];
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
-    const renderContent = () => {
+    const renderWorkoutContent = () => {
        if (screen === 'builder') {
          return (
             <div className="flex flex-col min-h-full p-4 pt-10">
@@ -652,6 +659,67 @@ export default function Home() {
           }
         return null;
     }
+    
+    const renderProfileContent = () => {
+        return (
+            <div className="p-4 pt-10 text-white">
+                <header className="text-center mb-10">
+                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
+                        Meu Perfil
+                    </h1>
+                </header>
+
+                <div className="flex flex-col items-center">
+                    <div className="relative mb-6">
+                        <img className="w-24 h-24 rounded-full border-4 border-cyan-400 object-cover" src="https://placehold.co/100x100.png" alt="Foto do Perfil" data-ai-hint="profile picture" />
+                        <button className="absolute bottom-0 right-0 bg-gray-800 rounded-full p-1 border-2 border-gray-900">
+                           <PlusCircle className="w-5 h-5 text-cyan-400" />
+                        </button>
+                    </div>
+
+                    <h2 className="text-2xl font-bold">Usuário Fitness</h2>
+                    <p className="text-gray-400">Desde 2024</p>
+                </div>
+                
+                 <div className="gradient-border mt-8">
+                    <div className="gradient-border-content">
+                        <h3 className="text-lg font-semibold mb-4 text-white">Estatísticas</h3>
+                        <div className="grid grid-cols-2 gap-4 text-center">
+                            <div>
+                                <p className="text-2xl font-bold text-cyan-400">15</p>
+                                <p className="text-sm text-gray-400">Treinos Concluídos</p>
+                            </div>
+                            <div>
+                                <p className="text-2xl font-bold text-cyan-400">1250</p>
+                                <p className="text-sm text-gray-400">Calorias Queimadas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                 <div className="gradient-border mt-6">
+                    <div className="gradient-border-content">
+                        <h3 className="text-lg font-semibold mb-4 text-white">Configurações</h3>
+                        <ul className="space-y-3">
+                            <li className="flex justify-between items-center bg-gray-700/50 p-3 rounded-lg">
+                                <span>Notificações</span>
+                                <input type="checkbox" className="toggle-checkbox" defaultChecked />
+                            </li>
+                             <li className="flex justify-between items-center bg-gray-700/50 p-3 rounded-lg">
+                                <span>Tema Escuro</span>
+                                <input type="checkbox" className="toggle-checkbox" defaultChecked disabled />
+                            </li>
+                             <li className="flex justify-between items-center bg-gray-700/50 p-3 rounded-lg">
+                                <span>Sair</span>
+                                <button className="text-red-500 font-semibold">Logout</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        );
+    };
 
     return (
         <>
@@ -676,6 +744,37 @@ export default function Home() {
             .bottom-nav {
                 flex-shrink: 0;
             }
+            .toggle-checkbox {
+                appearance: none;
+                width: 40px;
+                height: 22px;
+                background-color: #4b5563;
+                border-radius: 9999px;
+                position: relative;
+                cursor: pointer;
+                transition: background-color 0.2s ease-in-out;
+            }
+            .toggle-checkbox:checked {
+                background-color: #10b981;
+            }
+            .toggle-checkbox::before {
+                content: '';
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                background-color: white;
+                border-radius: 9999px;
+                top: 3px;
+                left: 3px;
+                transition: transform 0.2s ease-in-out;
+            }
+            .toggle-checkbox:checked::before {
+                transform: translateX(18px);
+            }
+             .toggle-checkbox:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
         `}</style>
             <div className="gym-background"></div>
             <div className="phone-frame">
@@ -685,7 +784,7 @@ export default function Home() {
                             <svg className="splash-icon w-24 h-24 text-cyan-400" viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <g transform="rotate(-30 32 32)">
                                     <rect x="22" y="30" width="20" height="4" rx="2" fill="#9ca3af"/>
-                                    <path d="M18 18C12.4772 18 8 22.4772 8 28V36C8 41.5228 12.4772 46 18 46H20V18H18Z"/>
+                                    <path d="M18 18C12.4772 18 8 22.4772 8 28V36C8 41.5228 12.4772 46 8 46H20V18H18Z"/>
                                     <path d="M46 18H44V46H46C51.5228 46 56 41.5228 56 36V28C56 22.4772 51.5228 18 46 18Z"/>
                                 </g>
                             </svg>
@@ -694,31 +793,38 @@ export default function Home() {
                 )}
 
                 <div className="phone-content custom-scrollbar">
-                  {renderContent()}
+                  {activeTab === 'workout' ? renderWorkoutContent() : renderProfileContent()}
                 </div>
 
                 <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50">
                     <div className="flex justify-around items-center h-16">
                         <button 
-                            onClick={() => setExerciseType('musculacao')} 
-                            className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                            onClick={() => handleNavClick('musculacao')} 
+                            className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4Z"></path><path d="M14 9V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v2"></path><path d="M18 9h2"></path><path d="M6 13h2"></path><path d="M10 13h2"></path></svg>
                             <span className="text-xs mt-1">Musculação</span>
                         </button>
                         <button 
-                            onClick={() => setExerciseType('corrida')} 
-                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${exerciseType === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                            onClick={() => handleNavClick('corrida')} 
+                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
                             <Route className="w-7 h-7" />
                             <span className="text-xs mt-1">Corrida</span>
                         </button>
                         <button 
-                            onClick={() => setExerciseType('caminhada')} 
-                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${exerciseType === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                            onClick={() => handleNavClick('caminhada')} 
+                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
                             <Footprints className="w-7 h-7" />
                             <span className="text-xs mt-1">Caminhada</span>
+                        </button>
+                         <button 
+                            onClick={() => setActiveTab('profile')} 
+                            className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'profile' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                        >
+                            <User className="w-7 h-7" />
+                            <span className="text-xs mt-1">Perfil</span>
                         </button>
                     </div>
                 </nav>
@@ -726,3 +832,5 @@ export default function Home() {
         </>
     );
 }
+
+    
