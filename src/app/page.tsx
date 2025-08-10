@@ -872,11 +872,11 @@ export default function Home() {
                          <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="weight" className="block text-sm font-medium text-gray-400 mb-1">Peso (kg)</label>
-                                <input type="number" id="weight" name="weight" value={tempProfile.weight} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                                <input type="number" id="weight" name="weight" value={tempProfile.weight || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
                             </div>
                              <div>
                                 <label htmlFor="age" className="block text-sm font-medium text-gray-400 mb-1">Idade</label>
-                                <input type="number" id="age" name="age" value={tempProfile.age} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                                <input type="number" id="age" name="age" value={tempProfile.age || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
                             </div>
                         </div>
                         <div>
