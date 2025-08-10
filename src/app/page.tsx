@@ -195,8 +195,9 @@ export default function Home() {
         }
     };
     
-    const handleDeleteWorkout = (id: number) => {
-        const updatedHistory = workoutHistory.filter(workout => workout.id !== id);
+    const handleDeleteWorkout = () => {
+        if (workoutToDelete === null) return;
+        const updatedHistory = workoutHistory.filter(workout => workout.id !== workoutToDelete);
         setWorkoutHistory(updatedHistory);
         try {
             localStorage.setItem('workoutHistory', JSON.stringify(updatedHistory));
@@ -984,7 +985,7 @@ export default function Home() {
                         <History className="w-5 h-5 text-cyan-400"/>
                         Histórico de Treinos
                     </h3>
-                    {workoutHistory.length === 0 ? (
+                     {workoutHistory.length === 0 ? (
                         <div className="text-center text-gray-500 bg-gray-800/50 rounded-lg p-6">
                             <p>Nenhum treino registrado ainda.</p>
                             <p className="text-sm mt-1">Complete seu primeiro treino para vê-lo aqui!</p>
@@ -1031,31 +1032,32 @@ export default function Home() {
                                     </div>
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild>
-                                            <button onClick={(e) => { e.stopPropagation(); setWorkoutToDelete(workout.id); }} className="ml-4 flex-shrink-0 text-gray-500 hover:text-red-500 transition-colors p-1">
+                                            <button onClick={() => setWorkoutToDelete(workout.id)} className="ml-4 flex-shrink-0 text-gray-500 hover:text-red-500 transition-colors p-1">
                                                 <Trash2 className="w-5 h-5" />
                                             </button>
                                         </AlertDialogTrigger>
-                                        {workoutToDelete === workout.id && (
-                                        <AlertDialogContent>
-                                            <AlertDialogHeader>
-                                                <AlertDialogTitle>Excluir Treino</AlertDialogTitle>
-                                                <AlertDialogDescription>
-                                                    Tem certeza que deseja excluir este treino do seu histórico? Esta ação não pode ser desfeita.
-                                                </AlertDialogDescription>
-                                            </AlertDialogHeader>
-                                            <AlertDialogFooter>
-                                                <AlertDialogCancel onClick={() => setWorkoutToDelete(null)}>Cancelar</AlertDialogCancel>
-                                                <AlertDialogAction onClick={() => handleDeleteWorkout(workout.id)}>Excluir</AlertDialogAction>
-                                            </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                        )}
                                     </AlertDialog>
                                 </li>
                             ))}
                         </ul>
                     )}
                 </div>
-
+                 {workoutToDelete !== null && (
+                    <AlertDialog open={workoutToDelete !== null} onOpenChange={(open) => !open && setWorkoutToDelete(null)}>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Excluir Treino</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Tem certeza que deseja excluir este treino do seu histórico? Esta ação não pode ser desfeita.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel onClick={() => setWorkoutToDelete(null)}>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleDeleteWorkout}>Excluir</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                )}
             </div>
         );
     };
@@ -1128,3 +1130,5 @@ export default function Home() {
         </>
     );
 }
+
+    
