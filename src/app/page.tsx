@@ -1,8 +1,19 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, PersonStanding, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit } from 'lucide-react';
+import { Dumbbell, PersonStanding, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit, Trash2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { calculateCalories, CalorieCalculationMethod } from '@/lib/calorie-calculator';
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
@@ -94,6 +105,8 @@ export default function Home() {
     
     // Workout History State
     const [workoutHistory, setWorkoutHistory] = useState<WorkoutSummary[]>([]);
+    const [workoutToDelete, setWorkoutToDelete] = useState<number | null>(null);
+
 
     // User Profile State
     const [userProfile, setUserProfile] = useState<UserProfile>({
@@ -181,6 +194,18 @@ export default function Home() {
             console.error("Failed to save workout history to localStorage", error);
         }
     };
+    
+    const handleDeleteWorkout = (id: number) => {
+        const updatedHistory = workoutHistory.filter(workout => workout.id !== id);
+        setWorkoutHistory(updatedHistory);
+        try {
+            localStorage.setItem('workoutHistory', JSON.stringify(updatedHistory));
+        } catch (error) {
+            console.error("Failed to save updated workout history to localStorage", error);
+        }
+        setWorkoutToDelete(null); // Close the dialog
+    };
+
 
     const calculateDistanceHaversine = (pos1: GeolocationPosition, pos2: GeolocationPosition) => {
         const toRad = (value: number) => (value * Math.PI) / 180;
@@ -918,15 +943,15 @@ export default function Home() {
                     <div className="mt-6 text-center">
                         <div className="bg-gray-800/50 rounded-2xl p-4 grid grid-cols-3 gap-4">
                             <div>
-                               <p className="font-bold text-lg text-gray-400">{userProfile.weight} <span className="text-sm">kg</span></p>
+                               <p className="font-bold text-lg text-gray-400">{userProfile.weight}<span className="text-sm"> kg</span></p>
                                <p className="text-xs text-gray-500">Peso</p>
                             </div>
                              <div>
-                               <p className="font-bold text-lg text-gray-400">{userProfile.height} <span className="text-sm">cm</span></p>
+                               <p className="font-bold text-lg text-gray-400">{userProfile.height}<span className="text-sm"> cm</span></p>
                                <p className="text-xs text-gray-500">Altura</p>
                             </div>
                              <div>
-                               <p className="font-bold text-lg text-gray-400">{userProfile.age} <span className="text-sm">anos</span></p>
+                               <p className="font-bold text-lg text-gray-400">{userProfile.age}<span className="text-sm"> anos</span></p>
                                <p className="text-xs text-gray-500">Idade</p>
                             </div>
                         </div>
@@ -967,41 +992,64 @@ export default function Home() {
                     ) : (
                         <ul className="space-y-4">
                             {workoutHistory.map(workout => (
-                                <li key={workout.id} className="bg-gray-800/50 rounded-xl p-4 transition-all hover:bg-gray-800/80 hover:scale-[1.02]">
-                                    <div className="flex justify-between items-center mb-3">
-                                        <div className="flex items-center gap-3">
-                                            {workout.type === 'musculacao' && <Dumbbell className="w-6 h-6 text-cyan-400" />}
-                                            {workout.type === 'corrida' && <Route className="w-6 h-6 text-cyan-400" />}
-                                            {workout.type === 'caminhada' && <PersonStanding className="w-6 h-6 text-cyan-400" />}
-                                            <span className="font-bold text-lg">{workout.name}</span>
+                                <li key={workout.id} className="bg-gray-800/50 rounded-xl p-4 transition-all hover:bg-gray-800/80 hover:scale-[1.02] flex justify-between items-start">
+                                    <div className="flex-grow">
+                                        <div className="flex justify-between items-center mb-3">
+                                            <div className="flex items-center gap-3">
+                                                {workout.type === 'musculacao' && <Dumbbell className="w-6 h-6 text-cyan-400" />}
+                                                {workout.type === 'corrida' && <Route className="w-6 h-6 text-cyan-400" />}
+                                                {workout.type === 'caminhada' && <PersonStanding className="w-6 h-6 text-cyan-400" />}
+                                                <span className="font-bold text-lg">{workout.name}</span>
+                                            </div>
+                                            <span className="text-xs text-gray-400 flex items-center gap-1.5">
+                                                <Calendar className="w-3 h-3"/>
+                                                {new Date(workout.date).toLocaleDateString('pt-BR')}
+                                            </span>
                                         </div>
-                                        <span className="text-xs text-gray-400 flex items-center gap-1.5">
-                                            <Calendar className="w-3 h-3"/>
-                                            {new Date(workout.date).toLocaleDateString('pt-BR')}
-                                        </span>
+                                        {workout.type === 'musculacao' ? (
+                                            <ul className="text-sm space-y-1 text-gray-300 pl-2">
+                                                {workout.exercises.map(ex => (
+                                                    <li key={ex.id}>- {ex.name}: {ex.sets}x{ex.reps} {ex.weight && ` com ${ex.weight}`}</li>
+                                                ))}
+                                            </ul>
+                                        ) : (
+                                            <div className="grid grid-cols-3 gap-2 text-center text-sm pt-2 border-t border-gray-700/50">
+                                                <div>
+                                                    <p className="font-bold">{formatCardioTime(workout.cardioTime || 0)}</p>
+                                                    <p className="text-xs text-gray-500">Tempo</p>
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold">{(workout.distance || 0).toFixed(2)}</p>
+                                                    <p className="text-xs text-gray-500">Dist (km)</p>
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold">{workout.calories || 0}</p>
+                                                    <p className="text-xs text-gray-500">Calorias</p>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
-                                    {workout.type === 'musculacao' ? (
-                                        <ul className="text-sm space-y-1 text-gray-300 pl-2">
-                                            {workout.exercises.map(ex => (
-                                                <li key={ex.id}>- {ex.name}: {ex.sets}x{ex.reps} {ex.weight && ` com ${ex.weight}`}</li>
-                                            ))}
-                                        </ul>
-                                    ) : (
-                                        <div className="grid grid-cols-3 gap-2 text-center text-sm pt-2 border-t border-gray-700/50">
-                                            <div>
-                                                <p className="font-bold">{formatCardioTime(workout.cardioTime || 0)}</p>
-                                                <p className="text-xs text-gray-500">Tempo</p>
-                                            </div>
-                                            <div>
-                                                <p className="font-bold">{(workout.distance || 0).toFixed(2)}</p>
-                                                <p className="text-xs text-gray-500">Dist (km)</p>
-                                            </div>
-                                            <div>
-                                                <p className="font-bold">{workout.calories || 0}</p>
-                                                <p className="text-xs text-gray-500">Calorias</p>
-                                            </div>
-                                        </div>
-                                    )}
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <button onClick={(e) => { e.stopPropagation(); setWorkoutToDelete(workout.id); }} className="ml-4 flex-shrink-0 text-gray-500 hover:text-red-500 transition-colors p-1">
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        </AlertDialogTrigger>
+                                        {workoutToDelete === workout.id && (
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Excluir Treino</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Tem certeza que deseja excluir este treino do seu histórico? Esta ação não pode ser desfeita.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel onClick={() => setWorkoutToDelete(null)}>Cancelar</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => handleDeleteWorkout(workout.id)}>Excluir</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                        )}
+                                    </AlertDialog>
                                 </li>
                             ))}
                         </ul>
