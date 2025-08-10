@@ -523,6 +523,7 @@ export default function Home() {
     const startNewWorkout = () => {
         setExercises([]);
         setScreen('builder');
+        setActiveTab('workout');
     }
 
     const handleNavClick = (type: ExerciseType) => {
@@ -1082,6 +1083,17 @@ export default function Home() {
                         </ul>
                     )}
                 </div>
+
+                 <div className="mt-8 mb-4">
+                    <button
+                        onClick={startNewWorkout}
+                        className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all text-sm flex items-center justify-center gap-2 mx-auto"
+                    >
+                        <LogOut className="w-4 h-4"/>
+                        Sair
+                    </button>
+                </div>
+
 
                  {workoutToDelete !== null && (
                     <AlertDialog open={workoutToDelete !== null} onOpenChange={(open) => !open && setWorkoutToDelete(null)}>
