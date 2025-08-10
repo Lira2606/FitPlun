@@ -896,7 +896,6 @@ export default function Home() {
                 <div className="flex flex-col items-center">
                     <div className="relative mb-4">
                         <Avatar className="w-24 h-24 border-4 border-cyan-400">
-                            <AvatarImage src="https://placehold.co/100x100.png" alt="Foto do Perfil" data-ai-hint="profile picture" />
                             <AvatarFallback className="bg-gray-700 text-cyan-400 text-3xl font-bold">
                                 {userInitials}
                             </AvatarFallback>
