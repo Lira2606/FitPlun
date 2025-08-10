@@ -654,9 +654,9 @@ export default function Home() {
     
                     {/* Resumo Principal do Treino */}
                      <div className="bg-gray-800/50 rounded-2xl p-6 space-y-5 animate-fade-in-up delay-300 transition-transform duration-300 hover:-translate-y-1">
-                        <div className="flex justify-between items-center pb-4 border-b border-gray-700">
+                        <div className="flex justify-between items-baseline pb-4 border-b border-gray-700">
                              <h2 className="text-xl font-bold">{isCardio ? lastWorkout.name : 'Musculação'}</h2>
-                            <span className="text-sm text-gray-400">{new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric'})}</span>
+                            <span className="text-sm text-gray-400 ml-4">{new Date().toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric'})}</span>
                         </div>
     
                         {isCardio ? (
