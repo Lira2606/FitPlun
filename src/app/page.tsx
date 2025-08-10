@@ -15,6 +15,8 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { calculateCalories, CalorieCalculationMethod } from '@/lib/calorie-calculator';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
 type ActiveTab = 'workout' | 'profile';
@@ -881,6 +883,7 @@ export default function Home() {
         const totalWorkouts = workoutHistory.length;
         const totalCalories = workoutHistory.reduce((acc, workout) => acc + (workout.calories || 0), 0);
         const joinDate = new Date(userProfile.joinDate);
+        const userInitials = userProfile.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 
         return (
             <div className="p-4 pt-10 text-white custom-scrollbar h-full overflow-y-auto">
@@ -892,7 +895,12 @@ export default function Home() {
 
                 <div className="flex flex-col items-center">
                     <div className="relative mb-4">
-                        <img className="w-24 h-24 rounded-full border-4 border-cyan-400 object-cover" src="https://placehold.co/100x100.png" alt="Foto do Perfil" data-ai-hint="profile picture" />
+                        <Avatar className="w-24 h-24 border-4 border-cyan-400">
+                            <AvatarImage src="https://placehold.co/100x100.png" alt="Foto do Perfil" data-ai-hint="profile picture" />
+                            <AvatarFallback className="bg-gray-700 text-cyan-400 text-3xl font-bold">
+                                {userInitials}
+                            </AvatarFallback>
+                        </Avatar>
                         <button className="absolute bottom-0 right-0 bg-gray-800 rounded-full p-1 border-2 border-gray-900">
                            <PlusCircle className="w-5 h-5 text-cyan-400" />
                         </button>
