@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
-import { Dumbbell, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit, Trash2, Footprints, LogOut } from 'lucide-react';
+import { Dumbbell, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit, Trash2, Footprints } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
     AlertDialog,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { calculateCalories, CalorieCalculationMethod } from '@/lib/calorie-calculator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { WalkIcon } from '@/components/icons/WalkIcon';
 
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
@@ -632,7 +633,7 @@ export default function Home() {
                                                     <div className="mr-4 text-cyan-400">
                                                         {ex.type === 'musculacao' && <Dumbbell className="w-6 h-6" />}
                                                         {ex.type === 'corrida' && <Route className="w-6 h-6" />}
-                                                        {ex.type === 'caminhada' && <Footprints className="w-6 h-6" />}
+                                                        {ex.type === 'caminhada' && <WalkIcon className="w-6 h-6" />}
                                                     </div>
                                                     <div className="flex-grow">
                                                         <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
@@ -1040,7 +1041,7 @@ export default function Home() {
                                             <div className="flex items-center gap-3">
                                                 {workout.type === 'musculacao' && <Dumbbell className="w-6 h-6 text-cyan-400" />}
                                                 {workout.type === 'corrida' && <Route className="w-6 h-6 text-cyan-400" />}
-                                                {workout.type === 'caminhada' && <Footprints className="w-6 h-6 text-cyan-400" />}
+                                                {workout.type === 'caminhada' && <WalkIcon className="w-6 h-6 text-cyan-400" />}
                                             </div>
                                             <span className="font-bold text-lg">{workout.name}</span>
                                             <span className="text-xs text-gray-400 flex items-center gap-1.5">
@@ -1144,7 +1145,7 @@ export default function Home() {
                             onClick={() => handleNavClick('caminhada')} 
                              className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                         >
-                            <Footprints className="w-7 h-7" />
+                            <WalkIcon className="w-7 h-7" />
                             <span className="text-xs mt-1">Caminhada</span>
                         </button>
                          <button 
@@ -1160,11 +1161,11 @@ export default function Home() {
                     <div id="splash-screen">
                         {showSplashIcon && (
                             <svg className="splash-icon w-24 h-24 text-cyan-400" viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <g transform="rotate(-30 32 32)">
-                                    <rect x="22" y="30" width="20" height="4" rx="2" fill="#9ca3af"/>
-                                    <path d="M 22 18 A 14 14 0 0 0 22 46 Z" fill="currentColor"/>
-                                    <path d="M 42 18 A 14 14 0 0 1 42 46 Z" fill="currentColor"/>
-                                </g>
+                               <g transform="rotate(15 32 32)">
+                                <rect x="22" y="30" width="20" height="4" rx="2" fill="#9ca3af"/>
+                                <circle cx="16" cy="32" r="6" fill="currentColor"/>
+                                <circle cx="48" cy="32" r="6" fill="currentColor"/>
+                               </g>
                             </svg>
                         )}
                     </div>
