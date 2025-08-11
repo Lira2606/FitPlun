@@ -919,7 +919,7 @@ export default function Home() {
                 <div className="flex flex-col items-center">
                     <div className="relative mb-4">
                         <Avatar className="w-24 h-24 border-4 border-cyan-400">
-                           <AvatarImage src={tempProfile.profilePicture} alt={tempProfile.name} className="object-cover" />
+                           <AvatarImage src={tempProfile.profilePicture} alt={tempProfile.name} />
                             <AvatarFallback className="bg-gray-700 text-cyan-400 text-3xl font-bold">
                                 {userInitials}
                             </AvatarFallback>
@@ -1162,8 +1162,8 @@ export default function Home() {
                             <svg className="splash-icon w-24 h-24 text-cyan-400" viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                 <g transform="rotate(-30 32 32)">
                                     <rect x="22" y="30" width="20" height="4" rx="2" fill="#9ca3af"/>
-                                    <path d="M18 18C12.4772 18 8 22.4772 8 28V36C8 41.5228 12.4772 46 8 46H20V18H18Z" fill="currentColor"/>
-                                    <path d="M46 18H44V46H46C51.5228 46 56 41.5228 56 36V28C56 22.4772 51.5228 18 46 18Z" fill="currentColor"/>
+                                    <path d="M 22 18 A 14 14 0 0 0 22 46 Z" fill="currentColor"/>
+                                    <path d="M 42 18 A 14 14 0 0 1 42 46 Z" fill="currentColor"/>
                                 </g>
                             </svg>
                         )}
