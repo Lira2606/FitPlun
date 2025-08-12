@@ -1111,9 +1111,9 @@ export default function Home() {
     return (
         <>
             {showSplash && (
-                <div id="splash-screen" className="animate-splash-out">
-                    <div className="splash-icon-container animate-pop-in">
-                       <BicepCurlAnimation />
+                 <div id="splash-screen" className="animate-splash-out">
+                    <div className="splash-icon-container">
+                       <Dumbbell className="w-12 h-12 text-cyan-400 splash-icon" />
                     </div>
                 </div>
             )}

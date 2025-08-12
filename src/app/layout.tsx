@@ -223,8 +223,22 @@ export default function RootLayout({
               transition: opacity 0.5s ease-out;
             }
             .splash-icon-container {
-              width: 150px;
-              height: 150px;
+              width: 80px;
+              height: 80px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            .splash-icon {
+                animation: spin 1.5s linear infinite;
+            }
+            @keyframes spin {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(360deg);
+                }
             }
             .animate-splash-out {
                 animation: fade-out-splash 0.5s ease-out 2s forwards;
