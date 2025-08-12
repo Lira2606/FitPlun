@@ -210,6 +210,37 @@ export default function RootLayout({
                     width: 100%;
                 }
             }
+            
+            /* Splash Screen */
+            #splash-screen {
+              position: fixed;
+              inset: 0;
+              z-index: 9999;
+              background-color: #030712;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: opacity 0.5s ease-out;
+            }
+            .splash-icon {
+              width: 80px;
+              height: 80px;
+              color: #06b6d4;
+            }
+            .animate-splash-out {
+                animation: fade-out-splash 0.5s ease-out 2s forwards;
+            }
+            @keyframes fade-out-splash {
+                to {
+                    opacity: 0;
+                    visibility: hidden;
+                }
+            }
+            .animate-pop-in {
+                animation: popIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s forwards;
+                opacity: 0;
+            }
+
 
             .animate-fade-in-up {
                 animation: fadeInUp 0.6s ease-out forwards;

@@ -89,6 +89,7 @@ export default function Home() {
     const [cardioTime, setCardioTime] = useState(0);
     const cardioTimerRef = useRef<NodeJS.Timeout | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const [showSplash, setShowSplash] = useState(true);
     
     // GPS Tracking State
     const [distance, setDistance] = useState(0); // in kilometers
@@ -128,6 +129,14 @@ export default function Home() {
 
     // Calorie Calculation
     const calorieTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+     // Splash Screen Effect
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowSplash(false);
+        }, 2500); // Adjust time as needed
+        return () => clearTimeout(timer);
+    }, []);
 
     // Load data from localStorage on mount
     useEffect(() => {
@@ -1101,17 +1110,22 @@ export default function Home() {
 
     return (
         <>
-        <style>{`
-            input:-webkit-autofill,
-            input:-webkit-autofill:hover,
-            input:-webkit-autofill:focus,
-            input:-webkit-autofill:active {
-                -webkit-text-fill-color: #ffffff !important;
-                -webkit-box-shadow: 0 0 0 1000px rgba(55, 65, 81, 0.5) inset !important;
-                transition: background-color 5000s ease-in-out 0s;
-                caret-color: #fff !important;
-            }
-        `}</style>
+            {showSplash && (
+                <div id="splash-screen" className="animate-splash-out">
+                    <BicepIcon className="splash-icon animate-pop-in" />
+                </div>
+            )}
+            <style>{`
+                input:-webkit-autofill,
+                input:-webkit-autofill:hover,
+                input:-webkit-autofill:focus,
+                input:-webkit-autofill:active {
+                    -webkit-text-fill-color: #ffffff !important;
+                    -webkit-box-shadow: 0 0 0 1000px rgba(55, 65, 81, 0.5) inset !important;
+                    transition: background-color 5000s ease-in-out 0s;
+                    caret-color: #fff !important;
+                }
+            `}</style>
             <div className="gym-background"></div>
             <div className="phone-frame">
                 <div className="phone-content custom-scrollbar">
