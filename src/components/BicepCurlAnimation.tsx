@@ -3,7 +3,7 @@ import React from 'react';
 export function BicepCurlAnimation() {
     const colors = {
         '--cor-pele': '#e0ac87',
-        '--cor-roupa': '#ef4444',
+        '--cor-roupa': '#06b6d4', // Alterado para ciano
         '--cor-cinto': '#4b5563',
         '--cor-barra': '#9ca3af',
         '--cor-peso': '#1f2937',
