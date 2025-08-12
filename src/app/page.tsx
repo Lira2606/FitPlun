@@ -1126,7 +1126,7 @@ export default function Home() {
                  {showSplash && (
                      <div id="splash-screen" className="animate-splash-out">
                         <div className="splash-icon-container">
-                           <Dumbbell className="w-12 h-12 text-cyan-400" />
+                           <Dumbbell className="w-12 h-12" />
                         </div>
                     </div>
                 )}

@@ -222,6 +222,9 @@ export default function RootLayout({
               justify-content: center;
               transition: opacity 0.5s ease-out;
             }
+            #splash-screen svg {
+                color: #22d3ee; /* cyan-400 */
+            }
             .splash-icon-container {
               width: 80px;
               height: 80px;
