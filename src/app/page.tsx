@@ -1110,13 +1110,6 @@ export default function Home() {
 
     return (
         <>
-            {showSplash && (
-                 <div id="splash-screen" className="animate-splash-out">
-                    <div className="splash-icon-container">
-                       <Dumbbell className="w-12 h-12 text-cyan-400 splash-icon" />
-                    </div>
-                </div>
-            )}
             <style>{`
                 input:-webkit-autofill,
                 input:-webkit-autofill:hover,
@@ -1130,6 +1123,13 @@ export default function Home() {
             `}</style>
             <div className="gym-background"></div>
             <div className="phone-frame">
+                 {showSplash && (
+                     <div id="splash-screen" className="animate-splash-out">
+                        <div className="splash-icon-container">
+                           <Dumbbell className="w-12 h-12 text-cyan-400" />
+                        </div>
+                    </div>
+                )}
                 <div className="phone-content custom-scrollbar">
                   {activeTab === 'workout' ? renderWorkoutContent() : renderProfileContent()}
                 </div>

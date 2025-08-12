@@ -213,9 +213,9 @@ export default function RootLayout({
             
             /* Splash Screen */
             #splash-screen {
-              position: fixed;
+              position: absolute;
               inset: 0;
-              z-index: 9999;
+              z-index: 999;
               background-color: #030712;
               display: flex;
               align-items: center;
@@ -238,11 +238,6 @@ export default function RootLayout({
                     visibility: hidden;
                 }
             }
-            .animate-pop-in {
-                animation: popIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s forwards;
-                opacity: 0;
-            }
-
 
             .animate-fade-in-up {
                 animation: fadeInUp 0.6s ease-out forwards;
