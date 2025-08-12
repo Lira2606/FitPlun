@@ -1162,7 +1162,7 @@ export default function Home() {
                     <div id="splash-screen">
                         {showSplashIcon && (
                             <div className="w-32 h-32 splash-icon">
-                                <BicepIcon className="w-full h-full text-cyan-400" />
+                                <BicepCurlAnimation />
                             </div>
                         )}
                     </div>
