@@ -17,6 +17,7 @@ import {
 import { calculateCalories, CalorieCalculationMethod } from '@/lib/calorie-calculator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { WalkIcon } from '@/components/icons/WalkIcon';
+import { BicepIcon } from '@/components/icons/BicepIcon';
 
 
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
@@ -1161,7 +1162,7 @@ export default function Home() {
                     <div id="splash-screen">
                         {showSplashIcon && (
                             <div className="w-32 h-32 splash-icon">
-                                <BicepCurlAnimation />
+                                <BicepIcon className="w-full h-full text-cyan-400" />
                             </div>
                         )}
                     </div>
