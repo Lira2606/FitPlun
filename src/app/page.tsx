@@ -89,8 +89,6 @@ export default function Home() {
     const [cardioTime, setCardioTime] = useState(0);
     const cardioTimerRef = useRef<NodeJS.Timeout | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-    const [splashVisible, setSplashVisible] = useState(true);
-    const [showSplashIcon, setShowSplashIcon] = useState(false);
     
     // GPS Tracking State
     const [distance, setDistance] = useState(0); // in kilometers
@@ -372,12 +370,6 @@ export default function Home() {
         const avgSpeed = (distance / (cardioTime / 3600));
         return avgSpeed.toFixed(1);
     }
-
-    useEffect(() => {
-        const splashTimer = setTimeout(() => setSplashVisible(false), 2500);
-        setShowSplashIcon(true);
-        return () => clearTimeout(splashTimer);
-    }, []);
     
     useEffect(() => {
         if (screen === 'rest' && timeLeft > 0) {
@@ -1158,15 +1150,6 @@ export default function Home() {
                         </button>
                     </div>
                 </nav>
-                 {splashVisible && (
-                    <div id="splash-screen">
-                        {showSplashIcon && (
-                            <div className="w-32 h-32 splash-icon">
-                                <BicepCurlAnimation />
-                            </div>
-                        )}
-                    </div>
-                )}
             </div>
         </>
     );

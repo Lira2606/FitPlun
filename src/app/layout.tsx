@@ -47,37 +47,6 @@ export default function RootLayout({
                 background-color: rgba(3, 7, 18, 0.8);
                 backdrop-filter: blur(5px);
             }
-            #splash-screen {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: #030712;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 50;
-                transition: opacity 0.8s ease-out, visibility 0.8s;
-                border-radius: 32px;
-            }
-            #splash-screen.hidden {
-                opacity: 0;
-                visibility: hidden;
-                pointer-events: none;
-            }
-            .splash-icon {
-                opacity: 0;
-                animation: pulse 2s infinite ease-in-out, fade-in-splash 0.5s 0.2s ease-out forwards;
-            }
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.1); }
-            }
-            @keyframes fade-in-splash {
-                from { opacity: 0; transform: translateY(10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
             .phone-frame {
                 max-width: 390px;
                 max-height: 844px;
