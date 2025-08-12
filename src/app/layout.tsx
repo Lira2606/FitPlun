@@ -222,10 +222,9 @@ export default function RootLayout({
               justify-content: center;
               transition: opacity 0.5s ease-out;
             }
-            .splash-icon {
-              width: 80px;
-              height: 80px;
-              color: #06b6d4;
+            .splash-icon-container {
+              width: 150px;
+              height: 150px;
             }
             .animate-splash-out {
                 animation: fade-out-splash 0.5s ease-out 2s forwards;

@@ -1112,7 +1112,9 @@ export default function Home() {
         <>
             {showSplash && (
                 <div id="splash-screen" className="animate-splash-out">
-                    <BicepIcon className="splash-icon animate-pop-in" />
+                    <div className="splash-icon-container animate-pop-in">
+                       <BicepCurlAnimation />
+                    </div>
                 </div>
             )}
             <style>{`
