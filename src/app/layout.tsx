@@ -219,41 +219,34 @@ export default function RootLayout({
                 background: #020617;
                 overflow: hidden;
                 display: flex;
+                flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 transition: opacity 0.5s ease-out;
             }
-
-             #splash-screen .splash-logo-container {
+            
+            #splash-screen .splash-logo-container {
                 width: 6rem; /* 96px */
                 height: 6rem; /* 96px */
                 margin-bottom: 1.25rem; /* mb-5 */
             }
 
-            #splash-screen .splash-logo-container svg {
+            #splash-screen svg {
                 width: 100%;
                 height: 100%;
+                color: #22d3ee;
+                opacity: 0;
             }
-            
-            #splash-screen .splash-logo-container .icon-background {
-                color: #374151; /* text-gray-700 */
-            }
-
-            #splash-screen .icon-fill-animation .icon-foreground {
-                 color: #22d3ee; /* Cor ciano */
-            }
-
 
             /* Animações de entrada da Splash */
             @keyframes fadeInDown {
                 from { opacity: 0; transform: translateY(-20px); }
                 to { opacity: 1; transform: translateY(0); }
             }
-
-            /* Animação de preenchimento do ícone */
-            @keyframes fillIcon {
-                from { clip-path: inset(100% 0 0 0); }
-                to { clip-path: inset(0% 0 0 0); }
+            
+            @keyframes icon-fade-in {
+              from { opacity: 0; transform: scale(0.9); }
+              to { opacity: 1; transform: scale(1); }
             }
 
             /* Animação das partículas de fundo */
@@ -263,15 +256,11 @@ export default function RootLayout({
             }
 
             /* Aplicando animações com delays */
-            .splash-logo-animation { animation: fadeInDown 0.8s ease-out forwards; }
+            .splash-logo-animation { animation: icon-fade-in 1s ease-out forwards; }
+            .splash-logo-animation svg { animation: icon-fade-in 1s ease-out 0.2s forwards; }
             .splash-title-animation { animation: fadeInDown 0.8s ease-out 0.3s forwards; opacity: 0; }
             .splash-slogan-animation { animation: fadeInUp 0.8s ease-out 0.6s forwards; opacity: 0; }
             .splash-quote-animation { animation: fadeInUp 0.8s ease-out 0.9s forwards; opacity: 0; }
-
-            .icon-fill-animation {
-                clip-path: inset(100% 0 0 0); 
-                animation: fillIcon 3.5s ease-in-out 0.5s;
-            }
 
             .particle {
                 position: absolute;
