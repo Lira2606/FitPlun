@@ -1181,9 +1181,11 @@ export default function Home() {
                                 <span className="text-cyan-400">Força</span> & Foco
                             </h1>
                             <p className="mt-2 text-lg text-gray-400 splash-slogan-animation">Sua jornada começa agora.</p>
-                            <p id="quote" className="text-center text-gray-300 text-sm italic mt-6 h-5 splash-quote-animation">
-                                &quot;{splashQuote}&quot;
-                            </p>
+                            {splashQuote && (
+                              <p id="quote" className="text-center text-gray-300 text-sm italic mt-6 h-5 splash-quote-animation">
+                                  &quot;{splashQuote}&quot;
+                              </p>
+                            )}
                         </div>
                     </div>
                 )}
