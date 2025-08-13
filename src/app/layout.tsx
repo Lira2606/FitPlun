@@ -216,7 +216,7 @@ export default function RootLayout({
                 position: absolute;
                 inset: 0;
                 z-index: 999;
-                background: radial-gradient(circle, #1f2937, #111827);
+                background: #020617;
                 overflow: hidden;
                 display: flex;
                 align-items: center;
