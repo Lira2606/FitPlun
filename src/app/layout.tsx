@@ -225,13 +225,6 @@ export default function RootLayout({
             #splash-screen svg {
                 color: #22d3ee; /* cyan-400 */
             }
-            .splash-icon-container {
-              width: 80px;
-              height: 80px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            }
             .animate-splash-out {
                 animation: fade-out-splash 0.5s ease-out 2s forwards;
             }

@@ -1124,10 +1124,8 @@ export default function Home() {
             <div className="gym-background"></div>
             <div className="phone-frame">
                  {showSplash && (
-                     <div id="splash-screen" className="animate-splash-out">
-                        <div className="splash-icon-container">
-                           <Dumbbell className="w-12 h-12" />
-                        </div>
+                    <div id="splash-screen" className="animate-splash-out">
+                        <Dumbbell className="w-12 h-12" />
                     </div>
                 )}
                 <div className="phone-content custom-scrollbar">
