@@ -76,6 +76,14 @@ const restQuotes = [
     "Não confunda descanso com desistência.",
 ];
 
+const splashQuotes = [
+    "A dor que você sente hoje é a força que você sentirá amanhã.",
+    "O corpo alcança o que a mente acredita.",
+    "Não espere por oportunidades, crie-as.",
+    "A única má sessão de treino é aquela que não aconteceu.",
+    "Seja mais forte que a sua melhor desculpa."
+];
+
 
 export default function Home() {
     const [screen, setScreen] = useState('builder'); // 'builder', 'workout', 'rest', 'finished'
@@ -92,6 +100,8 @@ export default function Home() {
     const cardioTimerRef = useRef<NodeJS.Timeout | null>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const [showSplash, setShowSplash] = useState(true);
+    const [splashQuote, setSplashQuote] = useState('');
+    const particleContainerRef = useRef<HTMLDivElement>(null);
     
     // GPS Tracking State
     const [distance, setDistance] = useState(0); // in kilometers
@@ -135,8 +145,41 @@ export default function Home() {
      // Splash Screen Effect
     useEffect(() => {
         const timer = setTimeout(() => {
-            setShowSplash(false);
-        }, 2500); // Adjust time as needed
+            const splashScreen = document.getElementById('splash-screen');
+            if (splashScreen) {
+                splashScreen.classList.add('animate-splash-out');
+                splashScreen.addEventListener('animationend', () => {
+                    setShowSplash(false);
+                }, { once: true });
+            } else {
+                 setShowSplash(false);
+            }
+        }, 4200);
+
+        setSplashQuote(splashQuotes[Math.floor(Math.random() * splashQuotes.length)]);
+
+        const container = particleContainerRef.current;
+        if (container) {
+            // Clear previous particles
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            const particleCount = 30;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 7 + 3;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.bottom = `-${size}px`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.animationDuration = `${Math.random() * 15 + 10}s`;
+                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particle.style.setProperty('--random-x', String(Math.random() - 0.5));
+                container.appendChild(particle);
+            }
+        }
+        
         return () => clearTimeout(timer);
     }, []);
 
@@ -615,7 +658,7 @@ export default function Home() {
 
                                     <div>
                                         <label htmlFor="exercise-notes" className="block text-sm font-medium text-gray-300 mb-1">Notas (opcional)</label>
-                                        <Textarea id="exercise-notes" name="exercise-notes" rows={2} placeholder="Ex: Manter ritmo, observar postura..." className="w-full bg-gray-700/50 border-gray-600 rounded-lg px-4 py-2.5 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
+                                        <Textarea id="exercise-notes" name="exercise-notes" rows={2} placeholder="Ex: Manter ritmo, observar postura..." className="w-full bg-gray-700/50 border-gray-600 rounded-lg px-4 py-2 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                     </div>
                                 </div>
                                 <button type="submit" className="mt-auto w-full bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/50">
@@ -1126,8 +1169,27 @@ export default function Home() {
             <div className="gym-background"></div>
             <div className="phone-frame">
                  {showSplash && (
-                    <div id="splash-screen">
-                        <Dumbbell />
+                    <div id="splash-screen" className="flex flex-col items-center justify-center p-4">
+                        <div ref={particleContainerRef} id="particle-container" className="absolute top-0 left-0 w-full h-full"></div>
+                        <div className="text-center z-10">
+                            <div className="relative w-24 h-24 mx-auto mb-5 splash-logo-animation">
+                                 <svg className="w-full h-full text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12.75 8.25v-1.5a2.25 2.25 0 00-4.5 0v1.5m4.5 0v4.5m-4.5-4.5v4.5m0-6.75h4.5m-4.5 0a2.25 2.25 0 01-2.25-2.25V6.75a2.25 2.25 0 012.25-2.25h4.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25m-4.5 0h4.5m-12 6.75a2.25 2.25 0 012.25-2.25h13.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25v-1.5z" />
+                                </svg>
+                                 <div className="absolute top-0 left-0 w-full h-full icon-fill-animation">
+                                    <svg className="w-full h-full text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12.75 8.25v-1.5a2.25 2.25 0 00-4.5 0v1.5m4.5 0v4.5m-4.5-4.5v4.5m0-6.75h4.5m-4.5 0a2.25 2.25 0 01-2.25-2.25V6.75a2.25 2.25 0 012.25-2.25h4.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25m-4.5 0h4.5m-12 6.75a2.25 2.25 0 012.25-2.25h13.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25v-1.5z" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <h1 className="text-4xl md:text-5xl font-black tracking-wider uppercase splash-title-animation">
+                                <span className="text-emerald-400">Força</span> & Foco
+                            </h1>
+                            <p className="mt-2 text-lg text-gray-400 splash-slogan-animation">Sua jornada começa agora.</p>
+                            <p id="quote" className="text-center text-gray-300 text-sm italic mt-6 h-5 splash-quote-animation">
+                                &quot;{splashQuote}&quot;
+                            </p>
+                        </div>
                     </div>
                 )}
                 <div className="phone-content custom-scrollbar">

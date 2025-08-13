@@ -213,23 +213,57 @@ export default function RootLayout({
             
             /* Splash Screen */
             #splash-screen {
-              position: absolute;
-              inset: 0;
-              z-index: 999;
-              background-color: #030712;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              transition: opacity 0.5s ease-out;
+                position: absolute;
+                inset: 0;
+                z-index: 999;
+                background: radial-gradient(circle, #1f2937, #111827);
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: opacity 0.5s ease-out;
             }
-            #splash-screen svg {
-                color: #22d3ee; /* cyan-400 */
-                width: 3rem;  /* 48px */
-                height: 3rem; /* 48px */
+
+            /* Animações de entrada da Splash */
+            @keyframes fadeInDown {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
             }
+
+            /* Animação de preenchimento do ícone */
+            @keyframes fillIcon {
+                from { clip-path: inset(100% 0 0 0); }
+                to { clip-path: inset(0% 0 0 0); }
+            }
+
+            /* Animação das partículas de fundo */
+            @keyframes float {
+                0% { transform: translateY(0) translateX(0); opacity: 0.5; }
+                100% { transform: translateY(-100vh) translateX(calc(var(--random-x) * 15vw)); opacity: 0; }
+            }
+
+            /* Aplicando animações com delays */
+            .splash-logo-animation { animation: fadeInDown 0.8s ease-out forwards; }
+            .splash-title-animation { animation: fadeInDown 0.8s ease-out 0.3s forwards; opacity: 0; }
+            .splash-slogan-animation { animation: fadeInUp 0.8s ease-out 0.6s forwards; opacity: 0; }
+            .splash-quote-animation { animation: fadeInUp 0.8s ease-out 0.9s forwards; opacity: 0; }
+
+            .icon-fill-animation {
+                clip-path: inset(100% 0 0 0); 
+                animation: fillIcon 3.5s ease-in-out 0.5s;
+            }
+
+            .particle {
+                position: absolute;
+                background-color: rgba(34, 211, 238, 0.1);
+                border-radius: 50%;
+                animation: float linear infinite;
+            }
+
             .animate-splash-out {
-                animation: fade-out-splash 0.5s ease-out 2s forwards;
+                animation: fade-out-splash 0.5s ease-out forwards;
             }
+            
             @keyframes fade-out-splash {
                 to {
                     opacity: 0;
