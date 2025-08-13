@@ -224,6 +224,8 @@ export default function RootLayout({
             }
             #splash-screen svg {
                 color: #22d3ee; /* cyan-400 */
+                width: 3rem;  /* 48px */
+                height: 3rem; /* 48px */
             }
             .animate-splash-out {
                 animation: fade-out-splash 0.5s ease-out 2s forwards;

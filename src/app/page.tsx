@@ -1125,7 +1125,7 @@ export default function Home() {
             <div className="phone-frame">
                  {showSplash && (
                     <div id="splash-screen" className="animate-splash-out">
-                        <Dumbbell className="w-12 h-12" />
+                        <Dumbbell />
                     </div>
                 )}
                 <div className="phone-content custom-scrollbar">
