@@ -224,6 +224,26 @@ export default function RootLayout({
                 transition: opacity 0.5s ease-out;
             }
 
+             #splash-screen .splash-logo-container {
+                width: 6rem; /* 96px */
+                height: 6rem; /* 96px */
+                margin-bottom: 1.25rem; /* mb-5 */
+            }
+
+            #splash-screen .splash-logo-container svg {
+                width: 100%;
+                height: 100%;
+            }
+            
+            #splash-screen .splash-logo-container .icon-background {
+                color: #374151; /* text-gray-700 */
+            }
+
+            #splash-screen .icon-fill-animation .icon-foreground {
+                 color: #22d3ee; /* Cor ciano */
+            }
+
+
             /* Animações de entrada da Splash */
             @keyframes fadeInDown {
                 from { opacity: 0; transform: translateY(-20px); }
