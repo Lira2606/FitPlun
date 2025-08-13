@@ -225,7 +225,7 @@ export default function RootLayout({
                 transition: opacity 0.5s ease-out;
             }
             
-            #splash-screen .splash-logo-container {
+            .splash-logo-container {
                 width: 6rem; /* 96px */
                 height: 6rem; /* 96px */
                 margin-bottom: 1.25rem; /* mb-5 */
@@ -256,7 +256,7 @@ export default function RootLayout({
             }
 
             /* Aplicando animações com delays */
-            .splash-logo-animation { animation: icon-fade-in 1s ease-out forwards; }
+            .splash-logo-animation { animation: icon-fade-in 1s ease-out forwards; opacity: 0; }
             .splash-logo-animation svg { animation: icon-fade-in 1s ease-out 0.2s forwards; }
             .splash-title-animation { animation: fadeInDown 0.8s ease-out 0.3s forwards; opacity: 0; }
             .splash-slogan-animation { animation: fadeInUp 0.8s ease-out 0.6s forwards; opacity: 0; }
