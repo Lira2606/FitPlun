@@ -1169,7 +1169,7 @@ export default function Home() {
             <div className="gym-background"></div>
             <div className="phone-frame">
                  {showSplash && (
-                    <div id="splash-screen" className="flex flex-col items-center justify-center p-4">
+                    <div id="splash-screen">
                         <div ref={particleContainerRef} id="particle-container" className="absolute top-0 left-0 w-full h-full"></div>
                         <div className="text-center z-10">
                              <div className="relative splash-logo-animation splash-logo-container mx-auto">
