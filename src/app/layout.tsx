@@ -235,7 +235,6 @@ export default function RootLayout({
                 width: 100%;
                 height: 100%;
                 color: #22d3ee;
-                opacity: 0;
             }
 
             /* Animações de entrada da Splash */
@@ -254,13 +253,16 @@ export default function RootLayout({
                 0% { transform: translateY(0) translateX(0); opacity: 0.5; }
                 100% { transform: translateY(-100vh) translateX(calc(var(--random-x) * 15vw)); opacity: 0; }
             }
+            
+            .hide-for-animation {
+                opacity: 0;
+            }
 
             /* Aplicando animações com delays */
-            .splash-logo-animation { animation: icon-fade-in 1s ease-out forwards; opacity: 0; }
-            .splash-logo-animation svg { animation: icon-fade-in 1s ease-out 0.2s forwards; }
-            .splash-title-animation { animation: fadeInDown 0.8s ease-out 0.3s forwards; opacity: 0; }
-            .splash-slogan-animation { animation: fadeInUp 0.8s ease-out 0.6s forwards; opacity: 0; }
-            .splash-quote-animation { animation: fadeInUp 0.8s ease-out 0.9s forwards; opacity: 0; }
+            .splash-logo-animation { animation: icon-fade-in 1s ease-out forwards; }
+            .splash-title-animation { animation: fadeInDown 0.8s ease-out 0.3s forwards; }
+            .splash-slogan-animation { animation: fadeInUp 0.8s ease-out 0.6s forwards; }
+            .splash-quote-animation { animation: fadeInUp 0.8s ease-out 0.9s forwards; }
 
             .particle {
                 position: absolute;
