@@ -222,7 +222,6 @@ export default function RootLayout({
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
-                transition: opacity 0.5s ease-out;
             }
             
             .splash-logo-container {
