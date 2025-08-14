@@ -253,7 +253,10 @@ export default function RootLayout({
                 100% { transform: translateY(-100vh) translateX(calc(var(--random-x) * 15vw)); opacity: 0; }
             }
             
-            .hide-for-animation {
+            .splash-loading .splash-logo-animation,
+            .splash-loading .splash-title-animation,
+            .splash-loading .splash-slogan-animation,
+            .splash-loading .splash-quote-animation {
                 opacity: 0;
             }
 

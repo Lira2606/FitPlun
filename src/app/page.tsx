@@ -102,6 +102,7 @@ export default function Home() {
     const [showSplash, setShowSplash] = useState(true);
     const [splashQuote, setSplashQuote] = useState('');
     const particleContainerRef = useRef<HTMLDivElement>(null);
+    const splashScreenRef = useRef<HTMLDivElement>(null);
     
     // GPS Tracking State
     const [distance, setDistance] = useState(0); // in kilometers
@@ -144,8 +145,16 @@ export default function Home() {
 
      // Splash Screen Effect
     useEffect(() => {
-        const timer = setTimeout(() => {
-            const splashScreen = document.getElementById('splash-screen');
+        // Add loading class immediately
+        splashScreenRef.current?.classList.add('splash-loading');
+
+        // Remove loading class after a short delay to allow styles to apply
+        const foucTimer = setTimeout(() => {
+            splashScreenRef.current?.classList.remove('splash-loading');
+        }, 100);
+
+        const animationTimer = setTimeout(() => {
+            const splashScreen = splashScreenRef.current;
             if (splashScreen) {
                 splashScreen.classList.add('animate-splash-out');
                 splashScreen.addEventListener('animationend', () => {
@@ -180,7 +189,10 @@ export default function Home() {
             }
         }
         
-        return () => clearTimeout(timer);
+        return () => {
+             clearTimeout(foucTimer);
+             clearTimeout(animationTimer);
+        }
     }, []);
 
     // Load data from localStorage on mount
@@ -1169,20 +1181,20 @@ export default function Home() {
             <div className="gym-background"></div>
             <div className="phone-frame">
                  {showSplash && (
-                    <div id="splash-screen">
+                    <div id="splash-screen" ref={splashScreenRef}>
                         <div ref={particleContainerRef} id="particle-container" className="absolute top-0 left-0 w-full h-full"></div>
                         <div className="text-center z-10">
-                             <div className="hide-for-animation relative splash-logo-animation splash-logo-container mx-auto">
+                             <div className="splash-logo-animation splash-logo-container mx-auto">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12.75 8.25v-1.5a2.25 2.25 0 00-4.5 0v1.5m4.5 0v4.5m-4.5-4.5v4.5m0-6.75h4.5m-4.5 0a2.25 2.25 0 01-2.25-2.25V6.75a2.25 2.25 0 012.25-2.25h4.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25m-4.5 0h4.5m-12 6.75a2.25 2.25 0 012.25-2.25h13.5a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25v-1.5z" />
                                 </svg>
                             </div>
-                            <h1 className="hide-for-animation text-4xl md:text-5xl font-black tracking-wider uppercase splash-title-animation">
+                            <h1 className="text-4xl md:text-5xl font-black tracking-wider uppercase splash-title-animation">
                                 <span className="text-cyan-400">Força</span> & Foco
                             </h1>
-                            <p className="hide-for-animation mt-2 text-lg text-gray-400 splash-slogan-animation">Sua jornada começa agora.</p>
+                            <p className="mt-2 text-lg text-gray-400 splash-slogan-animation">Sua jornada começa agora.</p>
                             {splashQuote && (
-                              <p id="quote" className="hide-for-animation text-center text-gray-300 text-sm italic mt-6 h-5 splash-quote-animation">
+                              <p id="quote" className="text-center text-gray-300 text-sm italic mt-6 h-5 splash-quote-animation">
                                   &quot;{splashQuote}&quot;
                               </p>
                             )}
