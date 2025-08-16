@@ -674,7 +674,7 @@ export default function Home() {
                                                     <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso</label>
                                                     <div className="relative">
                                                         <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Clock className="h-5 w-5 text-gray-400" /></span>
-                                                        <Input type="number" id="exercise-rest-time" name="exercise-rest-time" placeholder="Ex: 60" className="w-full bg-gray-700/50 border-gray-600 rounded-lg pl-10 pr-4 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-center" />
+                                                        <Input type="number" id="exercise-rest-time" name="exercise-rest-time" placeholder="Ex: 60" className="w-full bg-gray-700/50 border-gray-600 rounded-lg pl-10 pr-4 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -950,7 +950,7 @@ export default function Home() {
                                         </div>
                                     </div>
                                     <div className="w-full bg-gray-700 rounded-full h-2.5">
-                                    <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${( (lastWorkout.avgHeartRate || 0) / 200) * 100}%`}}></div>
+                                        <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${( (lastWorkout.avgHeartRate || 0) / 200) * 100}%`}}></div>
                                     </div>
                                     <div className="text-xs text-gray-500 flex justify-between mt-1">
                                         <span>Zona 2</span>
