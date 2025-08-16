@@ -543,9 +543,11 @@ export default function Home() {
                 notes: formData.get('exercise-notes') as string,
             };
             setExercises([newExercise]);
-        }
-
-        if (exercises.length > 0 || exerciseType !== 'musculacao') {
+            setCurrentExerciseIndex(0);
+            setCurrentSet(1);
+            setScreen('workout');
+            resetCardioState();
+        } else if (exercises.length > 0) {
              setCurrentExerciseIndex(0);
              setCurrentSet(1);
              setScreen('workout');
@@ -641,10 +643,14 @@ export default function Home() {
         shareText += `Data: ${new Date(lastWorkout.date).toLocaleDateString('pt-BR')}\n\n`;
 
         if (isCardio) {
-            shareText += `Tempo: ${formatCardioTime(lastWorkout.cardioTime || 0)}\n`;
-            shareText += `Distância: ${(lastWorkout.distance || 0).toFixed(2)} km\n`;
-            shareText += `Calorias: ${lastWorkout.calories || 0} kcal\n`;
-            shareText += `Pace Médio: ${lastWorkout.avgPace}\n`;
+            shareText += `⏱️ Tempo: ${formatCardioTime(lastWorkout.cardioTime || 0)}\n`;
+            shareText += `📍 Distância: ${(lastWorkout.distance || 0).toFixed(2)} km\n`;
+            shareText += `🔥 Calorias: ${lastWorkout.calories || 0} kcal\n`;
+            shareText += `🏃 Pace Médio: ${lastWorkout.avgPace}\n`;
+            shareText += `💨 Veloc. Média: ${lastWorkout.avgSpeed} km/h\n`;
+            if (lastWorkout.avgHeartRate && lastWorkout.avgHeartRate > 0) {
+                shareText += `❤️ BPM Médio: ${lastWorkout.avgHeartRate} bpm\n`;
+            }
         } else {
             shareText += "Exercícios:\n";
             lastWorkout.exercises.forEach(ex => {
@@ -672,18 +678,20 @@ export default function Home() {
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderMainContent = () => {
-        const isWorkoutInProgress = ['workout', 'rest', 'finished'].includes(screen);
-        // If a workout is in progress, show it regardless of the active tab, unless the active tab is profile
-        if (isWorkoutInProgress) {
-            const workoutType = exercises[0]?.type;
+        const workoutInProgress = screen === 'workout' || screen === 'rest';
+        if (workoutInProgress && exercises.length > 0) {
+            const workoutType = exercises[0].type;
             if (activeTab === workoutType) {
                 if (screen === 'workout') return renderWorkoutScreen();
                 if (screen === 'rest') return renderRestScreen();
-                if (screen === 'finished') return renderFinishedScreen();
             }
         }
     
-        // In all other cases (no workout, or different tab), show the builder for the active tab.
+        if (screen === 'finished') {
+             const workoutType = workoutHistory[0]?.type;
+             if (activeTab === workoutType) return renderFinishedScreen();
+        }
+
         return renderBuilder();
     }
 
