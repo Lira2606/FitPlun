@@ -622,6 +622,7 @@ export default function Home() {
         setScreen('builder');
         setActiveTab('musculacao');
         setExerciseType('musculacao');
+        resetCardioState();
     }
 
     const handleNavClick = (type: ExerciseType) => {
@@ -684,12 +685,16 @@ export default function Home() {
             if (activeTab === workoutType) {
                 if (screen === 'workout') return renderWorkoutScreen();
                 if (screen === 'rest') return renderRestScreen();
+            } else {
+                 return renderBuilder();
             }
         }
-    
+
         if (screen === 'finished') {
              const workoutType = workoutHistory[0]?.type;
-             if (activeTab === workoutType) return renderFinishedScreen();
+             if (activeTab === workoutType) {
+                return renderFinishedScreen();
+             }
         }
 
         return renderBuilder();
@@ -1024,7 +1029,7 @@ export default function Home() {
                         </div>
                     </div>
                     <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-600 transition-transform duration-300 hover:-translate-y-1">
-                         {(lastWorkout.avgHeartRate || 0) > 0 && (
+                         {(lastWorkout.avgHeartRate || 0) > 0 ? (
                             <>
                                 <div className="flex items-center space-x-3 mb-3">
                                     <div className="bg-red-500/20 p-2 rounded-full">
@@ -1045,7 +1050,7 @@ export default function Home() {
                                     <span>Zona 5</span>
                                 </div>
                             </>
-                        )}
+                        ) : null}
                     </div>
                     </>
                 )}
