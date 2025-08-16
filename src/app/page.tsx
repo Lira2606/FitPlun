@@ -499,7 +499,7 @@ export default function Home() {
         return `${paddedMinutes}:${paddedSeconds}`;
     };
 
-    const addExercise = (e: React.FormEvent<HTMLButtonElement>) => {
+    const addExercise = (e: React.MouseEvent<HTMLButtonElement>) => {
         const form = (e.target as HTMLElement).closest('form');
         if (!form) return;
     
@@ -601,7 +601,7 @@ export default function Home() {
         if (isLastSet && isLastExercise) {
             saveWorkoutToHistory();
             setScreen('finished');
-        } else if (currentExercise.restTime && parseInt(currentExercise.restTime) > 0) {
+        } else if (currentExercise.restTime && parseInt(currentExercise.restTime) > 0 && !isLastSet) {
             setTimeLeft(parseInt(currentExercise.restTime));
             setScreen('rest');
         } else {
@@ -623,8 +623,14 @@ export default function Home() {
     }
 
     const handleNavClick = (type: ExerciseType) => {
-        setActiveTab(type);
-        setExerciseType(type);
+        if (screen === 'workout' || screen === 'rest') {
+            if (activeTab !== type) {
+                setActiveTab(type);
+            }
+        } else {
+            setActiveTab(type);
+            setExerciseType(type);
+        }
     };
 
     const handleProfileClick = () => {
@@ -676,7 +682,7 @@ export default function Home() {
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderMainContent = () => {
-        if ((screen === 'workout' || screen === 'rest' || screen === 'finished') && (activeTab === (workoutHistory[0]?.type || currentExercise?.type))) {
+        if ((screen === 'workout' || screen === 'rest' || screen === 'finished') && activeTab === (workoutHistory[0]?.type || currentExercise?.type)) {
             if (screen === 'workout') return renderWorkoutScreen();
             if (screen === 'rest') return renderRestScreen();
             if (screen === 'finished') return renderFinishedScreen();
@@ -816,7 +822,7 @@ export default function Home() {
                         )}
                         <div className="mt-auto pt-6 w-full">
                             {exerciseType !== 'musculacao' || filteredExercises.length > 0 ? (
-                                <button onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
+                                <button type="button" onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
                                     Iniciar Treino
                                 </button>
                             ) : null}
