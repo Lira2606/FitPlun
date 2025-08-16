@@ -680,16 +680,12 @@ export default function Home() {
 
     const renderMainContent = () => {
         // If a workout is active, it takes priority.
-        if (screen === 'workout' || screen === 'rest') {
-            if (activeTab === currentExercise?.type) {
+        if (screen === 'workout' || screen === 'rest' || screen === 'finished') {
+             if (activeTab === (workoutHistory[0]?.type || currentExercise?.type)) {
                 if (screen === 'workout') return renderWorkoutScreen();
                 if (screen === 'rest') return renderRestScreen();
-            }
-        }
-    
-        // Show the finished screen if the active tab matches the finished workout type.
-        if (screen === 'finished' && workoutHistory.length > 0 && activeTab === workoutHistory[0].type) {
-            return renderFinishedScreen();
+                if (screen === 'finished') return renderFinishedScreen();
+             }
         }
         
         // Otherwise, render the builder for the active tab.
@@ -998,8 +994,17 @@ export default function Home() {
                             </div>
                         </div>
                     ) : (
-                         <div className="text-center py-4">
-                         </div>
+                        <div className="animate-fade-in-up delay-400 pt-4">
+                             <h3 className="font-bold text-lg mb-3 text-cyan-300">Resumo dos Exercícios</h3>
+                              <ul className="space-y-3">
+                                  {lastWorkout.exercises.map((ex: Exercise, index: number) => (
+                                      <li key={ex.id} className="text-sm border-b border-gray-700/50 pb-2 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms`}}>
+                                          <p className="font-bold">{ex.name}</p>
+                                          <p className="text-gray-400">{ex.sets} séries x {ex.reps} reps - {ex.weight}</p>
+                                      </li>
+                                  ))}
+                              </ul>
+                        </div>
                     )}
                 </div>
 
@@ -1052,19 +1057,6 @@ export default function Home() {
                     </>
                 )}
 
-                 {!isCardio && (
-                     <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-400">
-                         <h3 className="font-bold text-lg mb-3 text-cyan-300">Resumo dos Exercícios</h3>
-                          <ul className="space-y-3">
-                              {lastWorkout.exercises.map((ex: Exercise, index: number) => (
-                                  <li key={ex.id} className="text-sm border-b border-gray-700/50 pb-2 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms`}}>
-                                      <p className="font-bold">{ex.name}</p>
-                                      <p className="text-gray-400">{ex.sets} séries x {ex.reps} reps - {ex.weight}</p>
-                                  </li>
-                              ))}
-                          </ul>
-                     </div>
-                 )}
 
                 <div className="space-y-3 pt-4">
                     <button onClick={handleShareWorkout} className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 animate-fade-in-up delay-800 hover:-translate-y-1 hover:shadow-lg">
