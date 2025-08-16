@@ -679,19 +679,20 @@ export default function Home() {
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderMainContent = () => {
-        // Se um treino está ativo (workout ou rest), ele tem prioridade,
-        // mas somente se a aba ativa corresponder ao tipo de treino.
-        if ((screen === 'workout' || screen === 'rest') && currentExercise && activeTab === currentExercise.type) {
-            if (screen === 'workout') return renderWorkoutScreen();
-            if (screen === 'rest') return renderRestScreen();
+        // If a workout is active, it takes priority.
+        if (screen === 'workout' || screen === 'rest') {
+            if (activeTab === currentExercise?.type) {
+                if (screen === 'workout') return renderWorkoutScreen();
+                if (screen === 'rest') return renderRestScreen();
+            }
         }
-
-        // A tela de finalização só aparece se a aba ativa corresponder ao treino finalizado.
+    
+        // Show the finished screen if the active tab matches the finished workout type.
         if (screen === 'finished' && workoutHistory.length > 0 && activeTab === workoutHistory[0].type) {
             return renderFinishedScreen();
         }
         
-        // Em todos os outros casos, renderiza o builder para a aba ativa.
+        // Otherwise, render the builder for the active tab.
         return renderBuilder();
     }
 
@@ -998,7 +999,6 @@ export default function Home() {
                         </div>
                     ) : (
                          <div className="text-center py-4">
-                            <p className="text-lg">Confira o resumo dos seus exercícios abaixo.</p>
                          </div>
                     )}
                 </div>
