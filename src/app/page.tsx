@@ -655,7 +655,7 @@ export default function Home() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="exercise-reps" className="block text-sm font-medium text-gray-300 mb-1">Reps</label>
+                                                    <label htmlFor="exercise-reps" className="block text-sm font-medium text-gray-300 mb-1">Repetições</label>
                                                      <div className="relative">
                                                         <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Repeat className="h-5 w-5 text-gray-400" /></span>
                                                         <Input type="text" id="exercise-reps" name="exercise-reps" placeholder="Ex: 8-12" required className="w-full bg-gray-700/50 border-gray-600 rounded-lg pl-10 pr-4 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-center" />
