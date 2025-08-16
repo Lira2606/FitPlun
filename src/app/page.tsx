@@ -944,15 +944,19 @@ export default function Home() {
                                     <p className="font-bold animate-number-pop delay-700">{lastWorkout.avgHeartRate || '--'} <span className="text-sm font-normal text-gray-500">bpm (média)</span></p>
                                 </div>
                             </div>
-                            <div className="w-full bg-gray-700 rounded-full h-2.5">
-                              <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${( (lastWorkout.avgHeartRate || 0) / 200) * 100}%`}}></div>
-                            </div>
-                             <div className="text-xs text-gray-500 flex justify-between mt-1">
-                                <span>Zona 2</span>
-                                <span>Zona 3</span>
-                                <span>Zona 4</span>
-                                <span>Zona 5</span>
-                            </div>
+                             {(lastWorkout.avgHeartRate || 0) > 0 && (
+                                <>
+                                    <div className="w-full bg-gray-700 rounded-full h-2.5">
+                                    <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${( (lastWorkout.avgHeartRate || 0) / 200) * 100}%`}}></div>
+                                    </div>
+                                    <div className="text-xs text-gray-500 flex justify-between mt-1">
+                                        <span>Zona 2</span>
+                                        <span>Zona 3</span>
+                                        <span>Zona 4</span>
+                                        <span>Zona 5</span>
+                                    </div>
+                                </>
+                            )}
                         </div>
                         </>
                     )}
