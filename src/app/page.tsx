@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
 import { Dumbbell, Pause, Play, Route, Square, Weight, Heart, Zap, Mountain, Wind, User, PlusCircle, Trophy, GaugeCircle, HeartPulse, Share2, Calendar, History, Save, Edit, Trash2, Footprints } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
@@ -66,9 +65,9 @@ const CustomSplashStyles = () => (
 );
 
 // --- Componente da Tela de Splash ---
-const SplashScreen = ({ isExiting }) => {
+const SplashScreen = ({ isExiting }: { isExiting: boolean }) => {
     return (
-        <div className={`bg-custom-dark-splash absolute inset-0 z-50 h-screen w-screen flex flex-col justify-center items-center text-white p-4 text-center transition-opacity duration-500 ${isExiting ? 'splash-exit' : ''}`}>
+        <div className={`bg-custom-dark-splash absolute inset-0 z-50 h-full w-full flex flex-col justify-center items-center text-white p-4 text-center transition-opacity duration-500 ${isExiting ? 'splash-exit' : ''}`}>
             <CustomSplashStyles />
             <div className="relative flex justify-center items-center animate-logo" style={{ width: '80px', height: '80px' }}>
                 <div className="relative w-full h-full">
@@ -618,7 +617,7 @@ export default function Home() {
     const currentExercise = exercises[currentExerciseIndex];
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
-    const renderWorkoutContent = () => {
+    const renderMainContent = () => {
        if (screen === 'builder') {
          return (
             <div className="flex flex-col min-h-full p-4 pt-10">
@@ -763,7 +762,7 @@ export default function Home() {
                     </div>
                     
                     <div className="my-8 w-full max-w-[200px] mx-auto">
-                        <BicepCurlAnimation />
+                        <BicepIcon className="w-full h-auto text-cyan-400" />
                     </div>
                     
                     <div className="flex-grow flex flex-col items-center justify-center">
@@ -1186,10 +1185,6 @@ export default function Home() {
         );
     };
 
-    if (isLoadingSplash) {
-        return <SplashScreen isExiting={isExitingSplash} />;
-    }
-
     return (
         <>
             <style>{`
@@ -1205,42 +1200,48 @@ export default function Home() {
             `}</style>
             <div className="gym-background"></div>
             <div className="phone-frame fade-in-main">
-                <div className="phone-content custom-scrollbar">
-                  {activeTab === 'workout' ? renderWorkoutContent() : renderProfileContent()}
-                </div>
-
-                <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 mt-auto" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
-                    <div className="flex justify-around items-center h-16">
-                        <button 
-                            onClick={() => handleNavClick('musculacao')} 
-                            className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                        >
-                             <Dumbbell className="w-7 h-7" />
-                            <span className="text-xs mt-1">Musculação</span>
-                        </button>
-                        <button 
-                            onClick={() => handleNavClick('corrida')} 
-                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                        >
-                            <Route className="w-7 h-7" />
-                            <span className="text-xs mt-1">Corrida</span>
-                        </button>
-                        <button 
-                            onClick={() => handleNavClick('caminhada')} 
-                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                        >
-                            <WalkIcon className="w-7 h-7" />
-                            <span className="text-xs mt-1">Caminhada</span>
-                        </button>
-                         <button 
-                            onClick={() => setActiveTab('profile')} 
-                            className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'profile' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                        >
-                            <User className="w-7 h-7" />
-                            <span className="text-xs mt-1">Perfil</span>
-                        </button>
+                {isLoadingSplash ? (
+                    <SplashScreen isExiting={isExitingSplash} />
+                ) : (
+                    <div className="phone-content custom-scrollbar">
+                        {activeTab === 'workout' ? renderMainContent() : renderProfileContent()}
                     </div>
-                </nav>
+                )}
+                
+                {!isLoadingSplash && (
+                  <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 mt-auto" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
+                      <div className="flex justify-around items-center h-16">
+                          <button 
+                              onClick={() => handleNavClick('musculacao')} 
+                              className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                          >
+                               <Dumbbell className="w-7 h-7" />
+                              <span className="text-xs mt-1">Musculação</span>
+                          </button>
+                          <button 
+                              onClick={() => handleNavClick('corrida')} 
+                               className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                          >
+                              <Route className="w-7 h-7" />
+                              <span className="text-xs mt-1">Corrida</span>
+                          </button>
+                          <button 
+                              onClick={() => handleNavClick('caminhada')} 
+                               className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                          >
+                              <WalkIcon className="w-7 h-7" />
+                              <span className="text-xs mt-1">Caminhada</span>
+                          </button>
+                           <button 
+                              onClick={() => setActiveTab('profile')} 
+                              className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'profile' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                          >
+                              <User className="w-7 h-7" />
+                              <span className="text-xs mt-1">Perfil</span>
+                          </button>
+                      </div>
+                  </nav>
+                )}
             </div>
         </>
     );
