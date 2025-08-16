@@ -679,24 +679,15 @@ export default function Home() {
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderMainContent = () => {
-        const workoutInProgress = screen === 'workout' || screen === 'rest';
-        if (workoutInProgress && exercises.length > 0) {
-            const workoutType = exercises[0].type;
-            if (activeTab === workoutType) {
-                if (screen === 'workout') return renderWorkoutScreen();
-                if (screen === 'rest') return renderRestScreen();
-            } else {
-                 return renderBuilder();
-            }
+        if ((screen === 'workout' || screen === 'rest') && exercises.length > 0 && activeTab === exercises[0].type) {
+            if (screen === 'workout') return renderWorkoutScreen();
+            if (screen === 'rest') return renderRestScreen();
         }
 
-        if (screen === 'finished') {
-             const workoutType = workoutHistory[0]?.type;
-             if (activeTab === workoutType) {
-                return renderFinishedScreen();
-             }
+        if (screen === 'finished' && workoutHistory.length > 0 && activeTab === workoutHistory[0].type) {
+            return renderFinishedScreen();
         }
-
+        
         return renderBuilder();
     }
 
@@ -831,9 +822,11 @@ export default function Home() {
                         </div>
                     )}
                      <div className="mt-6 w-full">
-                        <button onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50" disabled={exerciseType === 'musculacao' && exercises.length === 0}>
-                            Iniciar Treino
-                        </button>
+                        {exerciseType !== 'musculacao' || filteredExercises.length > 0 ? (
+                            <button onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
+                                Iniciar Treino
+                            </button>
+                        ) : null}
                     </div>
                 </div>
             </div>
