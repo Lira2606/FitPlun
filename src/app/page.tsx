@@ -671,7 +671,7 @@ export default function Home() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso (s)</label>
+                                                    <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso</label>
                                                     <Input type="number" id="exercise-rest-time" name="exercise-rest-time" placeholder="Ex: 60" className="w-full bg-gray-700/50 border-gray-600 rounded-lg px-4 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-center" />
                                                 </div>
                                             </div>
