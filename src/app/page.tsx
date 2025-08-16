@@ -156,7 +156,7 @@ export default function Home() {
     const [motivationalQuote, setMotivationalQuote] = useState('');
     const [restQuote, setRestQuote] = useState('');
     const [exerciseType, setExerciseType] = useState<ExerciseType>('musculacao');
-    const [activeTab, setActiveTab] = useState<ActiveTab>('workout');
+    const [activeTab, setActiveTab] = useState<ExerciseType | 'profile'>('musculacao');
     const [cardioState, setCardioState] = useState<'idle' | 'running' | 'paused'>('idle');
     const [cardioTime, setCardioTime] = useState(0);
     const cardioTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -602,21 +602,16 @@ export default function Home() {
     const startNewWorkout = () => {
         setExercises([]);
         setScreen('builder');
-        setActiveTab('workout');
+        setActiveTab('musculacao');
+        setExerciseType('musculacao');
     }
 
     const handleNavClick = (type: ExerciseType) => {
-        if (screen === 'finished' || screen === 'workout' || screen === 'rest') {
-            startNewWorkout();
-        }
-        setActiveTab('workout');
+        setActiveTab(type);
         setExerciseType(type);
     };
 
     const handleProfileClick = () => {
-        if (screen === 'finished' || screen === 'workout' || screen === 'rest') {
-             startNewWorkout();
-        }
         setActiveTab('profile');
     }
 
@@ -624,8 +619,27 @@ export default function Home() {
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderMainContent = () => {
-       if (screen === 'builder') {
-         return (
+        // Se a aba ativa não corresponde ao tipo de treino em andamento, mostra o builder
+        const isWorkoutInProgress = screen === 'workout' || screen === 'rest';
+        if (isWorkoutInProgress && exercises.length > 0 && activeTab !== exercises[0].type && activeTab !== 'profile') {
+             setScreen('builder');
+        }
+
+       // Prioriza mostrar a tela de treino/descanso/finalizado se houver um
+       if ((screen === 'workout' || screen === 'rest' || screen === 'finished') && activeTab === exercises[0]?.type) {
+           switch (screen) {
+               case 'workout': return renderWorkoutScreen();
+               case 'rest': return renderRestScreen();
+               case 'finished': return renderFinishedScreen();
+           }
+       }
+       
+       // Senão, mostra o builder
+       return renderBuilder();
+    }
+
+    const renderBuilder = () => {
+        return (
             <div className="flex flex-col min-h-full p-4 pt-10">
                 <header className="text-center mb-6">
                     <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
@@ -757,10 +771,12 @@ export default function Home() {
                     )}
                 </div>
             </div>
-          )
-       }
-       if (screen === 'workout' && currentExercise) {
-         return (
+        )
+    }
+
+    const renderWorkoutScreen = () => {
+        if (!currentExercise) return null;
+        return (
             currentExercise.type === 'musculacao' ? (
                 // Musculação UI
                 <div className="min-h-full p-4 flex flex-col justify-between text-center relative">
@@ -862,143 +878,143 @@ export default function Home() {
                 </div>
             )
         )
-       }
-        if (screen === 'rest') {
-            return (
-                <div className="min-h-full p-4 flex flex-col justify-center items-center text-center">
-                     <h2 className="text-4xl font-bold text-cyan-400 mb-4">DESCANSO</h2>
-                     <p className="text-8xl font-bold text-white mb-8">{timeLeft}</p>
-                     <div className="mb-8 h-10 flex items-center justify-center">
-                        <p className="text-gray-400 italic text-center animate-fade-in">{restQuote}</p>
-                    </div>
-                     <button onClick={finishRest} className="w-full max-w-xs mx-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all transform hover:scale-105">
-                         PULAR
-                     </button>
+    }
+    
+    const renderRestScreen = () => {
+        return (
+            <div className="min-h-full p-4 flex flex-col justify-center items-center text-center">
+                 <h2 className="text-4xl font-bold text-cyan-400 mb-4">DESCANSO</h2>
+                 <p className="text-8xl font-bold text-white mb-8">{timeLeft}</p>
+                 <div className="mb-8 h-10 flex items-center justify-center">
+                    <p className="text-gray-400 italic text-center animate-fade-in">{restQuote}</p>
                 </div>
-            );
-        }
-        if (screen === 'finished') {
-            const lastWorkout = workoutHistory[0] || {};
-            const isCardio = lastWorkout.type === 'corrida' || lastWorkout.type === 'caminhada';
+                 <button onClick={finishRest} className="w-full max-w-xs mx-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg text-lg transition-all transform hover:scale-105">
+                     PULAR
+                 </button>
+            </div>
+        );
+    }
+    
+    const renderFinishedScreen = () => {
+        const lastWorkout = workoutHistory[0] || {};
+        const isCardio = lastWorkout.type === 'corrida' || lastWorkout.type === 'caminhada';
 
-            return (
-               <div className="p-8 text-white space-y-6 overflow-y-auto custom-scrollbar h-full">
-                    <div className="text-center">
-                        <Trophy className="text-5xl text-yellow-400 mb-3 animate-pop-in mx-auto" />
-                        <h1 className="text-4xl font-black tracking-tighter uppercase animate-fade-in-up delay-100 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400">Treino Finalizado!</h1>
-                        <p className="text-gray-400 mt-1 animate-fade-in-up delay-200">Parabéns! Você mandou muito bem.</p>
+        return (
+           <div className="p-8 text-white space-y-6 overflow-y-auto custom-scrollbar h-full">
+                <div className="text-center">
+                    <Trophy className="text-5xl text-yellow-400 mb-3 animate-pop-in mx-auto" />
+                    <h1 className="text-4xl font-black tracking-tighter uppercase animate-fade-in-up delay-100 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400">Treino Finalizado!</h1>
+                    <p className="text-gray-400 mt-1 animate-fade-in-up delay-200">Parabéns! Você mandou muito bem.</p>
+                </div>
+
+                 <div className="bg-gray-800/50 rounded-2xl p-6 space-y-5 animate-fade-in-up delay-300 transition-transform duration-300 hover:-translate-y-1">
+                    <div className="flex justify-between items-baseline pb-4 border-b border-gray-700">
+                         <h2 className="text-lg font-bold">{lastWorkout.name}</h2>
+                        <span className="text-sm text-gray-400 whitespace-nowrap ml-4">
+                            {new Date(lastWorkout.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} de {new Date(lastWorkout.date).getFullYear()}
+                        </span>
                     </div>
-    
-                     <div className="bg-gray-800/50 rounded-2xl p-6 space-y-5 animate-fade-in-up delay-300 transition-transform duration-300 hover:-translate-y-1">
-                        <div className="flex justify-between items-baseline pb-4 border-b border-gray-700">
-                             <h2 className="text-lg font-bold">{lastWorkout.name}</h2>
-                            <span className="text-sm text-gray-400 whitespace-nowrap ml-4">
-                                {new Date(lastWorkout.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} de {new Date(lastWorkout.date).getFullYear()}
-                            </span>
-                        </div>
-    
-                        {isCardio ? (
-                             <div className="grid grid-cols-3 gap-4 text-center">
-                                <div>
-                                    <p className="text-gray-400 text-sm">Tempo</p>
-                                    <p className="text-2xl font-bold">{formatCardioTime(lastWorkout.cardioTime || 0)}</p>
-                                    <p className="text-xs text-gray-500">min</p>
-                                </div>
-                                <div>
-                                    <p className="text-gray-400 text-sm">Distância</p>
-                                    <p className="text-2xl font-bold">{(lastWorkout.distance || 0).toFixed(2)}</p>
-                                    <p className="text-xs text-gray-500">km</p>
-                                </div>
-                                <div>
-                                    <p className="text-gray-400 text-sm">Calorias</p>
-                                    <p className="text-2xl font-bold">{lastWorkout.calories || 0}</p>
-                                    <p className="text-xs text-gray-500">kcal (estimativa)</p>
-                                </div>
+
+                    {isCardio ? (
+                         <div className="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <p className="text-gray-400 text-sm">Tempo</p>
+                                <p className="text-2xl font-bold">{formatCardioTime(lastWorkout.cardioTime || 0)}</p>
+                                <p className="text-xs text-gray-500">min</p>
                             </div>
-                        ) : (
-                             <div className="text-center py-4">
-                                <p className="text-lg">Confira o resumo dos seus exercícios abaixo.</p>
-                             </div>
+                            <div>
+                                <p className="text-gray-400 text-sm">Distância</p>
+                                <p className="text-2xl font-bold">{(lastWorkout.distance || 0).toFixed(2)}</p>
+                                <p className="text-xs text-gray-500">km</p>
+                            </div>
+                            <div>
+                                <p className="text-gray-400 text-sm">Calorias</p>
+                                <p className="text-2xl font-bold">{lastWorkout.calories || 0}</p>
+                                <p className="text-xs text-gray-500">kcal (estimativa)</p>
+                            </div>
+                        </div>
+                    ) : (
+                         <div className="text-center py-4">
+                            <p className="text-lg">Confira o resumo dos seus exercícios abaixo.</p>
+                         </div>
+                    )}
+                </div>
+
+                {isCardio && (
+                     <>
+                     <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-400 transition-transform duration-300 hover:-translate-y-1">
+                            <div className="bg-blue-500/20 p-2 rounded-full">
+                                <Footprints className="text-blue-400 w-5 h-5" />
+                            </div>
+                            <div>
+                                <p className="text-gray-400 text-xs">Ritmo Médio</p>
+                                <p className="font-bold animate-number-pop delay-500">{lastWorkout.avgPace} <span className="text-sm font-normal text-gray-500">/km</span></p>
+                            </div>
+                        </div>
+                        <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-500 transition-transform duration-300 hover:-translate-y-1">
+                            <div className="bg-green-500/20 p-2 rounded-full">
+                                 <GaugeCircle className="text-green-400 w-5 h-5" />
+                            </div>
+                            <div>
+                                <p className="text-gray-400 text-xs">Veloc. Média</p>
+                                <p className="font-bold animate-number-pop delay-600">{lastWorkout.avgSpeed} <span className="text-sm font-normal text-gray-500">km/h</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-600 transition-transform duration-300 hover:-translate-y-1">
+                         {(lastWorkout.avgHeartRate || 0) > 0 && (
+                            <>
+                                <div className="flex items-center space-x-3 mb-3">
+                                    <div className="bg-red-500/20 p-2 rounded-full">
+                                        <HeartPulse className="text-red-400 w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-400 text-xs">Frequência Cardíaca</p>
+                                        <p className="font-bold animate-number-pop delay-700">{lastWorkout.avgHeartRate || '--'} <span className="text-sm font-normal text-gray-500">bpm (média)</span></p>
+                                    </div>
+                                </div>
+                                <div className="w-full bg-gray-700 rounded-full h-2.5">
+                                    <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${( (lastWorkout.avgHeartRate || 0) / 200) * 100}%`}}></div>
+                                </div>
+                                <div className="text-xs text-gray-500 flex justify-between mt-1">
+                                    <span>Zona 2</span>
+                                    <span>Zona 3</span>
+                                    <span>Zona 4</span>
+                                    <span>Zona 5</span>
+                                </div>
+                            </>
                         )}
                     </div>
+                    </>
+                )}
 
-                    {isCardio && (
-                         <>
-                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-400 transition-transform duration-300 hover:-translate-y-1">
-                                <div className="bg-blue-500/20 p-2 rounded-full">
-                                    <Footprints className="text-blue-400 w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-gray-400 text-xs">Ritmo Médio</p>
-                                    <p className="font-bold animate-number-pop delay-500">{lastWorkout.avgPace} <span className="text-sm font-normal text-gray-500">/km</span></p>
-                                </div>
-                            </div>
-                            <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-500 transition-transform duration-300 hover:-translate-y-1">
-                                <div className="bg-green-500/20 p-2 rounded-full">
-                                     <GaugeCircle className="text-green-400 w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-gray-400 text-xs">Veloc. Média</p>
-                                    <p className="font-bold animate-number-pop delay-600">{lastWorkout.avgSpeed} <span className="text-sm font-normal text-gray-500">km/h</span></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-600 transition-transform duration-300 hover:-translate-y-1">
-                             {(lastWorkout.avgHeartRate || 0) > 0 && (
-                                <>
-                                    <div className="flex items-center space-x-3 mb-3">
-                                        <div className="bg-red-500/20 p-2 rounded-full">
-                                            <HeartPulse className="text-red-400 w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <p className="text-gray-400 text-xs">Frequência Cardíaca</p>
-                                            <p className="font-bold animate-number-pop delay-700">{lastWorkout.avgHeartRate || '--'} <span className="text-sm font-normal text-gray-500">bpm (média)</span></p>
-                                        </div>
-                                    </div>
-                                    <div className="w-full bg-gray-700 rounded-full h-2.5">
-                                        <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${( (lastWorkout.avgHeartRate || 0) / 200) * 100}%`}}></div>
-                                    </div>
-                                    <div className="text-xs text-gray-500 flex justify-between mt-1">
-                                        <span>Zona 2</span>
-                                        <span>Zona 3</span>
-                                        <span>Zona 4</span>
-                                        <span>Zona 5</span>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                        </>
-                    )}
-    
-                     {!isCardio && (
-                         <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-400">
-                             <h3 className="font-bold text-lg mb-3 text-cyan-300">Resumo dos Exercícios</h3>
-                              <ul className="space-y-3">
-                                  {lastWorkout.exercises.map((ex: Exercise, index: number) => (
-                                      <li key={ex.id} className="text-sm border-b border-gray-700/50 pb-2 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms`}}>
-                                          <p className="font-bold">{ex.name}</p>
-                                          <p className="text-gray-400">{ex.sets} séries x {ex.reps} reps - {ex.weight}</p>
-                                      </li>
-                                  ))}
-                              </ul>
-                         </div>
-                     )}
+                 {!isCardio && (
+                     <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-400">
+                         <h3 className="font-bold text-lg mb-3 text-cyan-300">Resumo dos Exercícios</h3>
+                          <ul className="space-y-3">
+                              {lastWorkout.exercises.map((ex: Exercise, index: number) => (
+                                  <li key={ex.id} className="text-sm border-b border-gray-700/50 pb-2 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms`}}>
+                                      <p className="font-bold">{ex.name}</p>
+                                      <p className="text-gray-400">{ex.sets} séries x {ex.reps} reps - {ex.weight}</p>
+                                  </li>
+                              ))}
+                          </ul>
+                     </div>
+                 )}
 
-                    <div className="space-y-3 pt-4">
-                        <button className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 animate-fade-in-up delay-800 hover:-translate-y-1 hover:shadow-lg">
-                            <Share2 className="w-4 h-4"/>
-                            <span>Compartilhar Treino</span>
-                        </button>
-                        <button onClick={startNewWorkout} className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/20 animate-fade-in-up delay-900 hover:-translate-y-1 hover:shadow-xl">
-                            Começar um Novo Treino
-                        </button>
-                    </div>
-    
+                <div className="space-y-3 pt-4">
+                    <button className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 animate-fade-in-up delay-800 hover:-translate-y-1 hover:shadow-lg">
+                        <Share2 className="w-4 h-4"/>
+                        <span>Compartilhar Treino</span>
+                    </button>
+                    <button onClick={startNewWorkout} className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/20 animate-fade-in-up delay-900 hover:-translate-y-1 hover:shadow-xl">
+                        Começar um Novo Treino
+                    </button>
                 </div>
-            )
-          }
-        return null;
+
+            </div>
+        )
     }
     
     const renderProfileContent = () => {
@@ -1224,27 +1240,27 @@ export default function Home() {
                 ) : (
                     <>
                         <div className="phone-content custom-scrollbar fade-in-main">
-                            {activeTab === 'workout' ? renderMainContent() : renderProfileContent()}
+                            {activeTab === 'profile' ? renderProfileContent() : renderMainContent()}
                         </div>
                         <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 mt-auto fade-in-main" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
                             <div className="flex justify-around items-center h-16">
                                 <button 
                                     onClick={() => handleNavClick('musculacao')} 
-                                    className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                                    className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                                 >
                                      <Dumbbell className="w-7 h-7" />
                                     <span className="text-xs mt-1">Musculação</span>
                                 </button>
                                 <button 
                                     onClick={() => handleNavClick('corrida')} 
-                                     className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                                     className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                                 >
                                     <Route className="w-7 h-7" />
                                     <span className="text-xs mt-1">Corrida</span>
                                 </button>
                                 <button 
                                     onClick={() => handleNavClick('caminhada')} 
-                                     className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                                     className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                                 >
                                     <Footprints className="w-7 h-7" />
                                     <span className="text-xs mt-1">Caminhada</span>
