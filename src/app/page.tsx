@@ -601,7 +601,7 @@ export default function Home() {
         if (isLastSet && isLastExercise) {
             saveWorkoutToHistory();
             setScreen('finished');
-        } else if (currentExercise.restTime && parseInt(currentExercise.restTime) > 0 && !isLastSet) {
+        } else if (currentExercise.restTime && parseInt(currentExercise.restTime) > 0) {
             setTimeLeft(parseInt(currentExercise.restTime));
             setScreen('rest');
         } else {
@@ -623,14 +623,8 @@ export default function Home() {
     }
 
     const handleNavClick = (type: ExerciseType) => {
-        if (screen === 'workout' || screen === 'rest') {
-            if (activeTab !== type) {
-                setActiveTab(type);
-            }
-        } else {
-            setActiveTab(type);
-            setExerciseType(type);
-        }
+        setExerciseType(type);
+        setActiveTab(type);
     };
 
     const handleProfileClick = () => {
@@ -682,10 +676,13 @@ export default function Home() {
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderMainContent = () => {
-        if ((screen === 'workout' || screen === 'rest' || screen === 'finished') && activeTab === (workoutHistory[0]?.type || currentExercise?.type)) {
-            if (screen === 'workout') return renderWorkoutScreen();
-            if (screen === 'rest') return renderRestScreen();
-            if (screen === 'finished') return renderFinishedScreen();
+        if (screen === 'workout' || screen === 'rest' || screen === 'finished') {
+             const workoutType = workoutHistory[0]?.type || currentExercise?.type;
+             if (activeTab === workoutType) {
+                if (screen === 'workout') return renderWorkoutScreen();
+                if (screen === 'rest') return renderRestScreen();
+                if (screen === 'finished') return renderFinishedScreen();
+             }
         }
         
         return renderBuilder();
@@ -782,51 +779,58 @@ export default function Home() {
                                )}
                             </div>
                         </div>
-
-                        {filteredExercises.length > 0 && exerciseType === 'musculacao' && (
-                            <div className="gradient-border animate-fade-in mt-8 flex-grow flex flex-col">
-                                <div className="gradient-border-content flex-grow flex flex-col">
-                                    <h2 className="text-xl font-semibold mb-5 text-white">Sua Rotina de {exerciseType.charAt(0).toUpperCase() + exerciseType.slice(1)}</h2>
-                                    <div id="workout-list-container" className="flex-grow">
-                                        <ul id="workout-list" className="space-y-3">
-                                            {filteredExercises.map((ex, index) => (
-                                                <li id={`exercise-${ex.id}`} key={ex.id} className="bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02] animate-slide-in" style={{ animationDelay: `${index * 100}ms`}}>
-                                                    <div className="flex items-center flex-grow pr-4">
-                                                        <div className="mr-4 text-cyan-400">
-                                                            {ex.type === 'musculacao' && <Dumbbell className="w-6 h-6" />}
-                                                            {ex.type === 'corrida' && <Route className="w-6 h-6" />}
-                                                            {ex.type === 'caminhada' && <Footprints className="w-6 h-6" />}
-                                                        </div>
-                                                        <div className="flex-grow">
-                                                            <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
-                                                            <div className="text-sm text-gray-300 mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
-                                                                {ex.sets && <span><strong>Séries:</strong> {ex.sets}</span>}
-                                                                {ex.reps && <span><strong>Repetições:</strong> {ex.reps}</span>}
-                                                                {ex.weight && <span><strong>Peso:</strong> {ex.weight}</span>}
-                                                                {ex.restTime && <span><strong>Descanso:</strong> {ex.restTime}s</span>}
-                                                                {ex.time && <span><strong>Tempo:</strong> {ex.time}</span>}
-                                                                {ex.distance && <span><strong>Distância:</strong> {ex.distance}</span>}
+                        {exerciseType === 'musculacao' && (
+                            <>
+                                {filteredExercises.length > 0 && (
+                                    <div className="gradient-border animate-fade-in mt-8 flex-grow flex flex-col">
+                                        <div className="gradient-border-content flex-grow flex flex-col overflow-y-auto">
+                                            <h2 className="text-xl font-semibold mb-5 text-white">Sua Rotina de Musculação</h2>
+                                            <div id="workout-list-container" className="flex-grow">
+                                                <ul id="workout-list" className="space-y-3">
+                                                    {filteredExercises.map((ex, index) => (
+                                                        <li id={`exercise-${ex.id}`} key={ex.id} className="bg-gray-700/50 backdrop-blur-sm p-4 rounded-lg flex items-start justify-between transition-all duration-300 hover:bg-gray-700/80 hover:scale-[1.02] animate-slide-in" style={{ animationDelay: `${index * 100}ms`}}>
+                                                            <div className="flex items-center flex-grow pr-4">
+                                                                <div className="mr-4 text-cyan-400">
+                                                                    <Dumbbell className="w-6 h-6" />
+                                                                </div>
+                                                                <div className="flex-grow">
+                                                                    <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
+                                                                    <div className="text-sm text-gray-300 mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+                                                                        {ex.sets && <span><strong>Séries:</strong> {ex.sets}</span>}
+                                                                        {ex.reps && <span><strong>Repetições:</strong> {ex.reps}</span>}
+                                                                        {ex.weight && <span><strong>Peso:</strong> {ex.weight}</span>}
+                                                                        {ex.restTime && <span><strong>Descanso:</strong> {ex.restTime}s</span>}
+                                                                    </div>
+                                                                    {ex.notes && <p className="text-xs text-gray-400 mt-2 italic"><strong>Nota:</strong> {ex.notes}</p>}
+                                                                </div>
                                                             </div>
-                                                            {ex.notes && <p className="text-xs text-gray-400 mt-2 italic"><strong>Nota:</strong> {ex.notes}</p>}
-                                                        </div>
-                                                    </div>
-                                                    <button onClick={() => removeExercise(ex.id)} className="remove-btn flex-shrink-0 text-gray-500 hover:text-red-500 transition-colors">
-                                                        <svg className="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                    </button>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                                            <button onClick={() => removeExercise(ex.id)} className="remove-btn flex-shrink-0 text-gray-500 hover:text-red-500 transition-colors">
+                                                                <svg className="w-6 h-6 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                            </button>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
+                                )}
+                                <div className="mt-auto pt-6 w-full">
+                                    {filteredExercises.length > 0 && (
+                                        <button type="button" onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
+                                            Iniciar Treino
+                                        </button>
+                                    )}
                                 </div>
-                            </div>
+                            </>
                         )}
-                        <div className="mt-auto pt-6 w-full">
-                            {exerciseType !== 'musculacao' || filteredExercises.length > 0 ? (
+
+                        {(exerciseType === 'corrida' || exerciseType === 'caminhada') && (
+                            <div className="mt-auto pt-6 w-full">
                                 <button type="button" onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
                                     Iniciar Treino
                                 </button>
-                            ) : null}
-                        </div>
+                            </div>
+                        )}
                     </form>
                 </div>
             </div>
