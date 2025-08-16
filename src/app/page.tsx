@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { calculateCalories, CalorieCalculationMethod } from '@/lib/calorie-calculator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { BicepIcon } from '@/components/icons/BicepIcon';
+import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -770,7 +770,7 @@ export default function Home() {
                     </div>
                     
                     <div className="my-8 w-full max-w-[200px] mx-auto">
-                        <BicepIcon className="w-full h-auto text-cyan-400" />
+                        <BicepCurlAnimation />
                     </div>
                     
                     <div className="flex-grow flex flex-col items-center justify-center">
@@ -1212,7 +1212,7 @@ export default function Home() {
             `}</style>
             <div className="gym-background"></div>
             <main className="phone-frame">
-                {isLoadingSplash ? (
+                 {isLoadingSplash ? (
                     <SplashScreen isExiting={isExitingSplash} />
                 ) : (
                     <>
@@ -1252,7 +1252,7 @@ export default function Home() {
                             </div>
                         </nav>
                     </>
-                )}
+                 )}
             </main>
         </>
     );
