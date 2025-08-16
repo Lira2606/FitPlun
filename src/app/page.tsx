@@ -606,12 +606,19 @@ export default function Home() {
     }
 
     const handleNavClick = (type: ExerciseType) => {
-        if (screen === 'finished') {
+        if (screen === 'finished' || screen === 'workout' || screen === 'rest') {
             startNewWorkout();
         }
         setActiveTab('workout');
         setExerciseType(type);
     };
+
+    const handleProfileClick = () => {
+        if (screen === 'finished' || screen === 'workout' || screen === 'rest') {
+             startNewWorkout();
+        }
+        setActiveTab('profile');
+    }
 
     const currentExercise = exercises[currentExerciseIndex];
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
@@ -1243,7 +1250,7 @@ export default function Home() {
                                     <span className="text-xs mt-1">Caminhada</span>
                                 </button>
                                  <button 
-                                    onClick={() => setActiveTab('profile')} 
+                                    onClick={handleProfileClick} 
                                     className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'profile' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                                 >
                                     <User className="w-7 h-7" />
