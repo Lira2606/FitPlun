@@ -67,7 +67,7 @@ const CustomSplashStyles = () => (
 // --- Componente da Tela de Splash ---
 const SplashScreen = ({ isExiting }: { isExiting: boolean }) => {
     return (
-        <div className={`bg-custom-dark-splash absolute inset-0 z-50 h-full w-full flex flex-col justify-center items-center text-white p-4 text-center transition-opacity duration-500 ${isExiting ? 'splash-exit' : ''}`}>
+        <div className={`absolute inset-0 z-50 h-full w-full flex flex-col justify-center items-center text-white p-4 text-center transition-opacity duration-500 bg-custom-dark-splash ${isExiting ? 'splash-exit' : ''}`}>
             <CustomSplashStyles />
             <div className="relative flex justify-center items-center animate-logo" style={{ width: '80px', height: '80px' }}>
                 <div className="relative w-full h-full">
@@ -1199,7 +1199,7 @@ export default function Home() {
                 }
             `}</style>
             <div className="gym-background"></div>
-            <div className="phone-frame fade-in-main">
+            <main className="phone-frame fade-in-main">
                 {isLoadingSplash ? (
                     <SplashScreen isExiting={isExitingSplash} />
                 ) : (
@@ -1242,7 +1242,7 @@ export default function Home() {
                       </div>
                   </nav>
                 )}
-            </div>
+            </main>
         </>
     );
 }
