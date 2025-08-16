@@ -68,7 +68,7 @@ const CustomSplashStyles = () => (
 // --- Componente da Tela de Splash ---
 const SplashScreen = ({ isExiting }) => {
     return (
-        <div className="phone-frame absolute inset-0 z-50">
+        <div className="h-screen w-screen absolute inset-0 z-50">
             <CustomSplashStyles />
             <div className={`bg-custom-dark-splash h-full w-full flex flex-col justify-center items-center text-white p-4 text-center transition-opacity duration-500 ${isExiting ? 'splash-exit' : ''}`}>
                 <div className="relative flex justify-center items-center animate-logo" style={{ width: '80px', height: '80px' }}>
