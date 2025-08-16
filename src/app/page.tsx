@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { calculateCalories, CalorieCalculationMethod } from '@/lib/calorie-calculator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { WalkIcon } from '@/components/icons/WalkIcon';
 import { BicepIcon } from '@/components/icons/BicepIcon';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -712,7 +711,7 @@ export default function Home() {
                                                     <div className="mr-4 text-cyan-400">
                                                         {ex.type === 'musculacao' && <Dumbbell className="w-6 h-6" />}
                                                         {ex.type === 'corrida' && <Route className="w-6 h-6" />}
-                                                        {ex.type === 'caminhada' && <WalkIcon className="w-6 h-6" />}
+                                                        {ex.type === 'caminhada' && <Footprints className="w-6 h-6" />}
                                                     </div>
                                                     <div className="flex-grow">
                                                         <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
@@ -1120,7 +1119,7 @@ export default function Home() {
                                             <div className="flex items-center gap-3">
                                                 {workout.type === 'musculacao' && <Dumbbell className="w-6 h-6 text-cyan-400" />}
                                                 {workout.type === 'corrida' && <Route className="w-6 h-6 text-cyan-400" />}
-                                                {workout.type === 'caminhada' && <WalkIcon className="w-6 h-6 text-cyan-400" />}
+                                                {workout.type === 'caminhada' && <Footprints className="w-6 h-6 text-cyan-400" />}
                                             </div>
                                             <span className="font-bold text-lg">{workout.name}</span>
                                             <span className="text-xs text-gray-400 flex items-center gap-1.5">
@@ -1229,7 +1228,7 @@ export default function Home() {
                               onClick={() => handleNavClick('caminhada')} 
                                className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'workout' && exerciseType === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                           >
-                              <WalkIcon className="w-7 h-7" />
+                              <Footprints className="w-7 h-7" />
                               <span className="text-xs mt-1">Caminhada</span>
                           </button>
                            <button 
