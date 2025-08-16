@@ -619,23 +619,22 @@ export default function Home() {
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderMainContent = () => {
-        // Se a aba ativa não corresponde ao tipo de treino em andamento, mostra o builder
-        const isWorkoutInProgress = screen === 'workout' || screen === 'rest';
-        if (isWorkoutInProgress && exercises.length > 0 && activeTab !== exercises[0].type && activeTab !== 'profile') {
-             setScreen('builder');
+        const isWorkoutInProgress = ['workout', 'rest'].includes(screen);
+        const workoutType = exercises[0]?.type;
+
+        // If a workout is in progress and the active tab matches the workout type, show the workout screen.
+        if (isWorkoutInProgress && activeTab === workoutType) {
+            if (screen === 'workout') return renderWorkoutScreen();
+            if (screen === 'rest') return renderRestScreen();
         }
 
-       // Prioriza mostrar a tela de treino/descanso/finalizado se houver um
-       if ((screen === 'workout' || screen === 'rest' || screen === 'finished') && activeTab === exercises[0]?.type) {
-           switch (screen) {
-               case 'workout': return renderWorkoutScreen();
-               case 'rest': return renderRestScreen();
-               case 'finished': return renderFinishedScreen();
-           }
-       }
-       
-       // Senão, mostra o builder
-       return renderBuilder();
+        // If the workout is finished and the active tab matches, show the finished screen.
+        if (screen === 'finished' && activeTab === workoutType) {
+            return renderFinishedScreen();
+        }
+
+        // In all other cases (no workout, or different tab), show the builder for the active tab.
+        return renderBuilder();
     }
 
     const renderBuilder = () => {
@@ -747,7 +746,7 @@ export default function Home() {
                                                         <h3 className="font-bold text-md text-cyan-300">{ex.name}</h3>
                                                         <div className="text-sm text-gray-300 mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
                                                             {ex.sets && <span><strong>Séries:</strong> {ex.sets}</span>}
-                                                            {ex.reps && <span><strong>Reps:</strong> {ex.reps}</span>}
+                                                            {ex.reps && <span><strong>Repetições:</strong> {ex.reps}</span>}
                                                             {ex.weight && <span><strong>Peso:</strong> {ex.weight}</span>}
                                                             {ex.restTime && <span><strong>Descanso:</strong> {ex.restTime}s</span>}
                                                             {ex.time && <span><strong>Tempo:</strong> {ex.time}</span>}
@@ -787,7 +786,7 @@ export default function Home() {
                         <p className="text-cyan-400 font-semibold mb-2">Exercício {currentExerciseIndex + 1} de {exercises.length}</p>
                         <h2 className="text-4xl font-bold text-white truncate px-12">{currentExercise.name}</h2>
                         <div className="text-gray-300 text-lg mt-2">
-                            {currentExercise.reps && <span>{currentExercise.reps} Reps</span>}
+                            {currentExercise.reps && <span>{currentExercise.reps} Repetições</span>}
                             {currentExercise.weight && <span> / {currentExercise.weight}</span>}
                         </div>
                     </div>
