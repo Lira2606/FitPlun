@@ -631,20 +631,58 @@ export default function Home() {
         setActiveTab('profile');
     }
 
+    const handleShareWorkout = async () => {
+        const lastWorkout = workoutHistory[0];
+        if (!lastWorkout) return;
+
+        const isCardio = lastWorkout.type === 'corrida' || lastWorkout.type === 'caminhada';
+        let shareText = `Confira meu treino de hoje! 💪\n\n`;
+        shareText += `Tipo: ${lastWorkout.name}\n`;
+        shareText += `Data: ${new Date(lastWorkout.date).toLocaleDateString('pt-BR')}\n\n`;
+
+        if (isCardio) {
+            shareText += `Tempo: ${formatCardioTime(lastWorkout.cardioTime || 0)}\n`;
+            shareText += `Distância: ${(lastWorkout.distance || 0).toFixed(2)} km\n`;
+            shareText += `Calorias: ${lastWorkout.calories || 0} kcal\n`;
+            shareText += `Pace Médio: ${lastWorkout.avgPace}\n`;
+        } else {
+            shareText += "Exercícios:\n";
+            lastWorkout.exercises.forEach(ex => {
+                shareText += `- ${ex.name}: ${ex.sets}x${ex.reps} com ${ex.weight || 'peso corporal'}\n`;
+            });
+        }
+
+        shareText += `\n#TreinoPro #Fitness`;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'Meu Treino Concluído!',
+                    text: shareText,
+                });
+            } catch (error) {
+                console.error('Erro ao compartilhar:', error);
+            }
+        } else {
+            alert('A função de compartilhar não é suportada neste navegador.');
+        }
+    };
+
     const currentExercise = exercises[currentExerciseIndex];
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderMainContent = () => {
         const isWorkoutInProgress = ['workout', 'rest', 'finished'].includes(screen);
-        const workoutType = exercises[0]?.type;
-    
-        // If a workout is in progress, and the active tab matches the workout type, show the current screen.
-        if (isWorkoutInProgress && activeTab === workoutType) {
-            if (screen === 'workout') return renderWorkoutScreen();
-            if (screen === 'rest') return renderRestScreen();
-            if (screen === 'finished') return renderFinishedScreen();
+        // If a workout is in progress, show it regardless of the active tab, unless the active tab is profile
+        if (isWorkoutInProgress) {
+            const workoutType = exercises[0]?.type;
+            if (activeTab === workoutType) {
+                if (screen === 'workout') return renderWorkoutScreen();
+                if (screen === 'rest') return renderRestScreen();
+                if (screen === 'finished') return renderFinishedScreen();
+            }
         }
-
+    
         // In all other cases (no workout, or different tab), show the builder for the active tab.
         return renderBuilder();
     }
@@ -1019,7 +1057,7 @@ export default function Home() {
                  )}
 
                 <div className="space-y-3 pt-4">
-                    <button className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 animate-fade-in-up delay-800 hover:-translate-y-1 hover:shadow-lg">
+                    <button onClick={handleShareWorkout} className="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center space-x-2 animate-fade-in-up delay-800 hover:-translate-y-1 hover:shadow-lg">
                         <Share2 className="w-4 h-4"/>
                         <span>Compartilhar Treino</span>
                     </button>
