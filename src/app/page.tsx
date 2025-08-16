@@ -679,15 +679,19 @@ export default function Home() {
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderMainContent = () => {
-        if ((screen === 'workout' || screen === 'rest') && exercises.length > 0 && activeTab === exercises[0].type) {
+        // Se um treino está ativo (workout ou rest), ele tem prioridade,
+        // mas somente se a aba ativa corresponder ao tipo de treino.
+        if ((screen === 'workout' || screen === 'rest') && currentExercise && activeTab === currentExercise.type) {
             if (screen === 'workout') return renderWorkoutScreen();
             if (screen === 'rest') return renderRestScreen();
         }
 
+        // A tela de finalização só aparece se a aba ativa corresponder ao treino finalizado.
         if (screen === 'finished' && workoutHistory.length > 0 && activeTab === workoutHistory[0].type) {
             return renderFinishedScreen();
         }
         
+        // Em todos os outros casos, renderiza o builder para a aba ativa.
         return renderBuilder();
     }
 
@@ -745,7 +749,7 @@ export default function Home() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso</label>
+                                                    <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso (s)</label>
                                                     <div className="relative">
                                                         <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Clock className="h-5 w-5 text-gray-400" /></span>
                                                         <Input type="number" id="exercise-rest-time" name="exercise-rest-time" placeholder="Ex: 60" className="w-full bg-gray-700/50 border-gray-600 rounded-lg pl-10 pr-4 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
