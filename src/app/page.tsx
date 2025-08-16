@@ -529,11 +529,27 @@ export default function Home() {
     const removeExercise = (id: number) => setExercises(exercises.filter(ex => ex.id !== id));
 
     const startWorkout = () => {
-        if (exercises.length > 0) {
-            setCurrentExerciseIndex(0);
-            setCurrentSet(1);
-            setScreen('workout');
-            resetCardioState();
+         if (exerciseType !== 'musculacao') {
+            // For cardio, create a virtual exercise and start
+            const form = document.getElementById('add-exercise-form') as HTMLFormElement;
+            if (!form) return;
+            const formData = new FormData(form);
+            const newExercise: Exercise = {
+                id: Date.now(),
+                name: exerciseType === 'corrida' ? 'Corrida' : 'Caminhada',
+                type: exerciseType,
+                time: formData.get('exercise-time') as string,
+                distance: formData.get('exercise-distance') as string,
+                notes: formData.get('exercise-notes') as string,
+            };
+            setExercises([newExercise]);
+        }
+
+        if (exercises.length > 0 || exerciseType !== 'musculacao') {
+             setCurrentExerciseIndex(0);
+             setCurrentSet(1);
+             setScreen('workout');
+             resetCardioState();
         }
     };
     
@@ -619,18 +635,14 @@ export default function Home() {
     const filteredExercises = exercises.filter(ex => ex.type === exerciseType);
 
     const renderMainContent = () => {
-        const isWorkoutInProgress = ['workout', 'rest'].includes(screen);
+        const isWorkoutInProgress = ['workout', 'rest', 'finished'].includes(screen);
         const workoutType = exercises[0]?.type;
-
-        // If a workout is in progress and the active tab matches the workout type, show the workout screen.
+    
+        // If a workout is in progress, and the active tab matches the workout type, show the current screen.
         if (isWorkoutInProgress && activeTab === workoutType) {
             if (screen === 'workout') return renderWorkoutScreen();
             if (screen === 'rest') return renderRestScreen();
-        }
-
-        // If the workout is finished and the active tab matches, show the finished screen.
-        if (screen === 'finished' && activeTab === workoutType) {
-            return renderFinishedScreen();
+            if (screen === 'finished') return renderFinishedScreen();
         }
 
         // In all other cases (no workout, or different tab), show the builder for the active tab.
@@ -651,7 +663,7 @@ export default function Home() {
 
                 <div className="flex flex-col flex-grow">
                     <div className={`gradient-border ${filteredExercises.length > 0 ? 'flex-shrink' : 'flex-grow flex'}`}>
-                        <div className={`gradient-border-content ${filteredExercises.length === 0 ? 'w-full flex flex-col' : ''}`}>
+                        <div className={`gradient-border-content ${filteredExercises.length === 0 && exerciseType === 'musculacao' ? 'w-full flex flex-col' : ''}`}>
                             <h2 className="text-xl font-semibold mb-5 text-white">Adicionar Exercício</h2>
                             <form id="add-exercise-form" className="space-y-4 flex-grow flex flex-col" onSubmit={addExercise}>
                                 <div className="flex-grow space-y-4">
@@ -721,14 +733,16 @@ export default function Home() {
                                         <Textarea id="exercise-notes" name="exercise-notes" rows={2} placeholder="Ex: Manter ritmo, observar postura..." className="w-full bg-gray-700/50 border-gray-600 rounded-lg px-4 py-2 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                     </div>
                                 </div>
+                               {exerciseType === 'musculacao' && (
                                 <button type="submit" className="mt-auto w-full bg-cyan-500 hover:bg-cyan-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-cyan-500/50">
                                     Adicionar à Rotina
                                 </button>
+                               )}
                             </form>
                         </div>
                     </div>
 
-                    {filteredExercises.length > 0 && (
+                    {filteredExercises.length > 0 && exerciseType === 'musculacao' && (
                         <div className="gradient-border animate-fade-in mt-8 flex-grow flex flex-col">
                             <div className="gradient-border-content flex-grow flex flex-col">
                                 <h2 className="text-xl font-semibold mb-5 text-white">Sua Rotina de {exerciseType.charAt(0).toUpperCase() + exerciseType.slice(1)}</h2>
@@ -762,12 +776,14 @@ export default function Home() {
                                         ))}
                                     </ul>
                                 </div>
-                                <button onClick={startWorkout} id="start-workout-btn" className="mt-6 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50" disabled={exercises.length === 0}>
-                                    Iniciar Treino
-                                </button>
                             </div>
                         </div>
                     )}
+                     <div className="mt-6 w-full">
+                        <button onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50" disabled={exerciseType === 'musculacao' && exercises.length === 0}>
+                            Iniciar Treino
+                        </button>
+                    </div>
                 </div>
             </div>
         )
