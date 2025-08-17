@@ -3,6 +3,10 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Monte Seu Treino',
   description: 'Adicione os exercícios para sua rotina.',
+  icons: {
+    icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwNmI2ZDQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJtNi41IDYuNSAzLjUgMy41TTEyIDEybDItMiIvPjxwYXRoIGQ9Im0yMS41IDIuNS05IDkiLz48cGF0aCBkPSJtMy41IDE0LjUgNy03Ii8+PHBhdGggZD0iTTMgMjEgMiAybDE5IDE5Ii8+PC9zdmc+',
+    apple: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiMwNmI2ZDQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJtNi41IDYuNSAzLjUgMy41TTEyIDEybDItMiIvPjxwYXRoIGQ9Im0yMS41IDIuNS05IDkiLz48cGF0aCBkPSJtMy41IDE0LjUgNy03Ii8+PHBhdGggZD0iTTMgMjEgMiAybDE5IDE5Ii8+PC9zdmc+',
+  }
 };
 
 export default function RootLayout({
@@ -147,7 +151,7 @@ export default function RootLayout({
                 0%, 100% { transform: translateY(0); }
                 50% { transform: translateY(-15px); }
             }
-            @media (max-width: 480px) and (orientation: portrait) {
+            @media (max-width: 420px) and (orientation: portrait) {
                 body {
                     padding: 0;
                 }
