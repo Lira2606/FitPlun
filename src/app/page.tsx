@@ -1040,17 +1040,20 @@ export default function Home() {
                         </div>
                     </div>
                     <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-600 transition-transform duration-300 hover:-translate-y-1">
-                         {(lastWorkout.avgHeartRate || 0) > 0 ? (
+                        <div className="flex items-center space-x-3 mb-3">
+                            <div className="bg-red-500/20 p-2 rounded-full">
+                                <HeartPulse className="text-red-400 w-5 h-5" />
+                            </div>
+                            <div>
+                                <p className="text-gray-400 text-xs">Frequência Cardíaca</p>
+                                <p className="font-bold animate-number-pop delay-700">
+                                    {(lastWorkout.avgHeartRate || 0) > 0 ? lastWorkout.avgHeartRate : '--'}
+                                    <span className="text-sm font-normal text-gray-500"> bpm (média)</span>
+                                </p>
+                            </div>
+                        </div>
+                        {(lastWorkout.avgHeartRate || 0) > 0 && (
                             <>
-                                <div className="flex items-center space-x-3 mb-3">
-                                    <div className="bg-red-500/20 p-2 rounded-full">
-                                        <HeartPulse className="text-red-400 w-5 h-5" />
-                                    </div>
-                                    <div>
-                                        <p className="text-gray-400 text-xs">Frequência Cardíaca</p>
-                                        <p className="font-bold animate-number-pop delay-700">{lastWorkout.avgHeartRate || '--'} <span className="text-sm font-normal text-gray-500">bpm (média)</span></p>
-                                    </div>
-                                </div>
                                 <div className="w-full bg-gray-700 rounded-full h-2.5">
                                     <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${( (lastWorkout.avgHeartRate || 0) / 200) * 100}%`}}></div>
                                 </div>
@@ -1061,7 +1064,7 @@ export default function Home() {
                                     <span>Zona 5</span>
                                 </div>
                             </>
-                        ) : null}
+                        )}
                     </div>
                     </>
                 )}
