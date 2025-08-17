@@ -1075,7 +1075,7 @@ export default function Home() {
                         <Share2 className="w-4 h-4"/>
                         <span>Compartilhar Treino</span>
                     </button>
-                    <button onClick={startNewWorkout} className="w-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/20 animate-fade-in-up delay-900 hover:-translate-y-1 hover:shadow-xl">
+                    <button onClick={startNewWorkout} className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg shadow-blue-600/20 animate-fade-in-up delay-900 hover:-translate-y-1 hover:shadow-xl">
                         Começar um Novo Treino
                     </button>
                 </div>
