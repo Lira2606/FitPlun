@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { calculateCalories, CalorieCalculationMethod } from '@/lib/calorie-calculator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { HeartbeatIcon } from '@/components/icons/HeartbeatIcon';
@@ -664,7 +663,7 @@ export default function Home() {
                 </header>
 
                 <div className="flex flex-col flex-grow">
-                     <form id="add-exercise-form" className="flex flex-col flex-grow" onSubmit={(e) => e.preventDefault()}>
+                     <form id="add-exercise-form" className="flex flex-col flex-grow" onSubmit={(e) => e.preventDefault()} autoComplete="off">
                         <div className={`gradient-border ${filteredExercises.length > 0 ? 'flex-shrink' : 'flex-grow flex'}`}>
                             <div className={`gradient-border-content ${filteredExercises.length === 0 && exerciseType === 'musculacao' ? 'w-full flex flex-col' : ''}`}>
                                 <h2 className="text-xl font-semibold mb-5 text-white">Adicionar Exercício</h2>
@@ -705,7 +704,7 @@ export default function Home() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso (s)</label>
+                                                    <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso</label>
                                                     <div className="relative"> 
                                                         <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Clock className="h-5 w-5 text-gray-400" /></span>
                                                         <Input type="number" id="exercise-rest-time" name="exercise-rest-time" placeholder="Ex: 60" className="w-full bg-gray-700/50 border-gray-600 rounded-lg pl-10 pr-4 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
@@ -1084,22 +1083,22 @@ export default function Home() {
                             <h3 className="text-lg font-semibold text-white text-center">Meus Dados</h3>
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-1">Nome</label>
-                                <input type="text" id="name" name="name" value={tempProfile.name} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                                <input type="text" id="name" name="name" value={tempProfile.name} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" autoComplete="off" />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label htmlFor="weight" className="block text-sm font-medium text-gray-400 mb-1">Peso (kg)</label>
-                                    <input type="number" id="weight" name="weight" value={tempProfile.weight || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                                    <input type="number" id="weight" name="weight" value={tempProfile.weight || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" autoComplete="off" />
                                 </div>
                                 <div>
                                     <label htmlFor="height" className="block text-sm font-medium text-gray-400 mb-1">Altura (cm)</label>
-                                    <input type="number" id="height" name="height" value={tempProfile.height || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                                    <input type="number" id="height" name="height" value={tempProfile.height || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" autoComplete="off" />
                                 </div>
                             </div>
                              <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label htmlFor="age" className="block text-sm font-medium text-gray-400 mb-1">Idade</label>
-                                    <input type="number" id="age" name="age" value={tempProfile.age || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" />
+                                    <input type="number" id="age" name="age" value={tempProfile.age || ''} onChange={handleProfileChange} className="w-full bg-gray-800/60 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-500" autoComplete="off" />
                                 </div>
                                 <div>
                                     <label htmlFor="gender" className="block text-sm font-medium text-gray-400 mb-1">Sexo</label>
