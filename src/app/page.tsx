@@ -527,7 +527,6 @@ export default function Home() {
 
     const startWorkout = () => {
          if (exerciseType !== 'musculacao') {
-            // For cardio, create a virtual exercise and start
             const form = document.getElementById('add-exercise-form') as HTMLFormElement;
             if (!form) return;
             const formData = new FormData(form);
@@ -677,16 +676,17 @@ export default function Home() {
 
     const renderMainContent = () => {
         if (screen === 'workout' || screen === 'rest' || screen === 'finished') {
-             const workoutType = workoutHistory[0]?.type || currentExercise?.type;
-             if (activeTab === workoutType) {
+            const workoutType = workoutHistory[0]?.type || currentExercise?.type;
+            if (activeTab === workoutType) {
                 if (screen === 'workout') return renderWorkoutScreen();
                 if (screen === 'rest') return renderRestScreen();
                 if (screen === 'finished') return renderFinishedScreen();
-             }
+            }
         }
-        
+
         return renderBuilder();
-    }
+    };
+
 
     const renderBuilder = () => {
         return (
@@ -779,6 +779,7 @@ export default function Home() {
                                )}
                             </div>
                         </div>
+
                         {exerciseType === 'musculacao' && (
                             <>
                                 {filteredExercises.length > 0 && (
