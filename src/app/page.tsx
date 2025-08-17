@@ -43,7 +43,7 @@ const SplashScreen = ({ onFadeOutComplete }: { onFadeOutComplete: () => void }) 
     return (
         <div className={`splash-screen ${animationClass} w-full h-full flex flex-col items-center justify-center bg-gray-900`}>
             <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
-                Treino Pro
+                FitPlan
             </h1>
         </div>
     );
@@ -609,7 +609,7 @@ export default function Home() {
             });
         }
 
-        shareText += `\n#TreinoPro #Fitness`;
+        shareText += `\n#FitPlan #Fitness`;
 
         if (navigator.share) {
             try {
