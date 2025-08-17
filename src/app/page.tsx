@@ -19,6 +19,40 @@ import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
+const SPLASH_DURATION = 3000;
+const SPLASH_FADE_DURATION = 500;
+
+const SplashScreen = ({ onFadeOutComplete }: { onFadeOutComplete: () => void }) => {
+    const [animationClass, setAnimationClass] = useState('splash-in');
+
+    useEffect(() => {
+        const fadeOutTimer = setTimeout(() => {
+            setAnimationClass('splash-out');
+        }, SPLASH_DURATION - SPLASH_FADE_DURATION);
+
+        const unmountTimer = setTimeout(() => {
+            onFadeOutComplete();
+        }, SPLASH_DURATION);
+
+        return () => {
+            clearTimeout(fadeOutTimer);
+            clearTimeout(unmountTimer);
+        };
+    }, [onFadeOutComplete]);
+
+    return (
+        <div className={`splash-screen ${animationClass} w-full h-full flex flex-col items-center justify-center bg-gray-900`}>
+             <div className="w-40 h-40">
+                <BicepCurlAnimation />
+            </div>
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight mt-4">
+                Treino Pro
+            </h1>
+        </div>
+    );
+};
+
+
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
 type ActiveTab = 'workout' | 'profile';
 type Gender = 'male' | 'female' | 'other';
@@ -74,6 +108,7 @@ const restQuotes = [
 ];
 
 export default function Home() {
+    const [isLoadingSplash, setIsLoadingSplash] = useState(true);
     const [screen, setScreen] = useState('builder'); // 'builder', 'workout', 'rest', 'finished'
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
@@ -669,7 +704,7 @@ export default function Home() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso (s)</label>
+                                                    <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso(s)</label>
                                                     <div className="relative"> 
                                                         <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Clock className="h-5 w-5 text-gray-400" /></span>
                                                         <Input type="number" id="exercise-rest-time" name="exercise-rest-time" placeholder="Ex: 60" className="w-full bg-gray-700/50 border-gray-600 rounded-lg pl-10 pr-4 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
@@ -956,7 +991,7 @@ export default function Home() {
                             </div>
                         </div>
                     </div>
-                    <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-600 transition-transform duration-300 hover:-translate-y-1">
+                     <div className="bg-gray-800/50 rounded-2xl p-4 animate-fade-in-up delay-600 transition-transform duration-300 hover:-translate-y-1">
                         <div className="flex items-center space-x-3 mb-3">
                             <div className="bg-red-500/20 p-2 rounded-full">
                                 <HeartPulse className="text-red-400 w-5 h-5" />
@@ -969,7 +1004,7 @@ export default function Home() {
                                 </p>
                             </div>
                         </div>
-                        {(lastWorkout.avgHeartRate || 0) > 0 && (
+                         {(lastWorkout.avgHeartRate || 0) > 0 && (
                             <>
                                 <div className="w-full bg-gray-700 rounded-full h-2.5">
                                     <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-600 h-2.5 rounded-full animate-fill-width" style={{ width: `${( (lastWorkout.avgHeartRate || 0) / 200) * 100}%`}}></div>
@@ -981,8 +1016,8 @@ export default function Home() {
                                     <span>Zona 5</span>
                                 </div>
                             </>
-                        )}
-                    </div>
+                         )}
+                     </div>
                     </>
                 )}
 
@@ -1219,41 +1254,47 @@ export default function Home() {
             `}</style>
             <div className="gym-background"></div>
             <main className="phone-frame">
-                 <div className="phone-content custom-scrollbar">
-                    {activeTab === 'profile' ? renderProfileContent() : renderMainContent()}
-                 </div>
-                 <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 mt-auto" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
-                     <div className="flex justify-around items-center h-16">
-                         <button 
-                             onClick={() => handleNavClick('musculacao')} 
-                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                         >
-                              <Dumbbell className="w-7 h-7" />
-                             <span className="text-xs mt-1">Musculação</span>
-                         </button>
-                         <button 
-                             onClick={() => handleNavClick('corrida')} 
-                              className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                         >
-                             <Route className="w-7 h-7" />
-                             <span className="text-xs mt-1">Corrida</span>
-                         </button>
-                         <button 
-                             onClick={() => handleNavClick('caminhada')} 
-                              className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                         >
-                             <Footprints className="w-7 h-7" />
-                             <span className="text-xs mt-1">Caminhada</span>
-                         </button>
-                          <button 
-                             onClick={() => handleNavClick('profile')} 
-                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'profile' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                         >
-                             <User className="w-7 h-7" />
-                             <span className="text-xs mt-1">Perfil</span>
-                         </button>
-                     </div>
-                 </nav>
+                 {isLoadingSplash ? (
+                     <SplashScreen onFadeOutComplete={() => setIsLoadingSplash(false)} />
+                 ) : (
+                    <>
+                        <div className="phone-content custom-scrollbar">
+                           {activeTab === 'profile' ? renderProfileContent() : renderMainContent()}
+                        </div>
+                        <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 mt-auto" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
+                            <div className="flex justify-around items-center h-16">
+                                <button 
+                                    onClick={() => handleNavClick('musculacao')} 
+                                    className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                                >
+                                     <Dumbbell className="w-7 h-7" />
+                                    <span className="text-xs mt-1">Musculação</span>
+                                </button>
+                                <button 
+                                    onClick={() => handleNavClick('corrida')} 
+                                     className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                                >
+                                    <Route className="w-7 h-7" />
+                                    <span className="text-xs mt-1">Corrida</span>
+                                </button>
+                                <button 
+                                    onClick={() => handleNavClick('caminhada')} 
+                                     className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                                >
+                                    <Footprints className="w-7 h-7" />
+                                    <span className="text-xs mt-1">Caminhada</span>
+                                </button>
+                                 <button 
+                                    onClick={() => handleNavClick('profile')} 
+                                    className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'profile' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                                >
+                                    <User className="w-7 h-7" />
+                                    <span className="text-xs mt-1">Perfil</span>
+                                </button>
+                            </div>
+                        </nav>
+                    </>
+                 )}
             </main>
         </>
     );

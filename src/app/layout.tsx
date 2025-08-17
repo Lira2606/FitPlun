@@ -229,6 +229,28 @@ export default function RootLayout({
             .animate-fill-width {
                 animation: fillWidth 1.5s 1s ease-out forwards; /* 1s de delay */
             }
+            
+            /* Splash Screen styles */
+            @keyframes splash-fade-in {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes splash-fade-out {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+            .splash-screen {
+                animation-duration: 0.5s;
+                animation-timing-function: ease-in-out;
+                animation-fill-mode: forwards;
+            }
+            .splash-in {
+                animation-name: splash-fade-in;
+            }
+            .splash-out {
+                animation-name: splash-fade-out;
+            }
+
 
             .delay-100 { animation-delay: 0.1s; }
             .delay-200 { animation-delay: 0.2s; }
