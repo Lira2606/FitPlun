@@ -42,7 +42,7 @@ const SplashScreen = ({ onFadeOutComplete }: { onFadeOutComplete: () => void }) 
     }, [onFadeOutComplete]);
 
     return (
-       <div className={`splash-screen ${animationClass} w-full h-full flex flex-col items-center justify-center bg-gray-900 p-8`}>
+       <div className={`splash-screen ${animationClass} w-full h-full flex flex-col items-center justify-center p-8`}>
             <div className="flex-grow flex flex-col items-center justify-center space-y-4" style={{ animation: 'splash-fade-in-up 0.8s 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards', opacity: 0 }}>
                 <HeartbeatIcon className="w-24 h-24 text-cyan-400" />
                 <h1 className="text-5xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400">
