@@ -1004,7 +1004,6 @@ export default function Home() {
                         </div>
                     ) : (
                         <div className="animate-fade-in-up delay-400 pt-4">
-                             <h3 className="font-bold text-lg mb-3 text-cyan-300">Resumo dos Exercícios</h3>
                               <ul className="space-y-3">
                                   {lastWorkout.exercises.map((ex: Exercise, index: number) => (
                                       <li key={ex.id} className="text-sm border-b border-gray-700/50 pb-2 animate-fade-in-up" style={{ animationDelay: `${500 + index * 100}ms`}}>
