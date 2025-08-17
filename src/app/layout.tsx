@@ -147,7 +147,7 @@ export default function RootLayout({
                 0%, 100% { transform: translateY(0); }
                 50% { transform: translateY(-15px); }
             }
-             @media (max-width: 420px) {
+            @media (max-width: 480px) and (orientation: portrait) {
                 body {
                     padding: 0;
                 }

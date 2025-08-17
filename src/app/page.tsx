@@ -655,7 +655,7 @@ export default function Home() {
         return (
             <div className="flex flex-col min-h-full p-4 pt-10">
                 <header className="text-center mb-6">
-                    <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
                         {exerciseType === 'musculacao' && 'Monte seu Treino'}
                         {exerciseType === 'corrida' && 'Defina sua Corrida'}
                         {exerciseType === 'caminhada' && 'Defina sua Caminhada'}
@@ -705,7 +705,7 @@ export default function Home() {
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso</label>
+                                                    <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso (s)</label>
                                                     <div className="relative"> 
                                                         <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Clock className="h-5 w-5 text-gray-400" /></span>
                                                         <Input type="number" id="exercise-rest-time" name="exercise-rest-time" placeholder="Ex: 60" className="w-full bg-gray-700/50 border-gray-600 rounded-lg pl-10 pr-4 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
@@ -840,7 +840,7 @@ export default function Home() {
                     </button>
                     <div className="mt-8">
                         <p className="text-cyan-400 font-semibold mb-1">{currentExercise.name}</p>
-                        <h2 className="text-6xl font-bold text-white">{formatCardioTime(cardioTime)}</h2>
+                        <h2 className="text-5xl sm:text-6xl font-bold text-white">{formatCardioTime(cardioTime)}</h2>
                         <p className="text-gray-400 mt-1 text-sm">Duração</p>
                     </div>
 
@@ -923,7 +923,7 @@ export default function Home() {
         const isCardio = lastWorkout.type === 'corrida' || lastWorkout.type === 'caminhada';
 
         return (
-           <div className="p-8 text-white space-y-6 overflow-y-auto custom-scrollbar h-full">
+           <div className="p-4 sm:p-8 text-white space-y-4 sm:space-y-6 overflow-y-auto custom-scrollbar h-full">
                 <div className="text-center">
                     <Trophy className="text-5xl text-yellow-400 mb-3 animate-pop-in mx-auto" />
                     <h1 className="text-4xl font-black tracking-tighter uppercase animate-fade-in-up delay-100 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400">Treino Finalizado!</h1>
@@ -939,21 +939,21 @@ export default function Home() {
                     </div>
 
                     {isCardio ? (
-                         <div className="grid grid-cols-3 gap-4 text-center">
+                         <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
                             <div>
-                                <p className="text-gray-400 text-sm">Tempo</p>
-                                <p className="text-2xl font-bold">{formatCardioTime(lastWorkout.cardioTime || 0)}</p>
+                                <p className="text-gray-400 text-xs sm:text-sm">Tempo</p>
+                                <p className="text-xl sm:text-2xl font-bold">{formatCardioTime(lastWorkout.cardioTime || 0)}</p>
                                 <p className="text-xs text-gray-500">min</p>
                             </div>
                             <div>
-                                <p className="text-gray-400 text-sm">Distância</p>
-                                <p className="text-2xl font-bold">{(lastWorkout.distance || 0).toFixed(2)}</p>
+                                <p className="text-gray-400 text-xs sm:text-sm">Distância</p>
+                                <p className="text-xl sm:text-2xl font-bold">{(lastWorkout.distance || 0).toFixed(2)}</p>
                                 <p className="text-xs text-gray-500">km</p>
                             </div>
                             <div>
-                                <p className="text-gray-400 text-sm">Calorias</p>
-                                <p className="text-2xl font-bold">{lastWorkout.calories || 0}</p>
-                                <p className="text-xs text-gray-500">kcal (estimativa)</p>
+                                <p className="text-gray-400 text-xs sm:text-sm">Calorias</p>
+                                <p className="text-xl sm:text-2xl font-bold">{lastWorkout.calories || 0}</p>
+                                <p className="text-xs text-gray-500">kcal (est)</p>
                             </div>
                         </div>
                     ) : (
@@ -972,7 +972,7 @@ export default function Home() {
 
                 {isCardio && (
                      <>
-                     <div className="grid grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-400 transition-transform duration-300 hover:-translate-y-1">
                             <div className="bg-blue-500/20 p-2 rounded-full">
                                 <Footprints className="text-blue-400 w-5 h-5" />
