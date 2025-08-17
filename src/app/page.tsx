@@ -542,8 +542,8 @@ export default function Home() {
            };
             // Replace only cardio exercises, keep musculacao
             const nonCardioExercises = exercises.filter(ex => ex.type === 'musculacao');
-            const currentCardioExercises = exercises.filter(ex => ex.type !== 'musculacao' && ex.type !== exerciseType);
-            const updatedExercises = [...nonCardioExercises, ...currentCardioExercises, newExercise];
+            const otherCardioExercises = exercises.filter(ex => ex.type !== 'musculacao' && ex.type !== exerciseType);
+            const updatedExercises = [...nonCardioExercises, ...otherCardioExercises, newExercise];
             setExercises(updatedExercises);
             setCurrentExerciseIndex(updatedExercises.length - 1);
             setCurrentSet(1);
@@ -825,12 +825,12 @@ export default function Home() {
                         
                         <div className="mt-auto pt-6 w-full">
                            {exerciseType === 'musculacao' && filteredExercises.length > 0 && (
-                                <button type="button" onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
+                                <button type="button" onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-600/50">
                                     Iniciar Treino
                                 </button>
                             )}
                              {(exerciseType === 'corrida' || exerciseType === 'caminhada') && (
-                                <button type="button" onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-500/50">
+                                <button type="button" onClick={startWorkout} id="start-workout-btn" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition-all transform hover:scale-105 shadow-lg hover:shadow-emerald-600/50">
                                     Iniciar Treino
                                 </button>
                             )}
