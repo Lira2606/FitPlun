@@ -239,6 +239,14 @@ export default function RootLayout({
                 from { opacity: 1; }
                 to { opacity: 0; }
             }
+            @keyframes splash-fade-in-up {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes splash-fill {
+                 from { width: 0%; }
+                 to { width: 100%; }
+            }
             .splash-screen {
                 animation-duration: 0.5s;
                 animation-timing-function: ease-in-out;

@@ -41,10 +41,20 @@ const SplashScreen = ({ onFadeOutComplete }: { onFadeOutComplete: () => void }) 
     }, [onFadeOutComplete]);
 
     return (
-        <div className={`splash-screen ${animationClass} w-full h-full flex flex-col items-center justify-center bg-gray-900`}>
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
-                FitPlan
-            </h1>
+       <div className={`splash-screen ${animationClass} w-full h-full flex flex-col items-center justify-center bg-gray-900 p-8`}>
+            <div className="flex-grow flex flex-col items-center justify-center" style={{ animation: 'splash-fade-in-up 0.8s 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards', opacity: 0 }}>
+                <div className="flex items-center space-x-3 mb-4">
+                    <Dumbbell className="w-10 h-10 text-cyan-400" />
+                    <h1 className="text-5xl font-bold tracking-tighter text-white">
+                        FitPlan
+                    </h1>
+                </div>
+            </div>
+            <div className="w-full max-w-xs text-center pb-8">
+                 <div className="w-full bg-gray-700/50 rounded-full h-1.5 overflow-hidden">
+                    <div className="bg-gradient-to-r from-cyan-400 to-emerald-400 h-1.5" style={{ animation: `splash-fill ${SPLASH_DURATION - 1000}ms 0.5s linear forwards`, width: '0%' }}></div>
+                </div>
+            </div>
         </div>
     );
 };
