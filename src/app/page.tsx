@@ -542,13 +542,15 @@ export default function Home() {
            };
             // Replace only cardio exercises, keep musculacao
             const nonCardioExercises = exercises.filter(ex => ex.type === 'musculacao');
-            setExercises([...nonCardioExercises, newExercise]);
-            setCurrentExerciseIndex(exercises.length - nonCardioExercises.length);
+            const currentCardioExercises = exercises.filter(ex => ex.type !== 'musculacao' && ex.type !== exerciseType);
+            const updatedExercises = [...nonCardioExercises, ...currentCardioExercises, newExercise];
+            setExercises(updatedExercises);
+            setCurrentExerciseIndex(updatedExercises.length - 1);
             setCurrentSet(1);
             setScreen('workout');
             resetCardioState();
         } else if (currentWorkoutExercises.length > 0) {
-            const firstExerciseOfTypeIndex = exercises.findIndex(ex => ex.type === exerciseType);
+            const firstExerciseOfTypeIndex = exercises.findIndex(ex => ex.id === currentWorkoutExercises[0].id);
             setCurrentExerciseIndex(firstExerciseOfTypeIndex >= 0 ? firstExerciseOfTypeIndex : 0);
             setCurrentSet(1);
             setScreen('workout');
