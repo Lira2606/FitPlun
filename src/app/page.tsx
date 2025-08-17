@@ -19,77 +19,6 @@ import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 
-// --- Constantes de Configuração da Splash ---
-const SPLASH_BACKGROUND_COLOR = '#040414';
-const ICON_OUTLINE_COLOR = '#475569';
-const ICON_FILL_COLOR = '#04a4c4';
-const SPLASH_DURATION = 12000;
-const FADE_OUT_DURATION = 500;
-
-// --- Componente de Estilos e Animações da Splash ---
-const CustomSplashStyles = () => (
-    <style>{`
-        .bg-custom-dark-splash {
-            background-color: ${SPLASH_BACKGROUND_COLOR};
-        }
-        @keyframes logo-fade-in-scale {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes fill-icon {
-            from { clip-path: inset(100% 0 0 0); }
-            to { clip-path: inset(0% 0 0 0); }
-        }
-        @keyframes splash-fade-in {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes splash-fade-out {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        .animate-logo {
-            animation: logo-fade-in-scale 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-        .icon-fill-animation {
-            animation: fill-icon ${SPLASH_DURATION / 1000}s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
-        .fade-in-main {
-            animation: splash-fade-in ${FADE_OUT_DURATION / 1000}s ease-in-out;
-        }
-        .splash-exit {
-            animation: splash-fade-out ${FADE_OUT_DURATION / 1000}s ease-out forwards;
-        }
-    `}</style>
-);
-
-// --- Componente da Tela de Splash ---
-const SplashScreen = ({ isExiting }: { isExiting: boolean }) => {
-    return (
-        <div className={`absolute inset-0 z-50 h-full w-full flex flex-col justify-center items-center text-white p-4 text-center transition-opacity duration-500 bg-custom-dark-splash ${isExiting ? 'splash-exit' : ''}`}>
-            <CustomSplashStyles />
-            <div className="relative flex justify-center items-center animate-logo" style={{ width: '80px', height: '80px' }}>
-                <div className="relative w-full h-full">
-                    <Dumbbell
-                        className="absolute top-0 left-0"
-                        color={ICON_OUTLINE_COLOR}
-                        size={80}
-                        strokeWidth={2}
-                    />
-                    <div className="absolute top-0 left-0 w-full h-full icon-fill-animation">
-                       <Dumbbell
-                            color={ICON_FILL_COLOR}
-                            size={80}
-                            strokeWidth={2}
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-
 type ExerciseType = 'musculacao' | 'corrida' | 'caminhada';
 type ActiveTab = 'workout' | 'profile';
 type Gender = 'male' | 'female' | 'other';
@@ -145,9 +74,6 @@ const restQuotes = [
 ];
 
 export default function Home() {
-    const [isLoadingSplash, setIsLoadingSplash] = useState(true);
-    const [isExitingSplash, setIsExitingSplash] = useState(false);
-
     const [screen, setScreen] = useState('builder'); // 'builder', 'workout', 'rest', 'finished'
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
@@ -200,19 +126,6 @@ export default function Home() {
 
     // Calorie Calculation
     const calorieTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-    // Splash Screen Logic
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsExitingSplash(true);
-            const exitTimer = setTimeout(() => {
-                setIsLoadingSplash(false);
-            }, FADE_OUT_DURATION);
-            return () => clearTimeout(exitTimer);
-        }, SPLASH_DURATION);
-
-        return () => clearTimeout(timer);
-    }, []);
 
     // Load data from localStorage on mount
     useEffect(() => {
@@ -1306,47 +1219,41 @@ export default function Home() {
             `}</style>
             <div className="gym-background"></div>
             <main className="phone-frame">
-                 {isLoadingSplash ? (
-                    <SplashScreen isExiting={isExitingSplash} />
-                ) : (
-                    <>
-                        <div className="phone-content custom-scrollbar fade-in-main">
-                           {activeTab === 'profile' ? renderProfileContent() : renderMainContent()}
-                        </div>
-                        <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 mt-auto fade-in-main" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
-                            <div className="flex justify-around items-center h-16">
-                                <button 
-                                    onClick={() => handleNavClick('musculacao')} 
-                                    className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                                >
-                                     <Dumbbell className="w-7 h-7" />
-                                    <span className="text-xs mt-1">Musculação</span>
-                                </button>
-                                <button 
-                                    onClick={() => handleNavClick('corrida')} 
-                                     className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                                >
-                                    <Route className="w-7 h-7" />
-                                    <span className="text-xs mt-1">Corrida</span>
-                                </button>
-                                <button 
-                                    onClick={() => handleNavClick('caminhada')} 
-                                     className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                                >
-                                    <Footprints className="w-7 h-7" />
-                                    <span className="text-xs mt-1">Caminhada</span>
-                                </button>
-                                 <button 
-                                    onClick={() => handleNavClick('profile')} 
-                                    className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'profile' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
-                                >
-                                    <User className="w-7 h-7" />
-                                    <span className="text-xs mt-1">Perfil</span>
-                                </button>
-                            </div>
-                        </nav>
-                    </>
-                 )}
+                 <div className="phone-content custom-scrollbar">
+                    {activeTab === 'profile' ? renderProfileContent() : renderMainContent()}
+                 </div>
+                 <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 mt-auto" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
+                     <div className="flex justify-around items-center h-16">
+                         <button 
+                             onClick={() => handleNavClick('musculacao')} 
+                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'musculacao' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                         >
+                              <Dumbbell className="w-7 h-7" />
+                             <span className="text-xs mt-1">Musculação</span>
+                         </button>
+                         <button 
+                             onClick={() => handleNavClick('corrida')} 
+                              className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'corrida' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                         >
+                             <Route className="w-7 h-7" />
+                             <span className="text-xs mt-1">Corrida</span>
+                         </button>
+                         <button 
+                             onClick={() => handleNavClick('caminhada')} 
+                              className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'caminhada' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                         >
+                             <Footprints className="w-7 h-7" />
+                             <span className="text-xs mt-1">Caminhada</span>
+                         </button>
+                          <button 
+                             onClick={() => handleNavClick('profile')} 
+                             className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'profile' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
+                         >
+                             <User className="w-7 h-7" />
+                             <span className="text-xs mt-1">Perfil</span>
+                         </button>
+                     </div>
+                 </nav>
             </main>
         </>
     );
