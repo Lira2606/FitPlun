@@ -1311,7 +1311,7 @@ export default function Home() {
                 ) : (
                     <>
                         <div className="phone-content custom-scrollbar fade-in-main">
-                            {activeTab === 'profile' ? renderProfileContent() : renderMainContent()}
+                           {activeTab === 'profile' ? renderProfileContent() : renderMainContent()}
                         </div>
                         <nav className="bottom-nav bg-gray-900/50 backdrop-blur-md border-t border-gray-700/50 mt-auto fade-in-main" style={{ backgroundColor: 'rgba(2, 6, 23, 0.7)' }}>
                             <div className="flex justify-around items-center h-16">
