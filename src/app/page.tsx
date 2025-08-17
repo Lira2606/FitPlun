@@ -42,10 +42,7 @@ const SplashScreen = ({ onFadeOutComplete }: { onFadeOutComplete: () => void }) 
 
     return (
         <div className={`splash-screen ${animationClass} w-full h-full flex flex-col items-center justify-center bg-gray-900`}>
-             <div className="w-40 h-40">
-                <BicepCurlAnimation />
-            </div>
-            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight mt-4">
+            <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400 tracking-tight">
                 Treino Pro
             </h1>
         </div>
