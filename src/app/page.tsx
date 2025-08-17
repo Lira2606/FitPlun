@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { BicepCurlAnimation } from '@/components/BicepCurlAnimation';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { HeartbeatIcon } from '@/components/icons/HeartbeatIcon';
 
 const SPLASH_DURATION = 3000;
 const SPLASH_FADE_DURATION = 500;
@@ -42,18 +43,11 @@ const SplashScreen = ({ onFadeOutComplete }: { onFadeOutComplete: () => void }) 
 
     return (
        <div className={`splash-screen ${animationClass} w-full h-full flex flex-col items-center justify-center bg-gray-900 p-8`}>
-            <div className="flex-grow flex flex-col items-center justify-center" style={{ animation: 'splash-fade-in-up 0.8s 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards', opacity: 0 }}>
-                <div className="flex items-center space-x-3 mb-4">
-                    <Dumbbell className="w-10 h-10 text-cyan-400" />
-                    <h1 className="text-5xl font-bold tracking-tighter text-white">
-                        FitPlan
-                    </h1>
-                </div>
-            </div>
-            <div className="w-full max-w-xs text-center pb-8">
-                 <div className="w-full bg-gray-700/50 rounded-full h-1.5 overflow-hidden">
-                    <div className="bg-gradient-to-r from-cyan-400 to-emerald-400 h-1.5" style={{ animation: `splash-fill ${SPLASH_DURATION - 1000}ms 0.5s linear forwards`, width: '0%' }}></div>
-                </div>
+            <div className="flex-grow flex flex-col items-center justify-center space-y-4" style={{ animation: 'splash-fade-in-up 0.8s 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards', opacity: 0 }}>
+                <HeartbeatIcon className="w-24 h-24 text-cyan-400" />
+                <h1 className="text-5xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-emerald-400">
+                    FitPlan
+                </h1>
             </div>
         </div>
     );
@@ -1262,7 +1256,7 @@ export default function Home() {
             <div className="gym-background"></div>
             <main className="phone-frame">
                  {isLoadingSplash ? (
-                     <SplashScreen onFadeOutComplete={() => setIsLoadingSplash(false)} />
+                    <SplashScreen onFadeOutComplete={() => setIsLoadingSplash(false)} />
                  ) : (
                     <>
                         <div className="phone-content custom-scrollbar">
