@@ -540,12 +540,17 @@ export default function Home() {
                distance: formData.get('exercise-distance') as string,
                notes: formData.get('exercise-notes') as string,
            };
-            // Replace only cardio exercises, keep musculacao
+            // Replace only cardio exercises of the same type, keep others
             const nonCardioExercises = exercises.filter(ex => ex.type === 'musculacao');
             const otherCardioExercises = exercises.filter(ex => ex.type !== 'musculacao' && ex.type !== exerciseType);
             const updatedExercises = [...nonCardioExercises, ...otherCardioExercises, newExercise];
+            
             setExercises(updatedExercises);
-            setCurrentExerciseIndex(updatedExercises.length - 1);
+            
+            // Find the index of the newly added exercise
+            const newExerciseIndex = updatedExercises.findIndex(ex => ex.id === newExercise.id);
+            setCurrentExerciseIndex(newExerciseIndex >= 0 ? newExerciseIndex : 0);
+            
             setCurrentSet(1);
             setScreen('workout');
             resetCardioState();
@@ -582,10 +587,6 @@ export default function Home() {
     };
 
     const completeSet = () => {
-        const currentWorkoutExercises = exercises.filter(ex => ex.type === currentExercise.type);
-        const currentWorkoutIndex = currentWorkoutExercises.findIndex(ex => ex.id === currentExercise.id);
-        const isLastExerciseInWorkout = currentWorkoutIndex >= currentWorkoutExercises.length - 1;
-
         if (currentExercise.type !== 'musculacao') {
             setCardioState('idle');
             stopLocationTracking();
@@ -598,6 +599,10 @@ export default function Home() {
             setScreen('finished');
             return;
         }
+
+        const currentWorkoutExercises = exercises.filter(ex => ex.type === currentExercise.type);
+        const currentWorkoutIndex = currentWorkoutExercises.findIndex(ex => ex.id === currentExercise.id);
+        const isLastExerciseInWorkout = currentWorkoutIndex >= currentWorkoutExercises.length - 1;
 
         const totalSets = currentExercise.sets ? parseInt(currentExercise.sets) : 1;
         const isLastSet = currentSet >= totalSets;
@@ -752,7 +757,7 @@ export default function Home() {
                                                 </div>
                                                 <div>
                                                     <label htmlFor="exercise-rest-time" className="block text-sm font-medium text-gray-300 mb-1">Descanso (s)</label>
-                                                    <div className="relative">
+                                                    <div className="relative"> 
                                                         <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><Clock className="h-5 w-5 text-gray-400" /></span>
                                                         <Input type="number" id="exercise-rest-time" name="exercise-rest-time" placeholder="Ex: 60" className="w-full bg-gray-700/50 border-gray-600 rounded-lg pl-10 pr-4 text-white focus:bg-gray-700/50 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500" />
                                                     </div>
@@ -1025,7 +1030,7 @@ export default function Home() {
                             </div>
                             <div>
                                 <p className="text-gray-400 text-xs">Ritmo Médio</p>
-                                <p className="font-bold animate-number-pop delay-500">{lastWorkout.avgPace} <span className="text-sm font-normal text-gray-500">/km</span></p>
+                                <p className="font-bold animate-number-pop delay-500 whitespace-nowrap">{lastWorkout.avgPace} <span className="text-sm font-normal text-gray-500">/km</span></p>
                             </div>
                         </div>
                         <div className="bg-gray-800/50 rounded-2xl p-4 flex items-center space-x-3 animate-fade-in-up delay-500 transition-transform duration-300 hover:-translate-y-1">
