@@ -23,7 +23,7 @@ import { Textarea } from '@/components/ui/textarea';
 const SPLASH_BACKGROUND_COLOR = '#040414';
 const ICON_OUTLINE_COLOR = '#475569';
 const ICON_FILL_COLOR = '#04a4c4';
-const SPLASH_DURATION = 2500;
+const SPLASH_DURATION = 12000;
 const FADE_OUT_DURATION = 500;
 
 // --- Componente de Estilos e Animações da Splash ---
@@ -1038,8 +1038,8 @@ export default function Home() {
                                  <GaugeCircle className="text-green-400 w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-gray-400 text-xs">Veloc. Média</p>
-                                <p className="font-bold animate-number-pop delay-600">{lastWorkout.avgSpeed} <span className="text-sm font-normal text-gray-500">km/h</span></p>
+                                <p className="text-gray-400 text-xs">Veloc.Média</p>
+                                <p className="font-bold animate-number-pop delay-600">{lastWorkout.avgSpeed}<span className="text-sm font-normal text-gray-500"> km/h</span></p>
                             </div>
                         </div>
                     </div>
