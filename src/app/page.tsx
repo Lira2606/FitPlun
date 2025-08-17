@@ -274,17 +274,17 @@ export default function Home() {
 
 
     const saveWorkoutToHistory = () => {
-        const lastExercise = exercises[exercises.length - 1];
-        if (!lastExercise) return;
-
-        const isCardio = lastExercise.type === 'corrida' || lastExercise.type === 'caminhada';
-
+        const currentWorkoutExercises = exercises.filter(ex => ex.type === (currentExercise?.type || exerciseType));
+        if (currentWorkoutExercises.length === 0) return;
+    
+        const isCardio = currentWorkoutExercises[0].type === 'corrida' || currentWorkoutExercises[0].type === 'caminhada';
+    
         const summary: WorkoutSummary = {
             id: Date.now(),
             date: new Date().toISOString(),
-            type: exercises[0].type,
-            name: isCardio ? lastExercise.name : 'Musculação',
-            exercises: [...exercises],
+            type: currentWorkoutExercises[0].type,
+            name: isCardio ? currentWorkoutExercises[0].name : 'Musculação',
+            exercises: [...currentWorkoutExercises],
             ...(isCardio && {
                 cardioTime: cardioTime,
                 distance: distance,
@@ -294,7 +294,7 @@ export default function Home() {
                 avgHeartRate: avgHeartRate,
             })
         };
-
+    
         const updatedHistory = [summary, ...workoutHistory];
         setWorkoutHistory(updatedHistory);
         try {
@@ -526,42 +526,50 @@ export default function Home() {
     const removeExercise = (id: number) => setExercises(exercises.filter(ex => ex.id !== id));
 
     const startWorkout = () => {
-         if (exerciseType !== 'musculacao') {
-            const form = document.getElementById('add-exercise-form') as HTMLFormElement;
-            if (!form) return;
-            const formData = new FormData(form);
-            const newExercise: Exercise = {
-                id: Date.now(),
-                name: exerciseType === 'corrida' ? 'Corrida' : 'Caminhada',
-                type: exerciseType,
-                time: formData.get('exercise-time') as string,
-                distance: formData.get('exercise-distance') as string,
-                notes: formData.get('exercise-notes') as string,
-            };
-            setExercises([newExercise]);
+        const currentWorkoutExercises = exercises.filter(ex => ex.type === exerciseType);
+
+        if (exerciseType !== 'musculacao') {
+           const form = document.getElementById('add-exercise-form') as HTMLFormElement;
+           if (!form) return;
+           const formData = new FormData(form);
+           const newExercise: Exercise = {
+               id: Date.now(),
+               name: exerciseType === 'corrida' ? 'Corrida' : 'Caminhada',
+               type: exerciseType,
+               time: formData.get('exercise-time') as string,
+               distance: formData.get('exercise-distance') as string,
+               notes: formData.get('exercise-notes') as string,
+           };
+            // Replace only cardio exercises, keep musculacao
+            const nonCardioExercises = exercises.filter(ex => ex.type === 'musculacao');
+            setExercises([...nonCardioExercises, newExercise]);
             setCurrentExerciseIndex(0);
             setCurrentSet(1);
             setScreen('workout');
             resetCardioState();
-        } else if (exercises.length > 0) {
-             setCurrentExerciseIndex(0);
-             setCurrentSet(1);
-             setScreen('workout');
-             resetCardioState();
+        } else if (currentWorkoutExercises.length > 0) {
+            const firstExerciseOfTypeIndex = exercises.findIndex(ex => ex.type === exerciseType);
+            setCurrentExerciseIndex(firstExerciseOfTypeIndex >= 0 ? firstExerciseOfTypeIndex : 0);
+            setCurrentSet(1);
+            setScreen('workout');
+            resetCardioState();
         }
     };
     
     const moveToNextSetOrExercise = () => {
-        const currentExercise = exercises[currentExerciseIndex];
+        const currentWorkoutExercises = exercises.filter(ex => ex.type === currentExercise.type);
+        const currentWorkoutIndex = currentWorkoutExercises.findIndex(ex => ex.id === currentExercise.id);
+
         const totalSets = currentExercise.sets ? parseInt(currentExercise.sets) : 1;
 
         if (currentSet < totalSets) {
             setCurrentSet(currentSet + 1);
         } else {
-            if (currentExerciseIndex < exercises.length - 1) {
-                setCurrentExerciseIndex(currentExerciseIndex + 1);
+            if (currentWorkoutIndex < currentWorkoutExercises.length - 1) {
+                const nextExerciseInWorkout = currentWorkoutExercises[currentWorkoutIndex + 1];
+                const nextGeneralIndex = exercises.findIndex(ex => ex.id === nextExerciseInWorkout.id);
+                setCurrentExerciseIndex(nextGeneralIndex);
                 setCurrentSet(1);
-                if (exercises[currentExerciseIndex + 1].type !== 'musculacao') resetCardioState();
             } else {
                 saveWorkoutToHistory();
                 setScreen('finished');
@@ -572,8 +580,9 @@ export default function Home() {
     };
 
     const completeSet = () => {
-        const currentExercise = exercises[currentExerciseIndex];
-        const isLastExercise = currentExerciseIndex >= exercises.length - 1;
+        const currentWorkoutExercises = exercises.filter(ex => ex.type === currentExercise.type);
+        const currentWorkoutIndex = currentWorkoutExercises.findIndex(ex => ex.id === currentExercise.id);
+        const isLastExerciseInWorkout = currentWorkoutIndex >= currentWorkoutExercises.length - 1;
 
         if (currentExercise.type !== 'musculacao') {
             setCardioState('idle');
@@ -583,21 +592,15 @@ export default function Home() {
                 const sum = finalHeartRateValues.reduce((a, b) => a + b, 0);
                 setAvgHeartRate(Math.round(sum / finalHeartRateValues.length));
             }
-            if (isLastExercise) {
-                saveWorkoutToHistory();
-                setScreen('finished');
-            } else {
-                setCurrentExerciseIndex(currentExerciseIndex + 1);
-                setScreen('workout');
-                resetCardioState();
-            }
+            saveWorkoutToHistory();
+            setScreen('finished');
             return;
         }
 
         const totalSets = currentExercise.sets ? parseInt(currentExercise.sets) : 1;
         const isLastSet = currentSet >= totalSets;
 
-        if (isLastSet && isLastExercise) {
+        if (isLastSet && isLastExerciseInWorkout) {
             saveWorkoutToHistory();
             setScreen('finished');
         } else if (currentExercise.restTime && parseInt(currentExercise.restTime) > 0) {
@@ -614,22 +617,20 @@ export default function Home() {
     }
     
     const startNewWorkout = () => {
-        setExercises([]);
+        setExercises(exercises.filter(ex => ex.type !== activeTab));
         setScreen('builder');
-        setActiveTab('musculacao');
-        setExerciseType('musculacao');
         resetCardioState();
     }
 
-    const handleNavClick = (type: ExerciseType) => {
-        setExerciseType(type);
-        setActiveTab(type);
+    const handleNavClick = (type: ExerciseType | 'profile') => {
+        if(type === 'profile') {
+            setActiveTab('profile');
+        } else {
+            setActiveTab(type);
+            setExerciseType(type);
+        }
     };
-
-    const handleProfileClick = () => {
-        setActiveTab('profile');
-    }
-
+    
     const handleShareWorkout = async () => {
         const lastWorkout = workoutHistory[0];
         if (!lastWorkout) return;
@@ -676,14 +677,13 @@ export default function Home() {
 
     const renderMainContent = () => {
         if (screen === 'workout' || screen === 'rest' || screen === 'finished') {
-            const workoutType = workoutHistory[0]?.type || currentExercise?.type;
-            if (activeTab === workoutType) {
-                if (screen === 'workout') return renderWorkoutScreen();
-                if (screen === 'rest') return renderRestScreen();
-                if (screen === 'finished') return renderFinishedScreen();
+            const workoutType = (screen === 'finished' ? workoutHistory[0]?.type : currentExercise?.type);
+            if(activeTab === workoutType) {
+                 if (screen === 'workout') return renderWorkoutScreen();
+                 if (screen === 'rest') return renderRestScreen();
+                 if (screen === 'finished') return renderFinishedScreen();
             }
         }
-
         return renderBuilder();
     };
 
@@ -840,6 +840,8 @@ export default function Home() {
 
     const renderWorkoutScreen = () => {
         if (!currentExercise) return null;
+        const currentWorkoutExercises = exercises.filter(ex => ex.type === currentExercise.type);
+        const currentWorkoutIndex = currentWorkoutExercises.findIndex(ex => ex.id === currentExercise.id);
         return (
             currentExercise.type === 'musculacao' ? (
                 // Musculação UI
@@ -848,7 +850,7 @@ export default function Home() {
                         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
                     <div className="mt-12">
-                        <p className="text-cyan-400 font-semibold mb-2">Exercício {currentExerciseIndex + 1} de {exercises.length}</p>
+                        <p className="text-cyan-400 font-semibold mb-2">Exercício {currentWorkoutIndex + 1} de {currentWorkoutExercises.length}</p>
                         <h2 className="text-4xl font-bold text-white truncate px-12">{currentExercise.name}</h2>
                         <div className="text-gray-300 text-lg mt-2">
                             {currentExercise.reps && <span>{currentExercise.reps} Repetições</span>}
@@ -1325,7 +1327,7 @@ export default function Home() {
                                     <span className="text-xs mt-1">Caminhada</span>
                                 </button>
                                  <button 
-                                    onClick={handleProfileClick} 
+                                    onClick={() => handleNavClick('profile')} 
                                     className={`flex flex-col items-center justify-center w-full transition-colors duration-300 ${activeTab === 'profile' ? 'text-cyan-400' : 'text-gray-400 hover:text-white'}`}
                                 >
                                     <User className="w-7 h-7" />
